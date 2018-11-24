@@ -23,6 +23,10 @@ The best solution will be to use https://gitpod.io . Just prefix the URL with `g
 
 It would be awesome if we manage to get all solutions up and running in this container!
 
+The standard [gitpod.io](https://gitpod.io) docker container supports JavaScript, TypeScript, Java, Groovy, Ruby, Python, Go, C, C++, Rust, Perl out of the box.
+
+At least Make, Gradle and Maven are available as build tools.
+
 ## Repository structure
 
 The structure we start with is the following:
