@@ -32,12 +32,12 @@ The structure we start with is the following:
 ├── README.md
 ├── day01
 ├── day02
-│   └── groovy
-│       ├── rdmueller
-│           ├── solution.groovy
-│           └── description.adoc
+│   ├── groovy
+│   |   └── rdmueller
+│   |       ├── solution.groovy
+│   |       └── description.adoc
 │   └── [language]
-│       ├── [githubhandle]
+│       └── [githubhandle]
 │           ├── solution.[extension]
 │           └── description.adoc
 ├── day03
