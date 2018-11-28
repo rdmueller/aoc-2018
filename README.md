@@ -2,7 +2,7 @@
 
 Code and Development environment for adventofcode.com - 2018 edition
 
-In this repository, we will collect the code for the solutions of [aventofcode](https://adventofcode.com) for the 2018 event.
+In this repository, we will collect the code for the solutions of [adventofcode](https://adventofcode.com) for the 2018 event.
 
 If you want to join the discussions, here is the invitation for our [slack channel](https://join.slack.com/t/aoc-2018/shared_invite/enQtNDg2NTI4NzY0Mjg5LTMzMDI1NzIyM2JiMzRhNGJhZTIwMWE4Y2Q3NmZmZjRlNWFhZDAwOWFkZDc0M2QxYTYzOGFmN2ZlZjIyYjNlZTU).
 
@@ -14,12 +14,12 @@ The id of the [shared leaderboard](https://adventofcode.com/2018/leaderboard/pri
 
 ... is to 
 
-- have a shared code base. It weill be interesting to see how the same problem is solved in different languages with different approaches
+- have a shared code base. It will be interesting to see how the same problem is solved in different languages with different approaches
 - have a development environment in which all examples run out of the box
 
 ### How do we ensure that all examples run out of the box?
 
-The best solution will be to use https://gitpod.io . Just prefix the URL with `gitpod.io#` or click on https://gitpod.io#https://github.com/rdmueller/aoc-2018 and a webbased IDE will open with the repository already cloned in a docker container.
+The best solution will be to use https://gitpod.io. Just prefix the URL with `gitpod.io#` or click on https://gitpod.io#https://github.com/rdmueller/aoc-2018 and a webbased IDE will open with the repository already cloned in a docker container.
 
 It would be awesome if we manage to get all solutions up and running in this container!
 
@@ -52,7 +52,7 @@ The structure we start with is the following:
 ## Documentation
 
 As you can see in the above repository structure, each folder contains a `description.adoc`. 
-It would be great if everybody could explain h(er|is) solution with a short description.
+It would be great if everybody could explain their solution with a short description.
 
 ## Questions?
 
