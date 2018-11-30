@@ -19,7 +19,11 @@ The id of the [shared leaderboard](https://adventofcode.com/2018/leaderboard/pri
 
 ### How do we ensure that all examples run out of the box?
 
-The best solution will be to use https://gitpod.io. Just prefix the URL with `gitpod.io#` or click on https://gitpod.io#https://github.com/rdmueller/aoc-2018 and a webbased IDE will open with the repository already cloned in a docker container.
+The best solution will be to use https://gitpod.io. Just prefix the URL with `gitpod.io#` or click the button:
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io#https://github.com/rdmueller/aoc-2018)
+
+A webbased IDE will open with the repository already cloned in a docker container.
 
 It would be awesome if we manage to get all solutions up and running in this container!
 
