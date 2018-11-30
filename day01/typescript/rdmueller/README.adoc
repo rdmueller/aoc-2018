@@ -1,0 +1,15 @@
+== Solution written in Typescript
+
+This is just a setup-test.
+
+Typescript runs out of the box in gitpod.
+
+Compile the `.ts` file via
+
+    tsc solution.ts
+
+you can add `--watch` to let `tsc` compile whenever your file changes
+
+Run your code by executing
+
+    node solution.js
