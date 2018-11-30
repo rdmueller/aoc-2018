@@ -1,5 +1,19 @@
 == Advent of Code 2018
 
+My goal for this year's advent of code is to learn python.
+
+Within the gitpod container, python is quite easy to use.
+Just prepend the following shebang to your file
+
+.Python shebang
+[source,bash]
+....
+#!/usr/bin/env python3
+....
+
+and make the file executable with a `chmod u+x filename.py`.
+You can then execute the file as `./filename.py`.
+
 === Day 1
 
 include::../../day01/python/rdmueller/README.adoc[leveloffset=+2]
