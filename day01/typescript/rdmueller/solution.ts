@@ -1,3 +1,5 @@
+#!/usr/bin/env ts-node
+
 function greeter(person:String):String {
     return "Hello, " + person;
 }
