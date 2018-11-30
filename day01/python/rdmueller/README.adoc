@@ -5,3 +5,12 @@ This is just a setup-test.
 Python runs out of the box in gitpod and can be started by just typing the name of the code file:
 
     ./solution.py
+
+=== Hello World
+
+a `Hello World` in python is as easy as
+
+[source, python]
+....
+include::solution.py[tags=helloWorld]
+....
