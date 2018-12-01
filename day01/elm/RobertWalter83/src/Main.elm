@@ -23,8 +23,11 @@ init =
 
 findDup : Int -> List Int -> Set Int -> Maybe Int
 findDup frqCurrent rgDelta memory = 
-  Maybe.andThen
-    (\deltaNext ->
+  let
+    mbDeltaNext = List.head rgDelta
+  in
+    case mbDeltaNext of
+      Just deltaNext ->
         let 
           frqNext = frqCurrent + deltaNext
           isDuplicate = Set.member frqNext memory
@@ -37,8 +40,9 @@ findDup frqCurrent rgDelta memory =
               rgDataNew = List.append (List.drop 1 rgDelta) [deltaNext]  
             in
               findDup frqNext rgDataNew memoryNew
-    )
-    (List.head rgDelta)
+
+      Maybe.Nothing ->
+        Maybe.Nothing
 
 -- UPDATE
 
