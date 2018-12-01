@@ -66,12 +66,12 @@ repeat while (max iterations reached?)
 
 [source, go]
 ....
-include::./solution.py
+include::./solution.py[]
 ....
 
 == Javascript implementation
 
 [source, javascript]
 ....
-include::../../javascript/anoff/solution.js
+include::../../javascript/anoff/solution.js[]
 ....
