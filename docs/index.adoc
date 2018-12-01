@@ -1,5 +1,11 @@
 == Advent of Code 2018
 
-https://adventofcode.com
+https://adventofcode.com[Advent of Code Website]
 
-link:rdmueller/adventOfCode.html[rdmueller]
+
+WARNING: Spoiler Alert! If you want to solve the aoc problems on your own, do not read any further.
+This repository contains solutions for the problems in several languages.
+
+== Solutions
+
+* by link:rdmueller/adventOfCode.html[Ralf D. Müller]
