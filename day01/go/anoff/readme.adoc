@@ -1,0 +1,10 @@
+== Solution written in Go
+
+=== Part 1
+
+The first star is just building the sum over a number of integers given as strings as input. I decided to give the input as a file instead of arguments, so I had to do file handling first.
+
+Then it is just splitting it by newlines, looping over each line and summing up the integer representations of each line.
+
+=== Part 2
+
