@@ -10,3 +10,4 @@ This repository contains solutions for the problems in several languages.
 
 * by link:anoff/adventOfCode.html[Andreas Offenhäuser]
 * by link:rdmueller/adventOfCode.html[Ralf D. Müller]
+* by link:gysel/adventOfCode.html[Michi Gysel]

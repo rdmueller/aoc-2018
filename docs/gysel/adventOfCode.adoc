@@ -1,0 +1,6 @@
+== Advent of Code 2018
+
+=== Day 1
+
+include::../../day01/kotlin/gysel/readme.adoc[leveloffset=+2]
+
