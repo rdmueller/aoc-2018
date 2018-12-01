@@ -1,10 +1,66 @@
-== Solution written in Go
+== Day 1: Chronal Calibration in Go
+> by https://anoff.io[Andreas Offenhaeuser]
 
 === Part 1
 
-The first star is just building the sum over a number of integers given as strings as input. I decided to give the input as a file instead of arguments, so I had to do file handling first.
+The first challenge is just building the sum over a number of integers given as string input to identify the `integrator value` after feeding it a bunch of differential values. I decided to give the input as a file instead of arguments, so I had to do file handling first.
 
 Then it is just splitting it by newlines, looping over each line and summing up the integer representations of each line.
 
+TIP: Go reads file content as bytes so they first need to be parsed into strings.
+
+[plantuml, day01-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:read input;
+:convert to string
+and split into lines;
+:initialize integrator with 0;
+while (new line available?)
+  :add to integrator;
+endwhile
+:show integrator value;
+@enduml
+....
+
 === Part 2
 
+The assumption in part 2 is that by continously applying the differential values given in the input the value of the `integrator` is bound to repeat at some point. The first value that the integrator reaches twice is the correct solution for this one.
+
+In addition to the integrator implementation from part 1 it is required to store each integrator value in an array before moving on with the list. During each step check in the _list of known integrator values_ if the current value has already been added previously. If that is the case then the current value is the correct solution.
+
+IMPORTANT: This only works if the actual list gets looped multiple times (in my case 140)
+
+Another change I was missing is to build an outer loop that runs the entire `integrator` over the input list multiple times.
+
+[plantuml, day01-part2, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:read input;
+:convert to string
+and split into lines;
+:initialize 
+- integrator with 0
+- array of known values;
+repeat
+  while (new line available?)
+    :add to integrator;
+    if (integrator value is
+    in known values) then (y)
+      :print integrator value;
+      stop
+    endif
+    :add integrator value to
+    array of known values;
+  endwhile
+repeat while (max iterations reached?)
+@enduml
+....
