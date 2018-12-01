@@ -1,14 +1,17 @@
 # aoc-2018
 
-Code and Development environment for adventofcode.com - 2018 edition
+WARNING: Spoiler Alert! If you want to solve the aoc problems on your own, do not read any further.
+This repository contains solutions for the problems in several languages.
 
-In this repository, we will collect the code for the solutions of [adventofcode](https://adventofcode.com) for the 2018 event.
+Code and Development environment for https://Adventofcode.com[adventofcode.com] - 2018 edition
 
-If you want to join the discussions, here is the invitation for our [slack channel](https://join.slack.com/t/aoc-2018/shared_invite/enQtNDg2NTI4NzY0Mjg5LTMzMDI1NzIyM2JiMzRhNGJhZTIwMWE4Y2Q3NmZmZjRlNWFhZDAwOWFkZDc0M2QxYTYzOGFmN2ZlZjIyYjNlZTU).
+In this repository, we will collect the code for the solutions of https://adventofcode.com[adventofcode] for the 2018 event.
 
-The slack channel itself is [aoc-2018](https://aoc-2018.slack.com/)
+If you want to join the discussions, here is the invitation for our https://join.slack.com/t/aoc-2018/shared_invite/enQtNDg2NTI4NzY0Mjg5LTMzMDI1NzIyM2JiMzRhNGJhZTIwMWE4Y2Q3NmZmZjRlNWFhZDAwOWFkZDc0M2QxYTYzOGFmN2ZlZjIyYjNlZTU[slack channel].
 
-The id of the [shared leaderboard](https://adventofcode.com/2018/leaderboard/private/view/117454) is `117454-7d5aa225` .
+The slack channel itself is https://aoc-2018.slack.com/[aoc-2018]
+
+The id of the https://adventofcode.com/2018/leaderboard/private/view/117454[shared leaderboard] is `117454-7d5aa225` .
 
 ## The Goal of this repository
 
@@ -21,13 +24,14 @@ The id of the [shared leaderboard](https://adventofcode.com/2018/leaderboard/pri
 
 The best solution will be to use https://gitpod.io. Just prefix the URL with `gitpod.io#` or click the button:
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io#https://github.com/rdmueller/aoc-2018)
+image:https://gitpod.io/button/open-in-gitpod.svg[link="https://gitpod.io#https://github.com/rdmueller/aoc-2018", title="Open in Gitpod"]
+
 
 A webbased IDE will open with the repository already cloned in a docker container.
 
 It would be awesome if we manage to get all solutions up and running in this container!
 
-The standard [gitpod.io](https://gitpod.io) docker container supports JavaScript, TypeScript, Java, Groovy, Ruby, Python, Go, C, C++, Rust, Perl out of the box.
+The standard https://gitpod.io[gitpod.io] docker container supports JavaScript, TypeScript, Java, Groovy, Ruby, Python, Go, C, C++, Rust, Perl out of the box.
 
 At least Make, Gradle and Maven are available as build tools.
 
@@ -60,4 +64,4 @@ It would be great if everybody could explain their solution with a short descrip
 
 ## Questions?
 
-=> see you on Slack: [aoc-2018](https://aoc-2018.slack.com/)
+=> see you on Slack: https://aoc-2018.slack.com/[aoc-2018]
