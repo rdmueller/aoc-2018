@@ -44,7 +44,7 @@ start
 :read input;
 :convert to string
 and split into lines;
-:initialize 
+:initialize
 - integrator with 0
 - array of known values;
 repeat
@@ -66,7 +66,7 @@ repeat while (max iterations reached?)
 
 [source, go]
 ....
-include::./solution.py[]
+include::./solution.go[]
 ....
 
 == Javascript implementation
