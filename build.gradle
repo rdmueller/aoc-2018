@@ -1,0 +1,16 @@
+apply plugin: 'groovy'
+
+//configure docToolchain to use the main project's config
+project('docToolchain') {
+    if (project.hasProperty('docDir')) {
+        docDir = '../.'
+        inputPath = 'docs'
+
+        mainConfigFile = 'docToolchain.config'
+    } else {
+        println "="*80
+        println "  please initialize the docToolchain submodule"
+        println "  by executing git submodule update -i"
+        println "="*80
+    }
+}
