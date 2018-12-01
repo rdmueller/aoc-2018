@@ -1,7 +1,4 @@
-== Day 1: Chronal Calibration in Go
-> by https://anoff.io[Andreas Offenhaeuser]
-
-=== Part 1
+== Part 1
 
 The first challenge is just building the sum over a number of integers given as string input to identify the `integrator value` after feeding it a bunch of differential values. I decided to give the input as a file instead of arguments, so I had to do file handling first.
 
@@ -27,7 +24,7 @@ endwhile
 @enduml
 ....
 
-=== Part 2
+== Part 2
 
 The assumption in part 2 is that by continously applying the differential values given in the input the value of the `integrator` is bound to repeat at some point. The first value that the integrator reaches twice is the correct solution for this one.
 
@@ -63,4 +60,18 @@ repeat
   endwhile
 repeat while (max iterations reached?)
 @enduml
+....
+
+== Go implementation
+
+[source, go]
+....
+include::./solution.py
+....
+
+== Javascript implementation
+
+[source, javascript]
+....
+include::../../javascript/anoff/solution.js
 ....

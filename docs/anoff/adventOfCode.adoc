@@ -1,4 +1,8 @@
 == Advent of Code 2018
+:toc:
+> by https://anoff.io[Andreas Offenhaeuser]
+
+Trying to build solutions with https://golang.org/[Go], https://isocpp.org/[C++] and potentially falling back to https://nodejs.org/en/[Node.js] if I just need to get things done.
 
 === Day 1
 
