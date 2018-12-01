@@ -6,7 +6,7 @@ to build:
 
     elm make src/Main.elm
 
-this produces a html file, which you can open locally (also checked in for convenience).
+This should produce index.html in the root directory, which you can open locally (also checked in for convenience).
 
 == Solution
 
