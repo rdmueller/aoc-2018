@@ -1,0 +1,5 @@
+== Solution written in Go
+
+This is just a setup-test. To run:
+
+    go run solution.go
