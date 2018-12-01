@@ -1,0 +1,27 @@
+== Solution written in elm 0.19
+
+goto https://guide.elm-lang.org/install.html to find your elm installation guide
+
+to build:
+
+    elm make src/Main.elm
+
+This should produce index.html in the root directory, which you can open locally (also checked in for convenience).
+
+== Solution
+
+The input is a list of integers.
+
+=== Part 1
+
+Uses https://package.elm-lang.org/packages/elm/core/latest/List#foldl[List.foldl] of the elm/core package to sum up the list elements. 
+
+=== Part 2
+
+Solved with a recursive function called `findDup`. It has three arguments 
+
+    * `frqCurrent` the current frequency as integer (seed is 0)
+    * `rgDelta` a list of input data: notice that we try to take the head (first element) and, if successful, move it to the end of this list, thus simulating a ring data structure
+    * `memory` a set that remembers already found freqencies (seed is an empty set) 
+
+If the new frequency (`frqCurrent + first element of ring`) is already in memory, we return this frequency. Otherwise, we recurse with the new frequency, an updated ring and an updated memory.

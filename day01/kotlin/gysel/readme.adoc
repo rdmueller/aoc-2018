@@ -1,0 +1,24 @@
+== Solution written in Kotlin
+
+To build and run the tests:
+
+    ./gradlew build
+
+To run:
+
+   ./gradlew run
+
+== Solution
+
+The data is parsed from a text file in `src/main/resources`.
+
+=== Part 1
+
+Simply calculating the sum of a `List<Int>` using https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/sum.html[sum()]
+
+=== Part 2
+
+Generate an infinite Kotlin Sequence (a Sequence is lazy) and iterate until a
+frequency is found for the second time. Unfortunately there is no operator in the stdlib
+to `map` using an accumulator. I'm therefore using a Closure to access state from outside
+of the Lambda.
