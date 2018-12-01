@@ -18,7 +18,3 @@ You can then execute the file as `./filename.py`.
 
 include::../../day01/python/rdmueller/README.adoc[leveloffset=+2]
 
-[plantuml,"test",png]
-....
-a->b
-....

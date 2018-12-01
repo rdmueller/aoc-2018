@@ -8,4 +8,5 @@ This repository contains solutions for the problems in several languages.
 
 == Solutions
 
+* by link:anoff/adventOfCode.html[Andreas Offenhäuser]
 * by link:rdmueller/adventOfCode.html[Ralf D. Müller]
