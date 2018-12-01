@@ -19,8 +19,9 @@ Uses https://package.elm-lang.org/packages/elm/core/latest/List#foldl[List.foldl
 === Part 2
 
 Solved with a recursive function called `findDup`. It has three arguments 
-* `frqCurrent` the current frequency as integer (seed is 0)
-* `rgDelta` a list of input data: notice that we try to take the head (first element) and, if successful, move it to the end of this list, thus simulating a ring data structure
-* `memory` a set that remembers already found freqencies (seed is an empty set) 
+
+    * `frqCurrent` the current frequency as integer (seed is 0)
+    * `rgDelta` a list of input data: notice that we try to take the head (first element) and, if successful, move it to the end of this list, thus simulating a ring data structure
+    * `memory` a set that remembers already found freqencies (seed is an empty set) 
 
 If the new frequency (`frqCurrent + first element of ring`) is already in memory, we return this frequency. Otherwise, we recurse with the new frequency, an updated ring and an updated memory.
