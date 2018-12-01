@@ -4,7 +4,6 @@ import (
     "io/ioutil"
     "strings"
     "strconv"
-    "math"
 )
 func main() {
     byteContent, err := ioutil.ReadFile("./input.txt")
@@ -38,7 +37,7 @@ func main() {
             num, _ := strconv.Atoi(v)
             currentFrequency += num
             
-            isMatch, _ := hasElement(frequencies, currentFrequency)
+            isMatch := hasElement(frequencies, currentFrequency)
             if isMatch {
                 fmt.Printf("Solution for part 2: %d, found in iteration %d\n", currentFrequency, i)
                 return
@@ -49,16 +48,11 @@ func main() {
     }
 }
 
-func hasElement (arr []int, elm int) (bool, int) {
-    minDiff := math.Inf(0)
+func hasElement (arr []int, elm int) (bool) {
     for _, n := range arr {
-        diff := math.Abs(float64(n - elm))
-        if diff < minDiff {
-            minDiff = diff
-        }
         if n == elm {
-            return true, int(minDiff)
+            return true
         }
     }
-    return false, int(minDiff)
+    return false
 }
