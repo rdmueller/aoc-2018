@@ -3,3 +3,7 @@
 This is just a setup-test. To run:
 
     go run solution.go
+
+== Solution
+
+Simply sum the data.
