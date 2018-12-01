@@ -10,7 +10,7 @@ This should produce index.html in the root directory, which you can open locally
 
 == Solution
 
-The input is a a list of integers.
+The input is a list of integers.
 
 === Part 1
 
