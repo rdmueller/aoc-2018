@@ -1,0 +1,27 @@
+== Solution written in elm 0.19
+
+goto https://guide.elm-lang.org/install.html to find your elm installation guide
+
+to build:
+
+    elm make src/Main.elm
+
+This should produce index.html in the root directory, which you can open locally (also checked in for convenience).
+
+== Solution
+
+The input is a list of strings.
+
+=== Part 1
+
+The input list is transformed three times.
+
+  . Step: From a *list of strings* to a *list of list of chars*
+  . Step: From a *list of list of chars* to a *list of dictionaries*, with *key = letter; value = count*
+  . Step: From a *list of dictionaries* to a tuple of two factors, which need to be multiplied in the end to get the checksum
+
+We increase the first factor every time a dictionary contains a value of 2, and we increase the second factor every time a dictionary contains a value of 3.
+
+=== Part 2
+
+Pending.
