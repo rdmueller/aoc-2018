@@ -5,8 +5,6 @@ This repository contains solutions for the problems in several languages.
 
 NOTE: Result can be found on https://aoc-2018.netlify.com/[aoc-2018.netlify.com] powered by netlify.
 
-Code and Development environment for https://Adventofcode.com[adventofcode.com] - 2018 edition
-
 In this repository, we will collect the code for the solutions of https://adventofcode.com[adventofcode] for the 2018 event.
 
 If you want to join the discussions, here is the invitation for our https://join.slack.com/t/aoc-2018/shared_invite/enQtNDg2NTI4NzY0Mjg5LTMzMDI1NzIyM2JiMzRhNGJhZTIwMWE4Y2Q3NmZmZjRlNWFhZDAwOWFkZDc0M2QxYTYzOGFmN2ZlZjIyYjNlZTU[slack channel].
