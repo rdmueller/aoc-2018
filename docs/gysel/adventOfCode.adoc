@@ -3,4 +3,7 @@
 === Day 1
 
 include::../../day01/kotlin/gysel/readme.adoc[leveloffset=+2]
+
+=== Day 2
+
 include::../../day02/kotlin/gysel/readme.adoc[leveloffset=+2]

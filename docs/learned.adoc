@@ -3,6 +3,7 @@
 :rdmueller: image:https://avatars2.githubusercontent.com/u/1856308?s=40[link=https://github.com/rdmueller]
 :anoff: image:https://avatars2.githubusercontent.com/u/7142618?s=40[link=https://github.com/anoff]
 :robertwalter83: image:https://avatars2.githubusercontent.com/u/5462981?s=40[link=https://github.com/robertwalter83]
+:gysel: image:https://avatars0.githubusercontent.com/u/1065960?s=40[link=https://github.com/gysel]
 
 == Today I learned..
 
@@ -20,6 +21,10 @@ a| * Elm is a language which seems to compile / transpile to JavaScript
 
 |{robertwalter83}
 | I learned how to use List.foldl/foldr in elm
+
+|{gysel}
+a| * How to create an infinite, repeating Sequence in Kotlin.
+ * There is no map operator that also provides an accumulator in Kotlin (such as http://reactivex.io/documentation/operators/scan.html[ReactiveX Scan])
 
 |====
 
@@ -39,5 +44,9 @@ Works great on top of test driven development!
 
 |{robertwalter83}
 |
+
+|{gysel}
+a| * The zip operator in Kotlin combines two Lists into a List<Pair>>
+* It makes sense to return either List or Sequence from your functions depending on the result size (List or Stream in Java)
 
 |====
