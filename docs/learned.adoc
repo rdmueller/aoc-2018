@@ -1,0 +1,7 @@
+== Today I learned..
+
+A collection of everyones daily learnings
+
+=== Day 1
+
+anoff:: I learned that Go only has for loops
