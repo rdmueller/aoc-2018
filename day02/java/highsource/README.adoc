@@ -1,0 +1,17 @@
+== Solution written in Java
+
+This is just a setup-test. To build:
+
+    mvn clean install
+
+To run:
+
+   java -jar target/aoc-2018-day02-1.0.0-SNAPSHOT.jar
+
+== Solution
+
+The core element is counting letters per line. This can be done with a one-liner with streams:
+
+```
+Map<Integer, Long> result = str.chars().boxed().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+```
