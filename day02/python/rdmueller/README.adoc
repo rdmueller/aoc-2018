@@ -42,5 +42,5 @@ With this function, it is easy to crawl over the input and find the only tuple w
 
 [source, python]
 ....
-include::solution.py[tags=starTwo]
+include::solution.py[tags=solutionTwo]
 ....
