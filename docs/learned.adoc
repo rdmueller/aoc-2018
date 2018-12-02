@@ -2,6 +2,7 @@
 
 :rdmueller: image:https://avatars2.githubusercontent.com/u/1856308?s=40[link=https://github.com/rdmueller]
 :anoff: image:https://avatars2.githubusercontent.com/u/7142618?s=40[link=https://github.com/anoff]
+:robertwalter83: image:https://avatars2.githubusercontent.com/u/5462981?s=40[link=https://github.com/robertwalter83]
 
 == Today I learned..
 
@@ -17,6 +18,9 @@ A collection of everyones daily learnings
 |{rdmueller}
 | I learned that elm is a language which seems to compile / transpile to JavaScript
 
+|{robertwalter83}
+| I learned how to use List.foldl/foldr in elm
+
 |====
 
 === Day 2
@@ -27,6 +31,9 @@ A collection of everyones daily learnings
 |
 
 |{rdmueller}
+|
+
+|{robertwalter83}
 |
 
 |====
