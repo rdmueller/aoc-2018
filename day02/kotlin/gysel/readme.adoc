@@ -1,0 +1,37 @@
+== Solution written in Kotlin
+
+To build and run the tests:
+
+    ./gradlew build
+
+To run:
+
+   ./gradlew run
+
+== Solution
+
+The data is parsed from a text file in `src/main/resources`.
+
+=== Part 1
+
+The data is processed Kotlin's https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.io/java.io.-reader/use-lines.html[useLines()]
+which opens the file and streams the lines using a `Sequence` (lazy Stream of items).
+
+The counters are Java's `AtomicInteger` accessed using a Closure
+which means that the data could easily processed in parallel even though the
+code is not using pure functions.
+
+=== Part 2
+
+As a first step all ids are loaded into a list. From that list a `Sequence` of all possible
+`Pair<String, String>` is calculated and then filtered using the
+function `numberOfChangedCharacters(pair) == 1`.
+
+The implementation makes heavy use of the collection operations in the Kotlin stdlib such as
+https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/zip.html[zip],
+https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/filter.html[map], or
+https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/map.html[map].
+
+Some operations are directly creating a new List, others are lazily evaluated using
+https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/index.html[Sequences] to keep memory
+usage under control.
