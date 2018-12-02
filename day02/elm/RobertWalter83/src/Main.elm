@@ -59,12 +59,13 @@ countOfLetters letter dictLetterToCount =
 calcFactors : Dict Char Int -> (Int, Int) -> (Int, Int)
 calcFactors dict (factor1, factor2) =
   let
-    hasPair = Dict.values dict |> List.member 2
-    hasTriple = Dict.values dict |> List.member 3
-    incFactor1 = if hasPair then 1 else 0
-    incFactor2 = if hasTriple then 1 else 0
+    values = Dict.values dict
   in
-    (factor1 + incFactor1, factor2 + incFactor2)
+    (factor1 + (values |> getFactorIncrement 2), factor2 + (values |> getFactorIncrement 3))
+
+getFactorIncrement : Int -> List Int -> Int
+getFactorIncrement value list =
+  if List.member value list then 1 else 0
   
 -- PART 2 
 
