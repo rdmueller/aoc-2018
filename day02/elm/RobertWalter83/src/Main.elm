@@ -5,6 +5,7 @@ import Html exposing (..)
 import Set exposing (Set)
 import Dict exposing (Dict)
 import Maybe exposing (Maybe)
+import List.Extra exposing (..)
 
 inputList : List String
 inputList =
@@ -13,19 +14,28 @@ inputList =
 -- MODEL
 
 type alias Model = 
-  { checkSum : Int }
+  { checkSum : Int
+  , idWithMinDistance : String }
 
 -- INIT
 
 init : Model
 init =
-  { checkSum = calcCheckSum inputList }
+  { checkSum = calcCheckSum inputList
+  , idWithMinDistance = findIdWithMinDistance inputList }
 
+-- COMMON UTIL
+
+toCharLists : List String -> List (List Char)
+toCharLists input =
+  List.map String.toList input
+
+-- PART 1
 
 calcCheckSum : List String -> Int
 calcCheckSum input =
     let
-      listOfCharLists = List.map String.toList input
+      listOfCharLists = toCharLists input
       dicts = List.map (List.foldl countOfLetters Dict.empty) listOfCharLists
       (factor1, factor2) = List.foldl calcFactors (0, 0) dicts
     in
@@ -44,7 +54,7 @@ countOfLetters letter dictLetterToCount =
             Maybe.Nothing ->
                 Just 1
     )
-    mapLetterToCount 
+    dictLetterToCount 
 
 calcFactors : Dict Char Int -> (Int, Int) -> (Int, Int)
 calcFactors dict (factor1, factor2) =
@@ -56,8 +66,49 @@ calcFactors dict (factor1, factor2) =
   in
     (factor1 + incFactor1, factor2 + incFactor2)
   
+-- PART 2 
 
--- UPDATE
+findIdWithMinDistance : List String -> String
+findIdWithMinDistance input =
+  let
+    asCharLists = toCharLists input
+    comparisonList = lift2 compareCharLists asCharLists asCharLists
+    resultList = List.filter filterForResult comparisonList
+  in
+    case resultList of
+      [] ->
+        ""
+      (distance, id) :: xs ->
+        id
+
+compareCharLists : List Char -> List Char -> (Bool, String)
+compareCharLists input1 input2 =
+  if input1 == input2 then
+    (False, (String.fromList input1))
+  else
+    let 
+      (distance, id) = List.foldl foldDistanceAndString (0, "") (List.map2 compareChars input1 input2)
+    in
+      if distance == 1 then
+        (True, id)
+      else
+        (False, id)
+
+
+compareChars : Char -> Char -> (Int, Char)
+compareChars a b = 
+  if a == b then (0, a) else (1, '_')
+
+foldDistanceAndString : (Int, Char) -> (Int, String) -> (Int, String)
+foldDistanceAndString (distance, letter) (distanceSum, id) = 
+  (distanceSum + distance, if distance == 0 then id ++ (String.fromChar letter) else id)
+
+filterForResult : (Bool, String) -> Bool
+filterForResult (isResult, _) =
+  isResult
+
+
+-- UPDATE (no op)
 
 type Msg = Nothing
 
@@ -72,6 +123,7 @@ view : Model -> Html Msg
 view model =
   div [] 
   [ div [] [ text <| "CheckSum:" ++ (String.fromInt model.checkSum ) ]
+  , div [] [ text <| "id with distance 1 (same characters only): " ++ model.idWithMinDistance ]
   ]
 
 -- MAIN

@@ -4984,7 +4984,7 @@ var elm$core$Dict$update = F3(
 		}
 	});
 var author$project$Main$countOfLetters = F2(
-	function (letter, mapLetterToCount) {
+	function (letter, dictLetterToCount) {
 		return A3(
 			elm$core$Dict$update,
 			letter,
@@ -4996,10 +4996,9 @@ var author$project$Main$countOfLetters = F2(
 					return elm$core$Maybe$Just(1);
 				}
 			},
-			mapLetterToCount);
+			dictLetterToCount);
 	});
-var elm$core$Basics$mul = _Basics_mul;
-var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
+var elm$core$Basics$gt = _Utils_gt;
 var elm$core$List$foldl = F3(
 	function (func, acc, list) {
 		foldl:
@@ -5019,7 +5018,6 @@ var elm$core$List$foldl = F3(
 			}
 		}
 	});
-var elm$core$Basics$gt = _Utils_gt;
 var elm$core$List$reverse = function (list) {
 	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
 };
@@ -5096,8 +5094,13 @@ var elm$core$String$foldr = _String_foldr;
 var elm$core$String$toList = function (string) {
 	return A3(elm$core$String$foldr, elm$core$List$cons, _List_Nil, string);
 };
+var author$project$Main$toCharLists = function (input) {
+	return A2(elm$core$List$map, elm$core$String$toList, input);
+};
+var elm$core$Basics$mul = _Basics_mul;
+var elm$core$Dict$empty = elm$core$Dict$RBEmpty_elm_builtin;
 var author$project$Main$calcCheckSum = function (input) {
-	var listOfCharLists = A2(elm$core$List$map, elm$core$String$toList, input);
+	var listOfCharLists = author$project$Main$toCharLists(input);
 	var dicts = A2(
 		elm$core$List$map,
 		A2(elm$core$List$foldl, author$project$Main$countOfLetters, elm$core$Dict$empty),
@@ -5111,10 +5114,116 @@ var author$project$Main$calcCheckSum = function (input) {
 	var factor2 = _n0.b;
 	return factor1 * factor2;
 };
+var author$project$Main$compareChars = F2(
+	function (a, b) {
+		return _Utils_eq(a, b) ? _Utils_Tuple2(0, a) : _Utils_Tuple2(
+			1,
+			_Utils_chr('_'));
+	});
+var elm$core$Basics$append = _Utils_append;
+var elm$core$String$cons = _String_cons;
+var elm$core$String$fromChar = function (_char) {
+	return A2(elm$core$String$cons, _char, '');
+};
+var author$project$Main$foldDistanceAndString = F2(
+	function (_n0, _n1) {
+		var distance = _n0.a;
+		var letter = _n0.b;
+		var distanceSum = _n1.a;
+		var id = _n1.b;
+		return _Utils_Tuple2(
+			distanceSum + distance,
+			(!distance) ? _Utils_ap(
+				id,
+				elm$core$String$fromChar(letter)) : id);
+	});
+var elm$core$List$map2 = _List_map2;
+var elm$core$String$fromList = _String_fromList;
+var author$project$Main$compareCharLists = F2(
+	function (input1, input2) {
+		if (_Utils_eq(input1, input2)) {
+			return _Utils_Tuple2(
+				false,
+				elm$core$String$fromList(input1));
+		} else {
+			var _n0 = A3(
+				elm$core$List$foldl,
+				author$project$Main$foldDistanceAndString,
+				_Utils_Tuple2(0, ''),
+				A3(elm$core$List$map2, author$project$Main$compareChars, input1, input2));
+			var distance = _n0.a;
+			var id = _n0.b;
+			return (distance === 1) ? _Utils_Tuple2(true, id) : _Utils_Tuple2(false, id);
+		}
+	});
+var author$project$Main$filterForResult = function (_n0) {
+	var isResult = _n0.a;
+	return isResult;
+};
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
+		}
+	});
+var elm$core$List$concat = function (lists) {
+	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
+};
+var elm$core$List$concatMap = F2(
+	function (f, list) {
+		return elm$core$List$concat(
+			A2(elm$core$List$map, f, list));
+	});
+var elm_community$list_extra$List$Extra$andThen = elm$core$List$concatMap;
+var elm_community$list_extra$List$Extra$lift2 = F3(
+	function (f, la, lb) {
+		return A2(
+			elm_community$list_extra$List$Extra$andThen,
+			function (a) {
+				return A2(
+					elm_community$list_extra$List$Extra$andThen,
+					function (b) {
+						return _List_fromArray(
+							[
+								A2(f, a, b)
+							]);
+					},
+					lb);
+			},
+			la);
+	});
+var author$project$Main$findIdWithMinDistance = function (input) {
+	var asCharLists = author$project$Main$toCharLists(input);
+	var comparisonList = A3(elm_community$list_extra$List$Extra$lift2, author$project$Main$compareCharLists, asCharLists, asCharLists);
+	var resultList = A2(elm$core$List$filter, author$project$Main$filterForResult, comparisonList);
+	if (!resultList.b) {
+		return '';
+	} else {
+		var _n1 = resultList.a;
+		var distance = _n1.a;
+		var id = _n1.b;
+		var xs = resultList.b;
+		return id;
+	}
+};
 var author$project$Main$inputList = _List_fromArray(
 	['mvgowxqubnhaefjslkjlrptzyi', 'pvgowlqubnhaefmslkjdrpteyi', 'ovgowoqubnhaefmslkjnrptzyi', 'cvgowxqubnrxefmslkjdrptzyo', 'cvgowxqubnhaefmsokjdrprzyf', 'cvgowxqubnhjeflslkjgrptzyi', 'cvgowxqvbnhaefmslkhdrotzyi', 'hvgowxqmbnharfmslkjdrptzyi', 'cvgoaxqubqhaefmslkjdrutzyi', 'cvxowxqdbnhaefmslkjdgptzyi', 'cvgikxqubnhaefmslkjdrptzyz', 'cvgnwxqubnhaqfjslkjdrptzyi', 'cqgowxqubnhaecmslkjgrptzyi', 'cvpowxqucnhaefmslkjdrptzyz', 'fvuoexqubnhaefmslkjdrptzyi', 'svgowxqubnhaefmsvkjdrttzyi', 'cvgowxqubnhaefmblkjdfpbzyi', 'cvkoyxqubnhaefsslkjdrptzyi', 'bvgowxqublhaefmslkjdrptzfi', 'xvgewxqubnhaefmslkjdrztzyi', 'cvgowxqubzhaefmslkkrrptzyi', 'cvgowxqubnhaefmslkudruuzyi', 'cvgowxqubnhaefmvlkjdrptwyl', 'cvgoyxqubnhaefmslkjvrotzyi', 'cvgowxoubnhaewmslkjdrpbzyi', 'cvgowxgubnhaefmslijdrptzxi', 'lvgowxqkbnhaefmslkjdrptzqi', 'xvgowxqubyhaefmflkjdrptzyi', 'wvnowxgubnhaefmslkjdrptzyi', 'cvgowxguwnhaefhslkjdrptzyi', 'cvgowfquxnhaefmdlkjdrptzyi', 'cvgywxqubnuaefmsldjdrpfzyi', 'cvkowxqzbrhaefmslkjdrptzyi', 'cviowxzubnhaefmslkjdrptqyi', 'cvgowxqubnhaefmsozjdrptzyc', 'cvglwxuubnhaewmslkjdrptzyi', 'cvgowxquknhaebmsfkjdrptzyi', 'vvgowxqubnhaesmslkjdrptzri', 'cvgowxoubndaefmslkjdrftzyi', 'cvgowxqubghaefmslkjdeptzyw', 'cvgowxqubnhaetmhlkjdrpvzyi', 'cvgowmquunhaefmslkjdrptzyt', 'cvgooxqpbniaefmslkjdrptzyi', 'cvgowxqubnhaeumslkjdkptiyi', 'cvgrwxqsbnhaemmslkjdrptzyi', 'cvrowxqubnhaefmslkjdrctcyi', 'dvgcwxqubnhaefmslkjdrptzyq', 'cugowxqubnhasfmmlkjdrptzyi', 'cwgowxqobzhaefmslkjdrptzyi', 'cvgowxquwnhaefmulkjdrptbyi', 'nvgowxqmbnhaefmslyjdrptzyi', 'cvgowxqubniakvmslkjdrptzyi', 'cvyowxqubnhaefmslejdrptzyx', 'cvgobxqubghaefeslkjdrptzyi', 'cvgowxiubnhaebmslkjdfptzyi', 'cvgosbqubnhaefmslkvdrptzyi', 'cvgpwxqubnhaefvslkjdrptzyh', 'cvgowxqubnyaefmslgjdsptzyi', 'cvgowxqubnhaefmslkjdrprzzp', 'cvgowxqubwhaemmslkjdrpazyi', 'cvgowxqpbnhaemmslkjdrpczyi', 'cvgoqxqubnhaelmslkjdrptzye', 'cvgowxqubnhaefmslbjdrttzvi', 'cvgowxqubnhlefmslkvurptzyi', 'cvgowxqujngaefmslktdrptzyi', 'cvgowxqubnhaefmsckjdcwtzyi', 'cvcowxqubnhaetmslkjorptzyi', 'jvnowxqubnhaefmslkjdrptzyf', 'cygowxqkbnhaefmslejdrptzyi', 'cvmowxqubnhaefmslkjdritzoi', 'cvgowxqubnpaefmslkjdrpnnyi', 'cvgowxqubnhaefmolkjdrpnzyy', 'uvgowxoubnhaefmslkjdrptzvi', 'cvgowxbabehaefmslkjdrptzyi', 'cvgokxqubnhaefmsckjdrjtzyi', 'cvgoxwqubahaefmslkjdrptzyi', 'cvgowxqusnhaefmslijdrptyyi', 'cvgowxqubmhaeqmslkxdrptzyi', 'cvgouxhubnhaefmslkjdrjtzyi', 'cvgowxqubnhaefmslrjdqptzyk', 'cvgowxiublhaefsslkjdrptzyi', 'cvgowxqubnxgefmslkadrptzyi', 'ovgowxqugshaefmslkjdrptzyi', 'cvgowxquznhaeemslsjdrptzyi', 'cvkowxqubnhaeomslkjdeptzyi', 'cvgvwxqubxhaefmslkjdrptzyu', 'cvglwxqybnhaefmslkjdrptzyb', 'cvgowxqubnlfwfmslkjdrptzyi', 'cvaowxqubnhaefmslkjdrvtzbi', 'cvgowxqubnrmefaslkjdrptzyi', 'cvgowxqubnhaefmsnkjdfpwzyi', 'cvgawxqmbnhaefmsykjdrptzyi', 'chgowmqubnhaefmslkjdrptwyi', 'cogowxqubnhaefmslkjxrptzri', 'cvgohxqubnoaesmslkjdrptzyi', 'cvdowxqubnhaofmslkjdrpvzyi', 'vvgowrqubnhaefmslkjdrpthyi', 'cvgowxquknhuefmslkjdoptzyi', 'cvyowxeubnhaefmslhjdrptzyi', 'cvglwxqubnhaefmslkjdrptdyq', 'cvgowxqubnhaefmsikgdrptayi', 'cvgowxqubnhaefjhlkjdrpczyi', 'cvgzwxkubnhaefmslkjdjptzyi', 'cxgowxqubnhaefmslkjdrptwyy', 'cvgowxqubnhaefeslkjdrmqzyi', 'cvgowxvubnhaefmilijdrptzyi', 'cvgowxqzbthaeomslkjdrptzyi', 'cvgowhqubndaefmglkjdrptzyi', 'cvgowxvubnhaeamylkjdrptzyi', 'cvgowiqubnhgefmslkjdrctzyi', 'cvgowxqubchaefmslksdritzyi', 'cvgowxqubnhaefmsnkjdreyzyi', 'cvgowxqubihaefmslkgdrutzyi', 'cvgowxqjbnhaeamslkjdrptzwi', 'cvgowxzubnhaefmsxkjdrrtzyi', 'cvgowxqubyhaetmslnjdrptzyi', 'cvgowxquhnhaebmslkjdxptzyi', 'cvgowxqubnhanfmslujdxptzyi', 'cvgowxqublhnefaslkjdrptzyi', 'cvgmwxqtbnhaefmslkjsrptzyi', 'jvgowxqubnhaeamslkjdrpmzyi', 'cvgowxqubhiaefmsljjdrptzyi', 'svgowxqubnhaefmswkjdrpozyi', 'cvgowxqebnhaeqmslkjdiptzyi', 'cveowxqubnhayzmslkjdrptzyi', 'cvglwxqubnhaefmxlkjdiptzyi', 'cvgowkqubdhaefmszkjdrptzyi', 'cvgowxkxbnhaeffslkjdrptzyi', 'cugowxqubnnaefmslujdrptzyi', 'cqgowxwubnhaepmslkjdrptzyi', 'cvgowxqubnhayfmmlkjwrptzyi', 'cvgowxquenhaefmsskxdrptzyi', 'cvgowxqubnhiefmsrkjdtptzyi', 'mvgowxkubnhaefmjlkjdrptzyi', 'cvgowkquunhaefmglkjdrptzyi', 'cvgowxqubqhaexmslgjdrptzyi', 'jvgowxqubnhaefmslkjddptlyi', 'cvgiwxqubnhaefmslkjdpptmyi', 'czgowxqubntaevmslkjdrptzyi', 'cvgotmqubnhaefmslkjdrpazyi', 'cvgowxtubnhaefmslkqdtptzyi', 'cvbowxqhnnhaefmslkjdrptzyi', 'cvgowkqubshaefmstkjdrptzyi', 'cvgowqqrbnaaefmslkjdrptzyi', 'cvgoixqubnhaefmslkjdrpmryi', 'cvgoxxqubnhaeimsxkjdrptzyi', 'cvgowxqubzhaebmslkjyrptzyi', 'cjgewxqubnhaefsslkjdrptzyi', 'cvgowxqdbnkaefmslwjdrptzyi', 'cvgowxqzbnhaeamslkjdrftzyi', 'cvgoixqubnsaewmslkjdrptzyi', 'cvgswxqubnhaxfmslkjdrptzni', 'cvwowxmubnhgefmslkjdrptzyi', 'cvggwxqubnhaefmslqjdbptzyi', 'cvgzwxqjbnhaefaslkjdrptzyi', 'cvgowzqubnharfmspkjdrptzyi', 'cvgowxqubnhawfmslkjdeptzyb', 'cvuowequbnhaefmslkjdrntzyi', 'gvgowxqubnxaefmslkjdrjtzyi', 'cvgowxqubnhmetmsldjdrptzyi', 'cvgowxqubnhamfmsqkjdrptyyi', 'cvgoqxqubnhaefmslkjtrpazyi', 'cvgoexqubhhaefmslkjdrhtzyi', 'cvgowwqubnhaeflslkjdrptzyf', 'cvgowlpubnhaefmslkjdrptvyi', 'cvgowxouunhaebmslkjdrptzyi', 'cvdowhqubnhaefmslijdrptzyi', 'cvgowxqubnkatfmslkjdrhtzyi', 'cvgowxqpbnhxeumslkjdrptzyi', 'cvgowxqubnhaefmsukjjrptzyn', 'cvgowxqubnhmefmslzjdrvtzyi', 'cvtowxqubihaefmclkjdrptzyi', 'chgowcqubnhayfmslkjdrptzyi', 'cvguwxqubnhaefmblkjarptzyi', 'cvgowoqubnhaefmsikjdrytzyi', 'cvgkwxqubnhaefmslkjdrptchi', 'cvhowxqubnhaefmslkjdrvlzyi', 'cvlowxfubnhaefmslkjkrptzyi', 'cvgowxqubhhaefoslkjdrytzyi', 'cvgowxsubqhaefmslpjdrptzyi', 'cvgowxpubnhaefmslhjdrptzyb', 'cvgowxqubnhrefmjlkddrptzyi', 'cvgowxqubnhaxfmykkjdrptzyi', 'mvgowxqubnhakfmslkjdrptnyi', 'cwgowxqubnhaffmslkadrptzyi', 'chgowxquwnhaefmslsjdrptzyi', 'cvgowxqubnhaefmslkjdwpnsyi', 'cvgawxqubnhaefmslkldyptzyi', 'cvgowxqubnhiefmslkjdiprzyi', 'cvgkqxqubnhaefcslkjdrptzyi', 'cvgovoqubnhaefmslkjdrpuzyi', 'cvgowxqubnhaefmszkjdrjtzyk', 'cvgopxqubnhaefmslkjdqpnzyi', 'cvgtwxqubnhaefmslkjnrptzri', 'cvgowxqurnhaedmslfjdrptzyi', 'cvpowxqubnhaefmswkjdrltzyi', 'cvgowxqujnpaefmslkjdrptdyi', 'cvgowgqubnhzifmslkjdrptzyi', 'lvgowxqubnhaenmslkjdbptzyi', 'ebgowxqubnhaeymslkjdrptzyi', 'cvgowxtubqhaefmslkedrptzyi', 'cvgowxqubshaesmslkjdrptryi', 'cvgowxqubnhaefmflkjmrpkzyi', 'cvgowxqubngaefmslkjdrytzgi', 'cvgowxqubnhaefmslklhzptzyi', 'cveowxqubnhgefmslkjdrpezyi', 'cvgowxqubnhaeomslkjdrqtzym', 'cvgowxqubzhaefmslwjdrptfyi', 'cmgowxqubnhaefmsdkjdrptzui', 'cvlowxqubnhaefmslsjdrptzwi', 'cvhowxpubnhaefmslkjhrptzyi', 'cveosxqurnhaefmslkjdrptzyi', 'cvgowxqubnhaefgsdkjdrptjyi', 'cvgvwxqubnhaefmslzjdmptzyi', 'cviowxqubnhalfmslkjdrptzyr', 'cvgowxqubchqefmslkjdrptzoi', 'cvgownqubnhaefmsyktdrptzyi', 'cvgywxqubnuaefmslkjdrpfzyi', 'cvgobxqunnhaefmslkjdrptzbi', 'cvgowxqubshaefgslkjdrxtzyi', 'cvghwxqubnhaefmslkjdrbtmyi', 'cvhowxqubnhaefmslkjdrpnzys', 'cvgowxqubnmaefmslejdrptzyq', 'cvmrwxqubnhaefmslkjdrpzzyi', 'cvgowxqubshaefmslkfdrptzyu', 'cvgowqqubnhaefmslkodrpjzyi', 'cvgnwnquknhaefmslkjdrptzyi', 'cvgowxquxnhacfmflkjdrptzyi', 'ovgowxqubnhaefmslkjmrmtzyi', 'cvgowxqubneaefmslkedrptzqi', 'cvgowxqubphweflslkjdrptzyi', 'cvgowxqudnhaefmplkjdrptdyi', 'cvwowxbubnhaefmslkjurptzyi', 'cvgowxtubnhaefmslkjdrwwzyi', 'cvgowxqubnhkefmslajdrptzyn', 'cvgowxqxbphaefmslkjdrptzsi', 'cvgowxquenhaefmslmjwrptzyi', 'zvgowdqubnhaeftslkjdrptzyi', 'csgowxqubnhgefmslkjdrptzyy', 'cvgolxqubahaefmslkjdrpvzyi', 'cvgoqxquhwhaefmslkjdrptzyi', 'cvgawxqubghaefmsrkjdrptzyi', 'cvgozxqubnhaefmslkwdfptzyi', 'cvgowxqubnhaefmslhjdkptzzi', 'cvnowxqubnhaefmsqkjdrptqyi', 'cvpowxqubnhaefmslkpdrptdyi', 'cvgowxoubnhaermslkjdrctzyi', 'cvgowxqubnheefmslkjdrctzyr', 'cvgowxqunnhaqfhslkjdrptzyi', 'cvgowxqulnhaefmslrjdrntzyi']);
 var author$project$Main$init = {
-	checkSum: author$project$Main$calcCheckSum(author$project$Main$inputList)
+	checkSum: author$project$Main$calcCheckSum(author$project$Main$inputList),
+	idWithMinDistance: author$project$Main$findIdWithMinDistance(author$project$Main$inputList)
 };
 var author$project$Main$update = F2(
 	function (msg, model) {
@@ -5124,7 +5233,6 @@ var elm$core$Basics$apL = F2(
 	function (f, x) {
 		return f(x);
 	});
-var elm$core$Basics$append = _Utils_append;
 var elm$core$String$fromInt = _String_fromNumber;
 var elm$core$Basics$identity = function (x) {
 	return x;
@@ -5324,7 +5432,6 @@ var elm$core$List$length = function (xs) {
 		0,
 		xs);
 };
-var elm$core$List$map2 = _List_map2;
 var elm$core$List$rangeHelp = F3(
 	function (lo, hi, list) {
 		rangeHelp:
@@ -5512,6 +5619,13 @@ var author$project$Main$view = function (model) {
 					[
 						elm$html$Html$text(
 						'CheckSum:' + elm$core$String$fromInt(model.checkSum))
+					])),
+				A2(
+				elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text('id with distance 1 (same characters only): ' + model.idWithMinDistance)
 					]))
 			]));
 };
