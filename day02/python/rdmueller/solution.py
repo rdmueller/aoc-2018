@@ -70,7 +70,7 @@ def calcDistance(id1, id2):
             distance += 1
         i += 1
     return distance
-# tag::calcDistance[]
+# end::calcDistance[]
 
 
 assert calcDistance("abcde", "axcye") == 2
