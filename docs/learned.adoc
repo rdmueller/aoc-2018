@@ -35,6 +35,7 @@ a| * Documentation driven development: first write the docs, then do the coding.
 Works great on top of test driven development!
 * Python has no power-assertions like groovy has. Makes testing harder 😒
 * VS Code and thus gitlab has a column mode for editing!
+* All your tests might run fine but the solution is still wrong
 
 |{robertwalter83}
 |
