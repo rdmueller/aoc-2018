@@ -1,0 +1,13 @@
+So this is my very first Python program. Well... actually my second after "Hello World" ;-)
+And my first program after 16 years of non-coding.
+No time left today for part 2.
+My solution in pseudo code (not pretty smart though):
+
+Add all calculated  frequencies to a list
+While duplicate not found
+    Read lines from file
+    compare calculated frequency with items in the list
+    IF CurrentFrequeny is in list
+        duplicate found
+        print Current Frequency
+
