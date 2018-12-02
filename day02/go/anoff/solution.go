@@ -7,8 +7,11 @@ import (
 
 func main() {
 	reader := getPipeReader()
+
 	doubles := 0
 	triples := 0
+
+	var previousLines []string
 
 	for {
 		lineBytes, _, err := reader.ReadLine()
@@ -16,6 +19,8 @@ func main() {
 			break
 		}
 		lineString := string(lineBytes)
+
+		// part 1
 		doubleCount, tripleCount := checkOccurences(lineString)
 		if doubleCount > 0 {
 			doubles++
@@ -23,6 +28,15 @@ func main() {
 		if tripleCount > 0 {
 			triples++
 		}
+
+		// part 2
+		for _, line2 := range previousLines {
+			matchDetected := checkAlmostIdentical(lineString, line2)
+			if matchDetected {
+				fmt.Printf("Solution for part2: YAY\n")
+			}
+		}
+		previousLines = append(previousLines, lineString)
 	}
 
 	fmt.Printf("Solution for part1: %d, doubles:%d, triples:%d\n", doubles*triples, doubles, triples)
@@ -48,4 +62,9 @@ func checkOccurences(str string) (int, int) {
 	}
 
 	return doubleCount, tripleCount
+}
+
+// 
+func checkAlmostIdentical(line1 string, line2 string) bool {
+	return false
 }
