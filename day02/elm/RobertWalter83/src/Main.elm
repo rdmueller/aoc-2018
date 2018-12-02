@@ -82,18 +82,12 @@ findIdWithMinDistance input =
       (distance, id) :: xs ->
         id
 
-compareCharLists : List Char -> List Char -> (Bool, String)
+compareCharLists : List Char -> List Char -> (Int, String)
 compareCharLists input1 input2 =
   if input1 == input2 then
-    (False, (String.fromList input1))
+    (0, (String.fromList input1))
   else
-    let 
-      (distance, id) = List.foldl foldDistanceAndString (0, "") (List.map2 compareChars input1 input2)
-    in
-      if distance == 1 then
-        (True, id)
-      else
-        (False, id)
+    List.foldl foldDistanceAndString (0, "") (List.map2 compareChars input1 input2)
 
 
 compareChars : Char -> Char -> (Int, Char)
@@ -104,9 +98,9 @@ foldDistanceAndString : (Int, Char) -> (Int, String) -> (Int, String)
 foldDistanceAndString (distance, letter) (distanceSum, id) = 
   (distanceSum + distance, if distance == 0 then id ++ (String.fromChar letter) else id)
 
-filterForResult : (Bool, String) -> Bool
+filterForResult : (Int, String) -> Bool
 filterForResult (isResult, _) =
-  isResult
+  isResult == 1
 
 
 -- UPDATE (no op)
@@ -133,3 +127,28 @@ main = Browser.sandbox
   { init = init
   , update = update
   , view = view }
+
+
+-- TEST INPUT
+
+testInput1 =
+  [ "abcdef"
+  , "bababc"
+  , "abbcde"
+  , "abcccd"
+  , "aabcdd"
+  , "abcdee"
+  , "ababab"
+  ]
+
+
+testInput2 =
+  [ "abcde"
+  , "fghij"
+  , "klmno"
+  , "pqrst"
+  , "fguij"
+  , "axcye"
+  , "wvxyz"
+  ]
+

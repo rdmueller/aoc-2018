@@ -5138,24 +5138,17 @@ var elm$core$List$map2 = _List_map2;
 var elm$core$String$fromList = _String_fromList;
 var author$project$Main$compareCharLists = F2(
 	function (input1, input2) {
-		if (_Utils_eq(input1, input2)) {
-			return _Utils_Tuple2(
-				false,
-				elm$core$String$fromList(input1));
-		} else {
-			var _n0 = A3(
-				elm$core$List$foldl,
-				author$project$Main$foldDistanceAndString,
-				_Utils_Tuple2(0, ''),
-				A3(elm$core$List$map2, author$project$Main$compareChars, input1, input2));
-			var distance = _n0.a;
-			var id = _n0.b;
-			return (distance === 1) ? _Utils_Tuple2(true, id) : _Utils_Tuple2(false, id);
-		}
+		return _Utils_eq(input1, input2) ? _Utils_Tuple2(
+			0,
+			elm$core$String$fromList(input1)) : A3(
+			elm$core$List$foldl,
+			author$project$Main$foldDistanceAndString,
+			_Utils_Tuple2(0, ''),
+			A3(elm$core$List$map2, author$project$Main$compareChars, input1, input2));
 	});
 var author$project$Main$filterForResult = function (_n0) {
 	var isResult = _n0.a;
-	return isResult;
+	return isResult === 1;
 };
 var elm$core$List$filter = F2(
 	function (isGood, list) {

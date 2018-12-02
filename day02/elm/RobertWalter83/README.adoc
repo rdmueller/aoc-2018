@@ -24,4 +24,13 @@ We increase the first factor every time a dictionary contains a value of 2, and 
 
 === Part 2
 
-Pending.
+The input is a list of strings.
+
+  . Step: Same as in part 1, we work with a *list of list of chars*
+  . Step: We use lift2 to cross-check the list against itself (this is certainly not optinmal in terms of performance)
+    .. Step: for each character that differs, we increase the 'distance' between the two IDs and build the common part of the two IDs
+    .. Step: only those with a distance of 1 are kept
+    .. Step: we assume that the input data is formed in a way where there must be exactly one pair of IDs that have a distance of 1
+  . Step: we try to lookup the first entry of the resulting list
+    .. Step: if it is empty, we don't have a result
+    .. Step: if it contains a head, we assume this is the ID we are looking for
