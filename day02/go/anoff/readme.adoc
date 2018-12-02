@@ -1,0 +1,37 @@
+== Part 1
+
+The first part of the challenge is about finding characters that appear _exactly two or three times_ in a given string (double/triple discovery). The input consists of multiple string and the occurence of lettters has to be checked for each string individually.
+
+As a solution for this puzzle is the `number of strings that have characters occuring twice (doubles)` multiplied by the `number of strings that have characters occuring three times (triples)`, so `solution = doubles * triples`. To get there for each `discovery` run over a given string I need to store if the given string had double or triple letters.
+
+For this challenge I will implement a piped input interface so all incoming data can already be chunked into lines.
+
+[plantuml, day01-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:initialize doubles and triples counter;
+while (new line available?)
+  :initialize empty map;
+  while (for each character)
+    :inc map(character) by one;
+  endwhile
+  while (for each key in the map)
+    if (character count == 2) then (y)
+      :inc doubles;
+    endif
+    if (character count == 3) then (y)
+      :inc triples;
+    endif
+  endwhile
+endwhile
+:show doubles*triples;
+end
+@enduml
+....
+
+== Part 2
+
