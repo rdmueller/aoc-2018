@@ -15,7 +15,7 @@ A collection of everyones daily learnings
 | I learned that Go only has for loops
 
 |{rdmueller}
-| I learned that elm is a language which seems to compile / transpile to JavaScript
+a| * Elm is a language which seems to compile / transpile to JavaScript
 
 |====
 
@@ -27,6 +27,9 @@ A collection of everyones daily learnings
 |
 
 |{rdmueller}
-|
+a| * Documentation driven development: first write the docs, then do the coding.
+Works great on top of test driven development!
+* Python has no power-assertions like groovy has. Makes testing harder 😒
+* VS Code and thus gitlab has a column mode for editing!
 
 |====

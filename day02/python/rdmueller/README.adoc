@@ -1,0 +1,44 @@
+This solution is written in Python.
+This time I will try to make use of test-driven development.
+
+https://adventofcode.com/2018/day/2
+
+== First Star
+
+Let's first break it down into functions.
+One that counts the letters in an id:
+
+[source, python]
+....
+include::solution.py[tags=countLetters]
+....
+
+And one that builds the checksum:
+
+[source, python]
+....
+include::solution.py[tags=createChecksum]
+....
+
+With those two functions which are tested with the given aoc examples, the whole problem boild down to a one-liner:
+
+[source, python]
+....
+include::solution.py[tags=solutionOne]
+....
+
+== Second Star
+
+Let's use the same documentation-/test-driven approach.
+
+This time, we need a distance function:
+
+[source, python]
+....
+include::solution.py[tags=calcDistance]
+....
+
+[source, python]
+....
+include::solution.py[tags=starTwo]
+....
