@@ -84,4 +84,5 @@ for id1 in input:
         if calcDistance(id1, input[id2]) == 1:
             print(id1)
             print(input[id2])
+    i += 1
 # end::solutionTwo[]
