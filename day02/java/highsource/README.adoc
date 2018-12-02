@@ -8,10 +8,18 @@ To run:
 
    java -jar target/aoc-2018-day02-1.0.0-SNAPSHOT.jar
 
-== Solution
+== Solution Part 1
 
 The core element is counting letters per line. This can be done with a one-liner with streams:
 
 ```
 Map<Integer, Long> result = str.chars().boxed().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 ```
+
+== Solution Part 2
+
+Since the number of strings isn't too large, we can just compare them pairwise. Since we're asked about the common part,
+we can calculate this right away. Iterate over characters of two strings and if the are equal, add them to the string buffer.
+
+Having this common part calculation routine in place we're simply looking for two strings which have common part with length
+exactly 1 smaller than lengths of the strings.

@@ -6,12 +6,12 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Solution {
+public class SolutionPart1 {
 
 	public static void main(String[] args) throws IOException {
 
 		try (BufferedReader reader = new BufferedReader(
-				new InputStreamReader(Solution.class.getResourceAsStream("input.txt")))) {
+				new InputStreamReader(SolutionPart1.class.getResourceAsStream("input.txt")))) {
 
 			int numberOfLinesContainingExactlyTwoOfAnyLetter = 0;
 			int numberOfLinesContainingExactlyThreeOfAnyLetter = 0;
