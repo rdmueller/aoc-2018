@@ -18,3 +18,6 @@ You can then execute the file as `./filename.py`.
 
 include::../../day01/python/rdmueller/README.adoc[leveloffset=+2]
 
+=== Day 2
+
+include::../../day02/python/rdmueller/README.adoc[leveloffset=+2]

@@ -64,12 +64,16 @@ repeat while (max iterations reached?)
 
 == Go implementation
 
+Can be run with `go run solution.go`
+
 [source, go]
 ....
 include::./solution.go[]
 ....
 
 == Javascript implementation
+
+Can be run with `node solution.js`
 
 [source, javascript]
 ....

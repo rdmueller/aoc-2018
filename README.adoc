@@ -3,7 +3,7 @@
 WARNING: Spoiler Alert! If you want to solve the aoc problems on your own, do not read any further.
 This repository contains solutions for the problems in several languages.
 
-Code and Development environment for https://Adventofcode.com[adventofcode.com] - 2018 edition
+NOTE: Result can be found on https://aoc-2018.netlify.com/[aoc-2018.netlify.com] powered by netlify.
 
 In this repository, we will collect the code for the solutions of https://adventofcode.com[adventofcode] for the 2018 event.
 
@@ -15,7 +15,7 @@ The id of the https://adventofcode.com/2018/leaderboard/private/view/117454[shar
 
 ## The Goal of this repository
 
-... is to 
+... is to
 
 - have a shared code base. It will be interesting to see how the same problem is solved in different languages with different approaches
 - have a development environment in which all examples run out of the box
@@ -59,7 +59,7 @@ The structure we start with is the following:
 
 ## Documentation
 
-As you can see in the above repository structure, each folder contains a `description.adoc`. 
+As you can see in the above repository structure, each folder contains a `description.adoc`.
 It would be great if everybody could explain their solution with a short description.
 
 ## Questions?
