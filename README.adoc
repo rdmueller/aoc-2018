@@ -3,7 +3,7 @@
 WARNING: Spoiler Alert! If you want to solve the aoc problems on your own, do not read any further.
 This repository contains solutions for the problems in several languages.
 
-NOTE: Result can be found https://quirky-wright-8319d0.netlify.com/anoff/adventofcode[on this page] powered by netlify
+NOTE: Result can be found https://quirky-wright-8319d0.netlify.com/[on this page] powered by netlify
 
 Code and Development environment for https://Adventofcode.com[adventofcode.com] - 2018 edition
 
