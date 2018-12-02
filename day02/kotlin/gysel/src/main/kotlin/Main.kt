@@ -40,10 +40,8 @@ fun main(args: Array<String>) {
 }
 
 fun groupByCharacter(input: String): Map<Char, Int> {
-    return input.toCharArray()
-            .groupBy { it }
-            .map { it.key to it.value.size }
-            .toMap()
+    return input.toCharArray().toList()
+            .groupingBy { it }.eachCount()
 }
 
 fun calculateCombinations(values: List<String>): Sequence<Pair<String, String>> {
