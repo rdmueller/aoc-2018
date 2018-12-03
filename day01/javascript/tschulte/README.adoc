@@ -32,3 +32,20 @@ The last step is to just reduce the input array to the sum of all numbers.
 include::solution.js[tags=reduce]
 ....
 
+== Second Star
+
+Here I started to extract the method into it's own module, so I could unit test it.
+
+[source, js]
+.Extracted module for part 2
+....
+include::part2.js[]
+....
+
+[source, js]
+.Tests
+....
+include::tests.js[]
+....
+
+Interestingly all tests just ran fine, but the result of the test run was wrong. That was, because the code `.filter(line => line)` when converting the lines to numbers was not yet there causing the last line of the input to be parsed as `0`.
