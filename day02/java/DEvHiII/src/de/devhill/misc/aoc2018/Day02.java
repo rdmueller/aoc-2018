@@ -11,6 +11,7 @@ public class Day02 {
     public static void main(String[] args) throws Exception {
         String[] input = readInput("Day02.txt");
         part1(input);
+		//easy but inefficient solution for part02 need to review algorythm
         part2(input);
     }
 
