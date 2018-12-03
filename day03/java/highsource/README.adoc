@@ -7,3 +7,37 @@ This is just a setup-test. To build:
 To run:
 
    java -jar target/aoc-2018-day03-1.0.0-SNAPSHOT.jar
+
+== Solution
+
+=== Parsing the claims
+
+First problem is parsing the claims. We have to parse a string like `#12 @ 719,695: 19x10` into five integer components.
+The easiest way to do this would be with a regular expression. Define a group like `(\d+)` for each of the five components.
+The resulting regex would look like:
+
+    ^#(\d+) @ (\d+),(\d+): (\d+)x(\d+)$
+
+Now if we compile a pattern with this regex and then match it to a string, the matcher will contain 5 groups - one per our component.
+
+It makes sense modelling a "claim" in a separate class.
+
+=== Counting overlapping claims per square inch
+
+Now that we can parse claims, we can start counting number of overlappings per square inch.
+
+To do this, we have to model a fabric somehow.
+
+A straightforward solution is to model a "square inch" as a separate value class and then simply use a
+map of "square inch" to number or set of claims for that square inch. For this, the `SquareInch` and `Claim` classes
+must implement `equals` and `hashCode` correctly. The `Claim` class should also produce the area
+(i.e. a collection of `SquareInch`es) that it covers.
+
+Now that we have the fabric (square inch to set of claims), we can simply count entries which have more that one claim.
+
+=== Finding non-overlapping claims
+
+The idea is rather simple. If we gather a set of all claims and remove overlapping claims (which we have already detected in part 1),
+the remaining claims will be non-overlapping.
+
+That's just set operations.

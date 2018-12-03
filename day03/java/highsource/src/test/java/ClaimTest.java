@@ -16,7 +16,7 @@ public class ClaimTest {
 	@Test
 	public void toStrings() throws IOException {
 		try (BufferedReader reader = new BufferedReader(
-				new InputStreamReader(SolutionPart1.class.getResourceAsStream("input.txt")))) {
+				new InputStreamReader(Solution.class.getResourceAsStream("input.txt")))) {
 
 			for (String line; (line = reader.readLine()) != null;) {
 				final Claim claim = Claim.parse(line);
