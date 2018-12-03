@@ -56,8 +56,8 @@ public final class Claim {
 	public List<SquareInch> area() {
 		final List<SquareInch> area = new ArrayList<>();
 
-		for (int x = left; x <= left + width; x++) {
-			for (int y = top; y <= top + height; y++) {
+		for (int x = left; x < left + width; x++) {
+			for (int y = top; y < top + height; y++) {
 				area.add(new SquareInch(x, y));
 			}
 		}

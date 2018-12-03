@@ -29,14 +29,14 @@ public class ClaimTest {
 	public void area1() {
 		final Claim claim = Claim.parse("#3 @ 5,5: 1x1");
 
-		assertThat(claim.area()).contains(new SquareInch(5, 5));
+		assertThat(claim.area()).containsExactlyInAnyOrder(new SquareInch(5, 5));
 	}
 
 	@Test
 	public void area2x2() {
 		final Claim claim = Claim.parse("#3 @ 5,5: 2x2");
 
-		assertThat(claim.area()).contains(
+		assertThat(claim.area()).containsExactlyInAnyOrder(
 				//
 				new SquareInch(5, 5), new SquareInch(6, 5),
 				//
