@@ -1,0 +1,89 @@
+== Part 1
+
+For the first part of the puzzle an input is given with each line representing an area that is being claimed on a map. The goal is to find areas that have multiple (`>= 2`) claims.
+
+As a claim for an area is given in a string format the first job is to extract the relevant information from each new line. For representing this information I use a custom struct `Area`. The following diagram `how to ref?` shows the main tasks for solving the puzzle.
+
+
+[plantuml, day03-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:initialize empty //Space// map;
+:initialize overlap counter;
+while (new line available?)
+  :parse new line to //Area// struct;
+  :popuplate //Space// map
+  with current //Area//
+  using **X_Y** as key;
+endwhile
+while (loop over all\nkeys in //Space//)
+  if (value >= 2) then (y)
+    :inc overlap counter;
+  endif
+endwhile
+:print result;
+end
+@enduml
+....
+
+=== Parsing the input
+
+[source, go]
+....
+include::./solution.go[tags=StructDef]
+....
+
+At first I wanted to use a RegExp to do the parsing but could not find the correct method within the https://golang.org/pkg/regexp/[go regexp package], so I ended up bundling together a bunch of https://golang.org/pkg/strings/#Split[strings.Split()] calls.
+
+[source, go]
+....
+include::./solution.go[tags=StringSplit]
+....
+
+
+== Part 2
+
+
+[plantuml, day03-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:initliaze empty slice of strings;
+while (new line available?)
+  while (all elements in slice)
+    :init mismatchDetected w/ 0;
+    while (each char in new line)
+      if (chars in slice elemnt
+      and newline mismatch) then (y)
+        :inc mismatchDetected by 1;
+        if (mismatchDetected > 1) then (y)
+          :stop looping over characters;
+        endif
+      endif
+    endwhile
+    if (mismatchDetected <= 1) then (y)
+      :identify identical characters
+        and print them as solution;
+      end
+    endif
+  endwhile
+endwhile
+end
+@enduml
+....
+
+== Go solution
+
+Can be run with `cat input.txt | go run *.go`
+
+[source, go]
+....
+include::./solution.go[]
+....
