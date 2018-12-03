@@ -58,12 +58,16 @@ a| * The zip operator in Kotlin combines two Lists into a List<Pair>>
 
 |====
 
-=== Day 2
+=== Day 3
 
 [cols="1,10"]
 |====
 |{rdmueller}
 a| * how classes work in Python
 * Asciidoctor lets you https://asciidoctor.org/docs/user-manual/#tag-filtering[exclude tags] in the `include` statement
+
+|{anoff}
+| ..https://gobyexample.com/structs[structs] and https://gobyexample.com/maps[maps] are super powerful 🤯
+| ..go is fast 💨
 
 |====
