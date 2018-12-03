@@ -50,3 +50,13 @@ a| * The zip operator in Kotlin combines two Lists into a List<Pair>>
 * It makes sense to return either List or Sequence from your functions depending on the result size (List or Stream in Java)
 
 |====
+
+=== Day 2
+
+[cols="1,10"]
+|====
+|{rdmueller}
+a| * how classes work in Python
+* Asciidoctor lets you https://asciidoctor.org/docs/user-manual/#tag-filtering[exclude tags] in the `include` statement
+
+|====
