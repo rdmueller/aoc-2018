@@ -15,7 +15,7 @@ A collection of everyones daily learnings
 [cols="1,10"]
 |====
 |{anoff}
-| I learned that Go only has for loops
+| .. that Go only has for loops
 
 |{rdmueller}
 a| * Elm is a language which seems to compile / transpile to JavaScript
@@ -40,7 +40,7 @@ a| * How to read a file in JavaScript and split by line ending
 [cols="1,10"]
 |====
 |{anoff}
-|
+| .. all my go projects need to go into `~/go/src`, which solves the dependency link problem for go
 
 |{rdmueller}
 a| * Documentation driven development: first write the docs, then do the coding.
@@ -65,5 +65,9 @@ a| * The zip operator in Kotlin combines two Lists into a List<Pair>>
 |{rdmueller}
 a| * how classes work in Python
 * Asciidoctor lets you https://asciidoctor.org/docs/user-manual/#tag-filtering[exclude tags] in the `include` statement
+
+|{anoff}
+| ..https://gobyexample.com/structs[structs] and https://gobyexample.com/maps[maps] are super powerful 🤯
+| ..go is fast 💨
 
 |====

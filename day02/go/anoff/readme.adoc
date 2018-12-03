@@ -6,7 +6,7 @@ As a solution for this puzzle is the `number of strings that have characters occ
 
 For this challenge I will implement a piped input interface so all incoming data can already be chunked into lines.
 
-[plantuml, day01-part1, png]
+[plantuml, day02-part1, png]
 ....
 @startuml
 skinparam defaulttextalignment center
@@ -37,7 +37,7 @@ end
 
 For part 2 we need to identify lines in the input that only differ by exactly one character. The solution for part2 is the list of characters that are the same (taking out the different one).
 
-[plantuml, day01-part1, png]
+[plantuml, day02-part2, png]
 ....
 @startuml
 skinparam defaulttextalignment center
