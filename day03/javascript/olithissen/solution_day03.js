@@ -149,13 +149,13 @@ function part2(data) {
         // If so, initialize or increase the intersect counter for that id.
         
         // FIXME: This all seems VERY verbose. Ideas anyone?
-        if (accumulator.hasOwnProperty(claims[i].id)) {
+        if (!accumulator.hasOwnProperty(claims[i].id)) {
           accumulator[claims[i].id] = 1;
         } else {
           accmulator[claims[i].id]++;
         }
 
-        if (accumulator.hasOwnProperty(claims[ji].id)) {
+        if (!accumulator.hasOwnProperty(claims[ji].id)) {
           accumulator[claims[j].id] = 1;
         } else {
           accumulator[claims[j].id]++;
