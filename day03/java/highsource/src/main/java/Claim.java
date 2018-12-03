@@ -1,8 +1,11 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Claim {
+public final class Claim {
+
 	public final int id;
 	public final int left;
 	public final int top;
@@ -48,6 +51,17 @@ public class Claim {
 	@Override
 	public String toString() {
 		return "#" + this.id + " @ " + this.left + "," + this.top + ": " + this.width + "x" + this.height;
+	}
+
+	public List<SquareInch> area() {
+		final List<SquareInch> area = new ArrayList<>();
+
+		for (int x = left; x <= left + width; x++) {
+			for (int y = top; y <= top + height; y++) {
+				area.add(new SquareInch(x, y));
+			}
+		}
+		return area;
 	}
 
 	private static final String CLAIM_REGEX = "^#(\\d+) @ (\\d+),(\\d+): (\\d+)x(\\d+)$";
