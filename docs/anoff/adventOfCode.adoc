@@ -8,3 +8,10 @@ Trying to build solutions with https://golang.org/[Go], https://isocpp.org/[C++]
 
 include::../../day01/go/anoff/readme.adoc[leveloffset=+2]
 
+=== Day 2
+
+include::../../day02/go/anoff/readme.adoc[leveloffset=+2]
+
+=== Day 3
+
+include::../../day03/go/anoff/readme.adoc[leveloffset=+2]

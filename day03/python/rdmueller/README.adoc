@@ -1,0 +1,34 @@
+This solution is written in Python.
+This time I will try to make use class objects.
+
+https://adventofcode.com/2018/day/3
+
+== First Star
+
+First create a class for the fabric
+
+[source, python]
+....
+include::solution.py[tags=Fabric;!solutionTwo]
+....
+
+This class already solved the challenge, I only have to read the input data and ask for the result:
+
+[source, python]
+....
+include::solution.py[tags=solutionOne]
+....
+
+== Second Star
+
+Since I stored all overlapping IDs already in my data structure,
+it should be easy to extract the non overlapping claim with brute force:
+
+[source, python]
+....
+include::solution.py[tags=solutionTwo]
+....
+
+It takes quite a while but returns after slightly over 2 minutes with the correct answer.
+An optimization could be to check for the non-overlap already when the structure is created.
+

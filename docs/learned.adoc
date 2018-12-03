@@ -4,6 +4,7 @@
 :anoff: image:https://avatars2.githubusercontent.com/u/7142618?s=40[link=https://github.com/anoff]
 :robertwalter83: image:https://avatars2.githubusercontent.com/u/5462981?s=40[link=https://github.com/robertwalter83]
 :gysel: image:https://avatars0.githubusercontent.com/u/1065960?s=40[link=https://github.com/gysel]
+:tschulte: image:https://avatars1.githubusercontent.com/u/203910?s=40[link=https://github.com/tschulte]
 
 == Today I learned..
 
@@ -14,7 +15,7 @@ A collection of everyones daily learnings
 [cols="1,10"]
 |====
 |{anoff}
-| I learned that Go only has for loops
+| .. that Go only has for loops
 
 |{rdmueller}
 a| * Elm is a language which seems to compile / transpile to JavaScript
@@ -26,6 +27,12 @@ a| * Elm is a language which seems to compile / transpile to JavaScript
 a| * How to create an infinite, repeating Sequence in Kotlin.
  * There is no map operator that also provides an accumulator in Kotlin (such as http://reactivex.io/documentation/operators/scan.html[ReactiveX Scan])
 
+|{tschulte}
+a| * How to read a file in JavaScript and split by line ending
+   * That JavaScript may implicitly convert a string to a number (e.g. that `1 + "1" == "11"` but `1 * "1" === 1`)
+   * How to explicitly convert a string to a number using `Number("1")`
+   * That `Number("")` and `Number(null)` both are `0`
+   * That `NaN !== NaN`, but you have to use `isNaN(NaN)` instead
 |====
 
 === Day 2
@@ -33,7 +40,7 @@ a| * How to create an infinite, repeating Sequence in Kotlin.
 [cols="1,10"]
 |====
 |{anoff}
-|
+| .. all my go projects need to go into `~/go/src`, which solves the dependency link problem for go
 
 |{rdmueller}
 a| * Documentation driven development: first write the docs, then do the coding.
@@ -48,5 +55,19 @@ Works great on top of test driven development!
 |{gysel}
 a| * The zip operator in Kotlin combines two Lists into a List<Pair>>
 * It makes sense to return either List or Sequence from your functions depending on the result size (List or Stream in Java)
+
+|====
+
+=== Day 3
+
+[cols="1,10"]
+|====
+|{rdmueller}
+a| * how classes work in Python
+* Asciidoctor lets you https://asciidoctor.org/docs/user-manual/#tag-filtering[exclude tags] in the `include` statement
+
+|{anoff}
+| ..https://gobyexample.com/structs[structs] and https://gobyexample.com/maps[maps] are super powerful 🤯
+| ..go is fast 💨
 
 |====
