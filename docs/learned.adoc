@@ -58,7 +58,7 @@ a| * The zip operator in Kotlin combines two Lists into a List<Pair>>
 
 |====
 
-=== Day 2
+=== Day 3
 
 [cols="1,10"]
 |====
