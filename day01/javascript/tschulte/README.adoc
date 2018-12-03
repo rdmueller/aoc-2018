@@ -1,0 +1,34 @@
+This solution is written in JavaScript.
+
+https://adventofcode.com/2018/day/1
+
+== First Star
+
+First I needed to learn how to read a file.
+
+[source, js]
+....
+include::solution.js[tags=readFile]
+....
+
+After that we need to get the lines,
+
+[source, js]
+....
+include::solution.js[tags=splitLines]
+....
+
+and map each line to a number.
+
+[source, js]
+....
+include::solution.js[tags=mapToNumber]
+....
+
+The last step is to just reduce the input array to the sum of all numbers.
+
+[source, js]
+....
+include::solution.js[tags=reduce]
+....
+
