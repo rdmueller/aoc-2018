@@ -1,5 +1,7 @@
 This solution is written in Python.
 
+https://adventofcode.com/2018/day/1
+
 == First Star
 
 So, the solution seems to be simple - one line of code in Groovy :-)

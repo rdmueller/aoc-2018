@@ -1,0 +1,51 @@
+This solution is written in JavaScript.
+
+https://adventofcode.com/2018/day/1
+
+== First Star
+
+First I needed to learn how to read a file.
+
+[source, js]
+....
+include::solution.js[tags=readFile]
+....
+
+After that we need to get the lines,
+
+[source, js]
+....
+include::solution.js[tags=splitLines]
+....
+
+and map each line to a number.
+
+[source, js]
+....
+include::solution.js[tags=mapToNumber]
+....
+
+The last step is to just reduce the input array to the sum of all numbers.
+
+[source, js]
+....
+include::solution.js[tags=reduce]
+....
+
+== Second Star
+
+Here I started to extract the method into it's own module, so I could unit test it.
+
+[source, js]
+.Extracted module for part 2
+....
+include::part2.js[]
+....
+
+[source, js]
+.Tests
+....
+include::tests.js[]
+....
+
+Interestingly all tests just ran fine, but the result of the test run was wrong. That was, because the code `.filter(line => line)` when converting the lines to numbers was not yet there causing the last line of the input to be parsed as `0`.

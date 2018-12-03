@@ -12,6 +12,7 @@ This repository contains solutions for the problems in several languages.
 * by link:anoff/adventOfCode.html[Andreas Offenhaeuser]
 * by link:rdmueller/adventOfCode.html[Ralf D. Müller]
 * by link:gysel/adventOfCode.html[Michi Gysel]
+* by link:tschulte/adventOfCode.html[Tobias Schulte]
 
 
 include::learned.adoc[lefeloffset=0]
