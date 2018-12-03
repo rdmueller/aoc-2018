@@ -14,24 +14,32 @@ The data is parsed from a text file in `src/main/resources`.
 
 === Part 1
 
-The data is processed Kotlin's https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.io/java.io.-reader/use-lines.html[useLines()]
-which opens the file and streams the lines using a `Sequence` (lazy Stream of items).
+The data is parsed and then stored in a `Map<Coordinates, Set<Claim>>`.
 
-The counters are Java's `AtomicInteger` accessed using a Closure
-which means that the data could easily processed in parallel even though the
-code is not using pure functions.
+Parsing works nicely when using destructuring and on the fly splitting and transformation of the line.
+
+[source,kotlin]
+----
+fun parse(line: String): Claim {
+    // #123 @ 3,2: 5x4
+    val (id, left, top, width, height) =
+            line.drop(1) // <1>
+                    .split("@", ",", ":", "x") // <2>
+                    .map(String::trim) // <3>
+                    .map(String::toInt) // <4>
+
+    return Claim(id, left, top, width, height)
+}
+----
+<1> drops the first Char (#)
+<2> returns Array<String>
+<3> still an Array<String> but trimmed
+<4> now an Array<Int>
+
+The result then is a simple count of Set.size > 1.
 
 === Part 2
 
-As a first step all ids are loaded into a list. From that list a `Sequence` of all possible
-`Pair<String, String>` is calculated and then filtered using the
-function `numberOfChangedCharacters(pair) == 1`.
+Once part 1 is ready, we can do a little collection arithmetics to find the unique claims: 
 
-The implementation makes heavy use of the collection operations in the Kotlin stdlib such as
-https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/zip.html[zip],
-https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/filter.html[map], or
-https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/map.html[map].
-
-Some operations are directly creating a new List, others are lazily evaluated using
-https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.sequences/index.html[Sequences] to keep memory
-usage under control.
+`result = claims - overlappingClaims`.
