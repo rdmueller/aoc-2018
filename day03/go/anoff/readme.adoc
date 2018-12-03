@@ -12,15 +12,15 @@ skinparam defaulttextalignment center
 skinparam monochrome true
 skinparam shadowing false
 start
-:initialize empty //Space// map;
+:initialize empty //space// map;
 :initialize overlap counter;
 while (new line available?)
   :parse new line to //Area// struct;
-  :popuplate //Space// map
+  :popuplate //space// map
   with current //Area//
   using **X_Y** as key;
 endwhile
-while (loop over all\nkeys in //Space//)
+while (loop over all\nkeys in //space//)
   if (value >= 2) then (y)
     :inc overlap counter;
   endif
@@ -47,33 +47,32 @@ include::./solution.go[tags=StringSplit]
 
 == Part 2
 
+For part 2 the area claim needs to be found that does not have a single overlap with any other area.
+The previously generated _space map_ will be reused to accomplish this goal.
 
-[plantuml, day03-part1, png]
+[plantuml, day03-part2, png]
 ....
 @startuml
 skinparam defaulttextalignment center
 skinparam monochrome true
 skinparam shadowing false
 start
-:initliaze empty slice of strings;
-while (new line available?)
-  while (all elements in slice)
-    :init mismatchDetected w/ 0;
-    while (each char in new line)
-      if (chars in slice elemnt
-      and newline mismatch) then (y)
-        :inc mismatchDetected by 1;
-        if (mismatchDetected > 1) then (y)
-          :stop looping over characters;
-        endif
-      endif
-    endwhile
-    if (mismatchDetected <= 1) then (y)
-      :identify identical characters
-        and print them as solution;
-      end
+:use slice of all areas and
+//space// map from part1;
+while (for each areas)
+  :init overlapDetected = false;
+  while (each point in area)
+    :look up point=key in
+    area in //space// map;
+    if (point value > 1) then (y)
+      :overlapDetected = true;
+      :stop loop;
     endif
   endwhile
+  if (overlapDetected == false) then (y)
+    :print area id as solution;
+    end
+  endif
 endwhile
 end
 @enduml

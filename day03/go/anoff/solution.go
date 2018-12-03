@@ -24,6 +24,9 @@ func main() {
 	spaceMap := make(map[string]int)
 	overlapCount := 0
 
+	// init part 2
+	var areas []Area
+
 	for {
 		lineBytes, _, err := reader.ReadLine()
 		if err == io.EOF {
@@ -31,7 +34,7 @@ func main() {
 		}
 		lineString := string(lineBytes)
 		area := stringToArea(lineString)
-
+		areas = append(areas, area)
 		populateMap(&spaceMap, area)
 	}
 	for _, v := range spaceMap {
@@ -40,6 +43,13 @@ func main() {
 		}
 	}
 	fmt.Printf("Solution for part1: %d\n", overlapCount)
+
+	for _, a := range areas {
+		overlap := detectOverlap(spaceMap, a)
+		if !overlap {
+			fmt.Printf("Solution for part2: %s\n", a.id)
+		}
+	}
 }
 
 // tag::StringSplit[]
@@ -67,4 +77,16 @@ func populateMap(mp *map[string]int, area Area) {
 			m[key]++
 		}
 	}
+}
+
+func detectOverlap(m map[string]int, area Area) bool {
+	for x := area.x1; x <= area.x2; x++ {
+		for y := area.y1; y <= area.y2; y++ {
+			key := strconv.Itoa(x) + "_" + strconv.Itoa(y)
+			if m[key] > 1 {
+				return true
+			}
+		}
+	}
+	return false
 }
