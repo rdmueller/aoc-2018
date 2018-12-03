@@ -3,4 +3,4 @@
 My goal for this year's advent of code is to learn JavaScript and TypeScript.
 
 
-include::generatedDays[]
+include::generatedDays.adoc[]
