@@ -1,0 +1,16 @@
+=== Day 01
+
+include::../../day01/java/highsource/README.adoc[leveloffset=+2]
+
+=== Day 01
+
+include::../../day01/go/highsource/README.adoc[leveloffset=+2]
+
+=== Day 02
+
+include::../../day02/java/highsource/README.adoc[leveloffset=+2]
+
+=== Day 03
+
+include::../../day03/java/highsource/README.adoc[leveloffset=+2]
+

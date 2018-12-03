@@ -1,0 +1,12 @@
+=== Day 01
+
+include::../../day01/python/rdmueller/README.adoc[leveloffset=+2]
+
+=== Day 02
+
+include::../../day02/python/rdmueller/README.adoc[leveloffset=+2]
+
+=== Day 03
+
+include::../../day03/python/rdmueller/README.adoc[leveloffset=+2]
+
