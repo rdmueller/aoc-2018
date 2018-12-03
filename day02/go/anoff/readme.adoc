@@ -37,7 +37,7 @@ end
 
 For part 2 we need to identify lines in the input that only differ by exactly one character. The solution for part2 is the list of characters that are the same (taking out the different one).
 
-[plantuml, day02-part1, png]
+[plantuml, day02-part2, png]
 ....
 @startuml
 skinparam defaulttextalignment center
