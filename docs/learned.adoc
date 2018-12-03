@@ -14,7 +14,7 @@ A collection of everyones daily learnings
 [cols="1,10"]
 |====
 |{anoff}
-| I learned that Go only has for loops
+| .. that Go only has for loops
 
 |{rdmueller}
 a| * Elm is a language which seems to compile / transpile to JavaScript
@@ -33,7 +33,7 @@ a| * How to create an infinite, repeating Sequence in Kotlin.
 [cols="1,10"]
 |====
 |{anoff}
-|
+| .. all my go projects need to go into `~/go/src`, which solves the dependency link problem for go
 
 |{rdmueller}
 a| * Documentation driven development: first write the docs, then do the coding.
