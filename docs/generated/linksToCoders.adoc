@@ -8,5 +8,6 @@
 * by link:olithissen/adventOfCode.html[{olithissen}]
 * by link:rdmueller/adventOfCode.html[{rdmueller}]
 * by link:sancho1241/adventOfCode.html[{sancho1241}]
+* by link:subesokun/adventOfCode.html[{subesokun}]
 * by link:tschulte/adventOfCode.html[{tschulte}]
 * by link:wschaef/adventOfCode.html[{wschaef}]

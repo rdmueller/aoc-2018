@@ -34,7 +34,7 @@ coders.sort().each { coder, data ->
         //=== Day 1
         //
         //include::../../day01/python/rdmueller/README.adoc[leveloffset=+2]
-        daysFile.append("=== Day ${datum[0]-"day"}\n\n")
+        daysFile.append("=== Day ${datum[0]-"day"}: ${datum[1]}\n\n")
         daysFile.append("include::../../${datum[0]}/${datum[1]}/${coder}/README.adoc[leveloffset=+2]\n\n")
     }
 }

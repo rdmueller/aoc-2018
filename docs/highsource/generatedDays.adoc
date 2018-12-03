@@ -1,16 +1,16 @@
-=== Day 01
+=== Day 01: java
 
 include::../../day01/java/highsource/README.adoc[leveloffset=+2]
 
-=== Day 01
+=== Day 01: go
 
 include::../../day01/go/highsource/README.adoc[leveloffset=+2]
 
-=== Day 02
+=== Day 02: java
 
 include::../../day02/java/highsource/README.adoc[leveloffset=+2]
 
-=== Day 03
+=== Day 03: java
 
 include::../../day03/java/highsource/README.adoc[leveloffset=+2]
 

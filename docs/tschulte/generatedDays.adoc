@@ -1,4 +1,4 @@
-=== Day 01
+=== Day 01: javascript
 
 include::../../day01/javascript/tschulte/README.adoc[leveloffset=+2]
 
