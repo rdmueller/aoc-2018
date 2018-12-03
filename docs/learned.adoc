@@ -4,6 +4,7 @@
 :anoff: image:https://avatars2.githubusercontent.com/u/7142618?s=40[link=https://github.com/anoff]
 :robertwalter83: image:https://avatars2.githubusercontent.com/u/5462981?s=40[link=https://github.com/robertwalter83]
 :gysel: image:https://avatars0.githubusercontent.com/u/1065960?s=40[link=https://github.com/gysel]
+:tschulte: image:https://avatars1.githubusercontent.com/u/203910?s=40[link=https://github.com/tschulte]
 
 == Today I learned..
 
@@ -26,6 +27,12 @@ a| * Elm is a language which seems to compile / transpile to JavaScript
 a| * How to create an infinite, repeating Sequence in Kotlin.
  * There is no map operator that also provides an accumulator in Kotlin (such as http://reactivex.io/documentation/operators/scan.html[ReactiveX Scan])
 
+|{tschulte}
+a| * How to read a file in JavaScript and split by line ending
+   * That JavaScript may implicitly convert a string to a number (e.g. that `1 + "1" == "11"` but `1 * "1" === 1`)
+   * How to explicitly convert a string to a number using `Number("1")`
+   * That `Number("")` and `Number(null)` both are `0`
+   * That `NaN !== NaN`, but you have to use `isNaN(NaN)` instead
 |====
 
 === Day 2
