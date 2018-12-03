@@ -155,7 +155,7 @@ function part2(data) {
           accmulator[claims[i].id]++;
         }
 
-        if (!accumulator.hasOwnProperty(claims[ji].id)) {
+        if (!accumulator.hasOwnProperty(claims[j].id)) {
           accumulator[claims[j].id] = 1;
         } else {
           accumulator[claims[j].id]++;
