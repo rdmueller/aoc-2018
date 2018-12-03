@@ -4,14 +4,5 @@
 
 Trying to build solutions with https://golang.org/[Go], https://isocpp.org/[C++] and potentially falling back to https://nodejs.org/en/[Node.js] if I just need to get things done.
 
-=== Day 1
 
-include::../../day01/go/anoff/readme.adoc[leveloffset=+2]
-
-=== Day 2
-
-include::../../day02/go/anoff/readme.adoc[leveloffset=+2]
-
-=== Day 3
-
-include::../../day03/go/anoff/readme.adoc[leveloffset=+2]
+include::generatedDays.adoc[]

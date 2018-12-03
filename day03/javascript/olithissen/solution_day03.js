@@ -137,29 +137,29 @@ function part2(data) {
   const claims = data.map(mapClaims);
 
   // Initialize accumulator object
-  let accumulator = {};
+  const accumulator = {
+    // I'm so sick of that ...
+    increase: function(id) {
+      if (!this[id]) {
+        this[id] = 1;
+      } else {
+        this[id]++;
+      }
+    }
+  };
 
   // Iterate over all claims
   for (let i = 0; i < claims.length; i++) {
     // "Cross join" all claims skipping already checked claims and indentities
     // (I really like that!)
     for (let j = i + 1; j < claims.length; j++) {
+      const claimA = claims[i];
+      const claimB = claims[j];
       // Check if the two claims intersect
-      if (intersectionDetection(claims[i], claims[j])) {
-        // If so, initialize or increase the intersect counter for that id.
-        
-        // FIXME: This all seems VERY verbose. Ideas anyone?
-        if (!accumulator.hasOwnProperty(claims[i].id)) {
-          accumulator[claims[i].id] = 1;
-        } else {
-          accmulator[claims[i].id]++;
-        }
-
-        if (!accumulator.hasOwnProperty(claims[j].id)) {
-          accumulator[claims[j].id] = 1;
-        } else {
-          accumulator[claims[j].id]++;
-        }
+      if (intersectionDetection(claimA, claimB)) {
+        // If so, increase the intersect counter for that id.
+        accumulator.increase(claimA.id);
+        accumulator.increase(claimB.id);
       }
     }
   }
@@ -178,19 +178,14 @@ const testdataPart01 = ["#1 @ 1,3: 4x4", "#2 @ 3,1: 4x4", "#3 @ 5,5: 2x2"];
 const testResult01 = part1(testdataPart01);
 console.log("Test result: " + testResult01);
 assert(testResult01 == 4);
-
 obs.observe({ entryTypes: ["function"] });
-
 const timerify_part1 = performance.timerify(part1);
-
-console.log("RESULT:" + timerify_part1(readInputAsArray()));
+// console.log("RESULT:" + timerify_part1(readInputAsArray()));
 
 // Part 2
 const testResult02 = part2(testdataPart01);
 console.log("Test result: " + testResult02);
 assert(testResult02 == 3);
-
 obs.observe({ entryTypes: ["function"] });
 const timerify_part2 = performance.timerify(part2);
-
 console.log("RESULT: " + timerify_part2(readInputAsArray()));

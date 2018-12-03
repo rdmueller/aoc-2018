@@ -9,10 +9,13 @@ This repository contains solutions for the problems in several languages.
 
 == Solutions
 
-* by link:anoff/adventOfCode.html[Andreas Offenhaeuser]
-* by link:rdmueller/adventOfCode.html[Ralf D. Müller]
-* by link:gysel/adventOfCode.html[Michi Gysel]
-* by link:tschulte/adventOfCode.html[Tobias Schulte]
+:anof: Andreas Offenhaeuser
+:rdmueller: Ralf D. Müller
+:gysel: Michi Gysel
+:tschulte: Tobias Schulte
+:wschaef: Waldemar Schäfer
+
+include::generated/linksToCoders.adoc[]
 
 
 include::learned.adoc[lefeloffset=0]
