@@ -5,6 +5,9 @@ import Html exposing (..)
 import Regex exposing (Regex)
 import List.Extra exposing (..)
 import Debug
+import Set exposing (Set)
+import Dict exposing (Dict)
+import Maybe exposing (..)
 
 -- MODEL
 
@@ -15,30 +18,32 @@ type alias Model =
 
 init : Model
 init =
-  { redundantClaims = Debug.log "start" (calcPart1) }
+  { redundantClaims = calcPart1 }
 
 calcPart1 : Int 
 calcPart1 =
   let
-    inputAsMatrix = Debug.log "parsed" (List.map parseInput inputAsList)
+    inputAsMatrix = List.map parseInput inputAsList
     
 
     (width, height) 
-      = Debug.log "dim" (List.foldl findClothDimension (0, 0) inputAsMatrix)
+      = List.foldl findClothDimension (0, 0) inputAsMatrix
 
-    cloth 
+    clothList
       = List.repeat (height * width) 0
 
+    dict = Dict.fromList (List.indexedMap (\index value -> (index, value)  ) clothList)
+
     foldClothClaimsCurried = foldClothClaims width
-    clothFolded = List.foldl foldClothClaimsCurried cloth inputAsMatrix
+    clothFolded = List.foldl foldClothClaimsCurried dict inputAsMatrix
   in
-    List.filter (\a -> a > 1) clothFolded |> List.length
+    List.filter (\a -> a > 1) (Dict.values clothFolded) |> List.length
     
 
-foldClothClaims : Int -> List Int -> List Int -> List Int
+foldClothClaims : Int -> List Int -> Dict Int Int -> Dict Int Int
 foldClothClaims width claim cloth =
   let
-    column = Debug.log "fold" (getAt claim 0)
+    column = getAt claim 0
     columnOffset = getAt claim 2
     columns = List.range column (column+columnOffset-1)
     row = getAt claim 1
@@ -47,14 +52,40 @@ foldClothClaims width claim cloth =
     to1DIndexCurried = to1DIndex width
     coordinates2D = List.Extra.lift2 (\a b -> (a, b)) rows columns
     coordinates1D = List.map to1DIndexCurried coordinates2D
-    clothNew =  cloth
+
+    clothNew =  updateClothRec cloth coordinates1D 
   in
     clothNew
 
-matchIndex : List Int -> Int -> Int -> Int
+updateClothRec : Dict Int Int -> List Int -> Dict Int Int
+updateClothRec dict keys =
+  case keys of
+      [] ->
+        dict  
+  
+      key :: others ->
+        let
+          dictNew = updateCloth dict key
+        in
+          updateClothRec dictNew others
+          
+
+updateCloth : Dict Int Int -> Int -> Dict Int Int
+updateCloth dict key =
+  Dict.update key 
+    (\mbv -> 
+      case mbv of
+        Maybe.Nothing ->
+          Maybe.Nothing
+    
+        Just v ->
+          Just (v+1)
+    ) dict
+
+matchIndex : Set.Set Int -> Int -> Int -> Int
 matchIndex coordinates1D index value =
   let
-    isRelevant = List.member index coordinates1D
+    isRelevant = Set.member index coordinates1D
   in
     if isRelevant then (value + 1) else value
   
