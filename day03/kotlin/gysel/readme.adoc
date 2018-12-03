@@ -1,0 +1,45 @@
+== Solution written in Kotlin
+
+To build and run the tests:
+
+    ./gradlew build
+
+To run:
+
+   ./gradlew run
+
+== Solution
+
+The data is parsed from a text file in `src/main/resources`.
+
+=== Part 1
+
+The data is parsed and then stored in a `Map<Coordinates, Set<Claim>>`.
+
+Parsing works nicely when using destructuring and on the fly splitting and transformation of the line.
+
+[source,kotlin]
+----
+fun parse(line: String): Claim {
+    // #123 @ 3,2: 5x4
+    val (id, left, top, width, height) =
+            line.drop(1) // <1>
+                    .split("@", ",", ":", "x") // <2>
+                    .map(String::trim) // <3>
+                    .map(String::toInt) // <4>
+
+    return Claim(id, left, top, width, height)
+}
+----
+<1> drops the first Char (#)
+<2> returns Array<String>
+<3> still an Array<String> but trimmed
+<4> now an Array<Int>
+
+The result then is a simple count of Set.size > 1.
+
+=== Part 2
+
+Once part 1 is ready, we can do a little collection arithmetics to find the unique claims: 
+
+`result = claims - overlappingClaims`.
