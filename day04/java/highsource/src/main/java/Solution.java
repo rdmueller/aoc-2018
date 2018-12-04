@@ -10,7 +10,8 @@ public class Solution {
 				new InputStreamReader(Solution.class.getResourceAsStream("input.txt")))) {
 
 			for (String line; (line = reader.readLine()) != null;) {
-				System.out.println(line);
+				Event event = Event.parse(line);
+				System.out.println(event);
 			}
 		}
 	}
