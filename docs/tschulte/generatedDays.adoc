@@ -2,3 +2,6 @@
 
 include::../../day01/javascript/tschulte/README.adoc[leveloffset=+2]
 
+=== Day 02: javascript
+
+include::../../day02/javascript/tschulte/README.adoc[leveloffset=+2]

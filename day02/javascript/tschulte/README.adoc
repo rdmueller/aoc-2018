@@ -1,0 +1,26 @@
+This solution is written in JavaScript.
+
+https://adventofcode.com/2018/day/2
+
+== First Star
+
+First a string is transformed to a histogram with char as key and count as value
+
+[source, js]
+....
+include::part1.js[tags=histogram]
+....
+
+Than we need a function to return 1, if any char in that histogram has a value of n
+
+[source, js]
+....
+include::part1.js[tags=nTimes]
+....
+
+And last but not least we put it together
+
+[source, js]
+....
+include::part1.js[tags=checksum]
+....
