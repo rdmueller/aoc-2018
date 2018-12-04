@@ -15,6 +15,11 @@ public class WakesUpEvent extends Event {
 	public String toString() {
 		return "[" + this.timestamp.format(Event.FORMATTER) + "] wakes up";
 	}
+	
+	@Override
+	public void applyTo(SleepLog dayLog) {
+		dayLog.setStateFromTime(GuardState.AWAKE, this.timestamp);
+	}
 
 	public static Event parse(String str) {
 		final Matcher matcher = WakesUpEvent.PATTERN.matcher(str);

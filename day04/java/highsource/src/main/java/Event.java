@@ -13,7 +13,7 @@ public abstract class Event {
 	protected Event(LocalDateTime timestamp) {
 		this.timestamp = timestamp;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.timestamp);
@@ -33,12 +33,11 @@ public abstract class Event {
 		final Event that = (Event) object;
 		return Objects.equals(this.timestamp, that.timestamp);
 	}
-
 	
-	private static final List<Function<String, ? extends Event>> PARSERS = Arrays.asList(
-			BeginsShiftEvent::parse,
-			FallsAsleepEvent::parse,
-			WakesUpEvent::parse);
+	public abstract void applyTo(SleepLog dayLog);
+
+	private static final List<Function<String, ? extends Event>> PARSERS = Arrays.asList(BeginsShiftEvent::parse,
+			FallsAsleepEvent::parse, WakesUpEvent::parse);
 
 	public static Event parse(String str) {
 		for (Function<String, ? extends Event> parser : PARSERS) {

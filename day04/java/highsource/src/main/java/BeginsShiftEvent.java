@@ -8,10 +8,12 @@ public class BeginsShiftEvent extends Event {
 	public static final String REGEX = "^\\[([^\\]]+)] Guard #(\\d+) begins shift$";
 	public static final Pattern PATTERN = Pattern.compile(REGEX);
 	public final int id;
+	public final DateId dateId;
 
 	public BeginsShiftEvent(LocalDateTime timestamp, int id) {
 		super(timestamp);
 		this.id = id;
+		this.dateId = new DateId(timestamp.toLocalDate(), id);
 	}
 
 	@Override
@@ -37,6 +39,11 @@ public class BeginsShiftEvent extends Event {
 	@Override
 	public String toString() {
 		return "[" + this.timestamp.format(Event.FORMATTER) + "] Guard #" + id + " begins shift";
+	}
+
+	@Override
+	public void applyTo(SleepLog dayLog) {
+		dayLog.setStateFromTime(GuardState.AWAKE, this.timestamp);
 	}
 
 	public static Event parse(String str) {

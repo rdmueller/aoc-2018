@@ -15,6 +15,11 @@ public class FallsAsleepEvent extends Event {
 	public String toString() {
 		return "[" + this.timestamp.format(Event.FORMATTER) + "] falls asleep";
 	}
+	
+	@Override
+	public void applyTo(SleepLog dayLog) {
+		dayLog.setStateFromTime(GuardState.ASLEEP, this.timestamp);
+	}
 
 	public static Event parse(String str) {
 		final Matcher matcher = FallsAsleepEvent.PATTERN.matcher(str);
