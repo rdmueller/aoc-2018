@@ -78,8 +78,41 @@ public class Solution {
 				System.out.println(
 						"Most sleepy guard was most sleepy on the minute [" + mostSleepyMinuteOfMostSleepyGuard + "].");
 
-				System.out.println("The result is " + (mostSleepyGuardId * mostSleepyMinuteOfMostSleepyGuard) + "].");
+				System.out.println("The result is [" + (mostSleepyGuardId * mostSleepyMinuteOfMostSleepyGuard) + "].");
 
+			}
+
+			// Part 2
+			{
+				final Map<Integer, List<SleepLog>> logsByGuard = logs.values().stream()
+						.collect(Collectors.groupingBy(dayLog -> dayLog.id));
+
+				final Map<Integer, Long> longestSleepyMinutesByGuard = logsByGuard.entrySet().stream()
+						.collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+							entry.getKey();
+							List<SleepLog> ls = entry.getValue();
+							return ls.stream().flatMapToInt(SleepLog::minutesAsleep).boxed()
+									.collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).values()
+									.stream().max(Comparator.naturalOrder()).orElseThrow(IllegalStateException::new);
+						}));
+
+				final Entry<Integer, Long> mostSleepyGuardEntry = longestSleepyMinutesByGuard.entrySet().stream()
+						.max(Entry.comparingByValue()).orElseThrow(IllegalStateException::new);
+
+				final Integer mostSleepyGuardId = mostSleepyGuardEntry.getKey();
+				System.out.println("The guard [" + mostSleepyGuardId + "] is the most sleepy guard with ["
+						+ mostSleepyGuardEntry.getValue() + "] minutes asleep.");
+
+				final List<SleepLog> mostSleepyGuardLogs = logsByGuard.get(mostSleepyGuardId);
+
+				Entry<Integer, Long> mostSleepyMinuteEntry = mostSleepyGuardLogs.stream()
+						.flatMapToInt(SleepLog::minutesAsleep).boxed()
+						.collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet().stream()
+						.max(Entry.comparingByValue()).orElseThrow(IllegalStateException::new);
+
+				Integer mostSleepyMinute = mostSleepyMinuteEntry.getKey();
+
+				System.out.println("The result is [" + (mostSleepyGuardId * mostSleepyMinute) + "].");
 			}
 		}
 	}
