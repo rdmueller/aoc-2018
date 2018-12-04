@@ -1,34 +1,25 @@
 This solution is written in Python.
-This time I will try to make use class objects.
 
-https://adventofcode.com/2018/day/3
+This time I will try to make use of modules.
+
+https://adventofcode.com/2018/day/4
 
 == First Star
 
-First create a class for the fabric
+First, I need a parser for the logs
 
 [source, python]
 ....
-include::solution.py[tags=Fabric;!solutionTwo]
+include::logParser.py[]
 ....
 
-This class already solved the challenge, I only have to read the input data and ask for the result:
+Then I need to transform the logs to a 2D array (list of lists)
 
 [source, python]
 ....
-include::solution.py[tags=solutionOne]
+include::transformer.py[]
 ....
 
-== Second Star
+Now I can easily count how many minutes every guard is asleep.
 
-Since I stored all overlapping IDs already in my data structure,
-it should be easy to extract the non overlapping claim with brute force:
-
-[source, python]
-....
-include::solution.py[tags=solutionTwo]
-....
-
-It takes quite a while but returns after slightly over 2 minutes with the correct answer.
-An optimization could be to check for the non-overlap already when the structure is created.
-
+TODO(RDM): finish this README
