@@ -14,3 +14,7 @@ include::../../day02/java/highsource/README.adoc[leveloffset=+2]
 
 include::../../day03/java/highsource/README.adoc[leveloffset=+2]
 
+=== Day 04: java
+
+include::../../day04/java/highsource/README.adoc[leveloffset=+2]
+
