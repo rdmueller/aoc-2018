@@ -2,57 +2,83 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"strings"
-	"strconv"
-	"sort"
+	"strconv"	
 )
 
 // tag::StructDef[]
-type Area struct {
-	id string
-	x1 int // area start from left
-	x2 int // last valid point in the area from left
-	y1 int // first valid point from top
-	y2 int // last valid point from top
+type Shift struct {
+	guard int // guard id
+	date string // date str MM-DD
+	asleep []int // array of minutes being asleep (each entry is a minute where guard is asleep)
 }
 // end::StructDef[]
 
 func main() {
-	input := getInput()
-	sort.Strings(input)
+	input := getInput(true)
+	
 	fmt.Println(strings.Join(input, "\n"))
+	strategy1(input)
 }
 
-// parse all input lines into string slice
-func getInput() []string {
-	reader := getPipeReader()
-	var input []string
-
-	for {
-		lineBytes, _, err := reader.ReadLine()
-		if err == io.EOF {
-			break
+func strategy1(log []string /* sorted input */) {
+	var shifts []Shift
+	activeShift := Shift{guard: -1}
+	fellAsleep := -1
+	for _, entry := range log {
+		guardId := detectShiftChange(entry)
+		date := extractDate(entry)
+		if guardId > -1 {
+			// check if this is NOT the first shift
+			if activeShift.guard > -1 {
+				shifts = append(shifts, activeShift)
+			}
+			// fmt.Printf("Guard change detected on %s from %d to %d\n", date, activeShift.guard, guardId)
+			activeShift.guard = guardId
+			activeShift.asleep = []int{}
+			fellAsleep = -1
 		}
-		lineString := string(lineBytes)
-		input = append(input, lineString)
+		activeShift.date = date
+
+		if strings.Contains(entry, "falls asleep") {
+			fellAsleep = extractMinute(entry)
+		}
+
+		if strings.Contains(entry, "wakes up") {
+			if fellAsleep > -1 {
+				wakeupMin := extractMinute(entry)
+				for i := fellAsleep; i <= wakeupMin; i++ {
+					activeShift.asleep = append(activeShift.asleep, i)
+				}
+			} else {
+				fmt.Printf("🤯 Guard %d woke up withouth falling asleep :ooo\n", activeShift.guard)
+			}
+		}
 	}
-	return input
+	// make sure last shift is also stored (no shift change in file)
+	shifts = append(shifts, activeShift)
+
+	fmt.Println(shifts)
 }
 
-// tag::StringSplit[]
-// convert an input string to a struct of Area
-func stringToArea(str string) Area {
-	id := strings.Split(str, " @ ")[0]
-	startPos := strings.Split(strings.Split(strings.Split(str, " @ ")[1], ": ")[0], ",")
-	width := strings.Split(strings.Split(strings.Split(str, " @ ")[1], ": ")[1], "x")
-	x1, _ := strconv.Atoi(startPos[0])
-	y1, _ := strconv.Atoi(startPos[1])
-	xw, _ := strconv.Atoi(width[0])
-	x2 		:= x1 + xw - 1
-	yw, _ := strconv.Atoi(width[1])
-	y2 		:= y1 + yw - 1
-
-	return Area{id:id, x1:x1, x2:x2, y1:y1, y2:y2}
+// extract the guard id from a new shift entry
+// returns -1 if no shift change detected
+func detectShiftChange(entry string) int {
+	if strings.Contains(entry, "begins shift") {
+		id := strings.Split(strings.Split(entry, "#")[1], " ")[0]
+		num, _ := strconv.Atoi(id)
+		return num
+	}
+	return -1
 }
-// end::StringSplit[]
+
+func extractDate(entry string) string {
+	date := entry[6:11]
+	return date
+}
+
+func extractMinute(entry string) int {
+	min := entry[15:17]
+	num, _ := strconv.Atoi(min)
+	return num
+}

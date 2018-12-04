@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
+	"io"
 )
 
 func getPipeReader() *bufio.Reader {
@@ -19,4 +21,24 @@ func getPipeReader() *bufio.Reader {
 
 	reader := bufio.NewReader(os.Stdin)
 	return reader
+}
+
+// parse all input lines into string slice
+func getInput(sorted bool) []string {
+	reader := getPipeReader()
+	var input []string
+
+	for {
+		lineBytes, _, err := reader.ReadLine()
+		if err == io.EOF {
+			break
+		}
+		lineString := string(lineBytes)
+		input = append(input, lineString)
+	}
+
+	if sorted {
+		sort.Strings(input)
+	}
+	return input
 }
