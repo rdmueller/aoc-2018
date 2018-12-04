@@ -24,3 +24,23 @@ And last but not least we put it together
 ....
 include::part1.js[tags=checksum]
 ....
+
+== Second Star
+
+This solution just generates the common string for each combination of rows.
+The first common string that is just one char smaller than the two lines is the result.
+
+[source, js]
+....
+include::part2.js[]
+....
+
+Here I learned, that
+
+[source, js]
+....
+for (i = 0; ...) {}
+for (i = 0; ...) {}
+....
+
+does not work, and you have to limit the scope of the variables.

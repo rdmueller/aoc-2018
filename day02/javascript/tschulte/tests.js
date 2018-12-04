@@ -4,6 +4,8 @@ const assert = require("assert");
 const histogram = require("./part1.js").histogram;
 const nTimes = require("./part1.js").nTimes;
 const checksum = require("./part1.js").checksum;
+const commonString = require("./part2.js").commonString;
+const correctBoxId = require("./part2.js").correctBoxId;
 
 // tag::histogram[]
 assert.deepEqual(histogram(""), {});
@@ -34,3 +36,24 @@ assert.equal(checksum(["aabcde"]), 0);
 assert.equal(checksum(["aabbbcde"]), 1);
 assert.equal(checksum(["aabcde", "aaabcde"]), 1);
 // end::checksum[]
+
+// part 2:
+assert.equal(commonString("a", "b"), "");
+assert.equal(commonString("aa", "ab"), "a");
+assert.equal(commonString("abc", "axc"), "ac");
+assert.equal(commonString("abc", "axca"), "ac");
+assert.equal(commonString("abca", "axc"), "ac");
+
+const testInput = [
+  "abcde",
+  "fghij",
+  "klmno",
+  "pqrst",
+  "fguij",
+  "axcye",
+  "wvxyz"
+];
+
+const expectedResult = "fgij";
+
+assert.equal(correctBoxId(testInput), "fgij");
