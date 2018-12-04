@@ -12,19 +12,18 @@ import Maybe exposing (..)
 -- MODEL
 
 type alias Model = 
-  { redundantClaims : Int }
+  { solution : (Int, String) }
 
 -- INIT
 
 init : Model
 init =
-  { redundantClaims = calcPart1 }
+  { solution = calcSolution }
 
-calcPart1 : Int 
-calcPart1 =
+calcSolution : (Int, String) 
+calcSolution =
   let
     inputAsMatrix = List.map parseInput inputAsList
-    
 
     (width, height) 
       = List.foldl findClothDimension (0, 0) inputAsMatrix
@@ -36,18 +35,73 @@ calcPart1 =
 
     foldClothClaimsCurried = foldClothClaims width
     clothFolded = List.foldl foldClothClaimsCurried dict inputAsMatrix
+    part1 = List.filter (\a -> a > 1) (Dict.values clothFolded) |> List.length
+    part2 = findClaimWithoutOverlapRec width clothFolded inputAsMatrix
   in
-    List.filter (\a -> a > 1) (Dict.values clothFolded) |> List.length
+    (part1, part2)
     
+findClaimWithoutOverlapRec : Int -> Dict Int Int -> List (List Int) -> String
+findClaimWithoutOverlapRec width cloth inputAsMatrix =
+  case inputAsMatrix of
+    [] -> 
+      "couldn't find claim without overlap"
+
+    claim :: others ->
+      let
+        hasNoOverlap = findClaimWithoutOverlap width cloth claim
+      in
+        if hasNoOverlap then
+          String.fromInt (getAt claim 0)
+        else
+          findClaimWithoutOverlapRec width cloth others
+
+findClaimWithoutOverlap : Int -> Dict Int Int -> List Int -> Bool
+findClaimWithoutOverlap width cloth claim =
+  let
+    column = getAt claim 1
+    columnOffset = getAt claim 3
+    columns = List.range column (column+columnOffset-1)
+    row = getAt claim 2
+    rowOffset = getAt claim 4
+    rows = List.range row (row+rowOffset-1)
+    to1DIndexCurried = to1DIndex width
+    coordinates2D = List.Extra.lift2 (\a b -> (a, b)) rows columns
+    coordinates1D = List.map to1DIndexCurried coordinates2D
+    inchCoverage = calcInchCoverage cloth coordinates1D 0
+  in
+    case inchCoverage of
+        Maybe.Nothing ->
+            False
+    
+        Just v ->
+            v == List.length coordinates1D
+  
+calcInchCoverage : Dict Int Int -> List Int -> Int -> Maybe Int
+calcInchCoverage cloth keys coverage =
+  case keys of
+      [] ->
+          Just coverage
+  
+      key :: others ->
+        let
+          coverageAt = Dict.get key cloth
+        in
+          case coverageAt of
+              Maybe.Nothing ->
+                  Maybe.Nothing
+          
+              Just v ->
+                calcInchCoverage cloth others (coverage+v)
+                  
 
 foldClothClaims : Int -> List Int -> Dict Int Int -> Dict Int Int
 foldClothClaims width claim cloth =
   let
-    column = getAt claim 0
-    columnOffset = getAt claim 2
+    column = getAt claim 1
+    columnOffset = getAt claim 3
     columns = List.range column (column+columnOffset-1)
-    row = getAt claim 1
-    rowOffset = getAt claim 3
+    row = getAt claim 2
+    rowOffset = getAt claim 4
     rows = List.range row (row+rowOffset-1)
     to1DIndexCurried = to1DIndex width
     coordinates2D = List.Extra.lift2 (\a b -> (a, b)) rows columns
@@ -82,7 +136,7 @@ updateCloth dict key =
           Just (v+1)
     ) dict
 
-matchIndex : Set.Set Int -> Int -> Int -> Int
+matchIndex : Set Int -> Int -> Int -> Int
 matchIndex coordinates1D index value =
   let
     isRelevant = Set.member index coordinates1D
@@ -98,10 +152,10 @@ to1DIndex width (column, row) =
 findClothDimension : List Int -> (Int, Int) -> (Int, Int)
 findClothDimension claim (width, height) =
   let
-    column = getAt claim 0
-    columnOffset = getAt claim 2
-    row = getAt claim 1
-    rowOffset = getAt claim 3
+    column = getAt claim 1
+    columnOffset = getAt claim 3
+    row = getAt claim 2
+    rowOffset = getAt claim 4
   in
     ( max width (column+columnOffset), max height (row+rowOffset)  )
 
@@ -117,7 +171,7 @@ parseInput line =
 splitterRegex : Regex
 splitterRegex =
   Maybe.withDefault Regex.never <| 
-    Regex.fromString " *@ *| *, *| *: *| *x *"  
+    Regex.fromString " *# *| *@ *| *, *| *: *| *x *"  
 
 -- UPDATE (no op)
 
@@ -133,8 +187,8 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div [] 
-  [ div [] [ text <| "Redundant claims (square inches):" ++ (String.fromInt model.redundantClaims ) ]
-  --, div [] [ text <| "id with distance 1 (same characters only): " ++ model.idWithMinDistance ]
+  [ div [] [ text <| "Redundant claims (square inches):" ++ (String.fromInt (Tuple.first model.solution) ) ]
+  , div [] [ text <| "id without overlap: " ++ Tuple.second model.solution ]
   ]
 
 -- MAIN
