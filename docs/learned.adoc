@@ -70,6 +70,8 @@ a| * how classes work in Python
 | * .. https://gobyexample.com/structs[structs] and https://gobyexample.com/maps[maps] are super powerful 🤯
  * ..go is fast 💨
 
+|====
+
 === Day 4
 
 [cols="1,10"]
@@ -78,13 +80,12 @@ a| * how classes work in Python
 | * being able to increment a non-existant integer value without checking for its existence first is super convenient
 * splitting strings is way faster than regexing
 
-|====
-
-=== Day 4
-
-[cols="1,10"]
-|====
 |{rdmueller}
 a| * how to create your own python modules
+
+|{gysel}
+a| * you can destructure in Kotlin from an Array, a List, or e Map.Entry (and probably more...)
+* Kotlin's `Iterable<T>.groupingBy` offers a nice way to group and then aggregate.
+* How to use `fold` with a stateful accumulator
 
 |====
