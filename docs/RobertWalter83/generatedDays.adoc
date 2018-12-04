@@ -6,3 +6,7 @@ include::../../day01/elm/RobertWalter83/README.adoc[leveloffset=+2]
 
 include::../../day02/elm/RobertWalter83/README.adoc[leveloffset=+2]
 
+=== Day 03: elm
+
+include::../../day03/elm/RobertWalter83/README.adoc[leveloffset=+2]
+

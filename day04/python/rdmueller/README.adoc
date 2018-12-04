@@ -1,0 +1,25 @@
+This solution is written in Python.
+
+This time I will try to make use of modules.
+
+https://adventofcode.com/2018/day/4
+
+== First Star
+
+First, I need a parser for the logs
+
+[source, python]
+....
+include::logParser.py[]
+....
+
+Then I need to transform the logs to a 2D array (list of lists)
+
+[source, python]
+....
+include::transformer.py[]
+....
+
+Now I can easily count how many minutes every guard is asleep.
+
+TODO(RDM): finish this README

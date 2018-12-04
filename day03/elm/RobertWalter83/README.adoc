@@ -20,9 +20,13 @@ These are the steps of my solution:
   . Step: calulate the bottom right corner of the sheet according to the claims (everything beyond the most bottom / right claim is irrelevant)
   . Step: initialize a dictionary of the size of the grid
   . for each claim, convert the 2D coordinates into 1D coordinates
-  . use the coordinate as lookup key in the dictionary and increment the value by 1
+  . use the coordinate as lookup key in the dictionary and increment the value by 1 (create sth like a heat map)
   . count all values that are greater than 1
 
 === Part 2
 
-Pending.
+In order to find the id of the untouched claim, we do the following:
+
+  . we iterate (recursivley) over all claims
+    .. we transform a claim's coordinates + size to the 1D coordinates in our heat map
+    .. if all the inches have a heat of 1, we found our claim
