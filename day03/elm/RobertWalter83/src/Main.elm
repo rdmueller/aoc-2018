@@ -31,14 +31,20 @@ calcSolution =
     clothList
       = List.repeat (height * width) 0
 
-    dict = Dict.fromList (List.indexedMap (\index value -> (index, value)  ) clothList)
+    foldClothClaimsWithWidth = foldClothClaims width
 
-    foldClothClaimsCurried = foldClothClaims width
-    clothFolded = List.foldl foldClothClaimsCurried dict inputAsMatrix
+    clothFolded = List.foldl foldClothClaimsWithWidth (createMapIndexToInch clothList) inputAsMatrix
+
     part1 = List.filter (\a -> a > 1) (Dict.values clothFolded) |> List.length
     part2 = findClaimWithoutOverlapRec width clothFolded inputAsMatrix
   in
     (part1, part2)
+
+createMapIndexToInch clothList =
+  let
+    indexToInchList = List.indexedMap (\index value -> (index, value)) clothList    
+  in
+    Dict.fromList indexToInchList
     
 findClaimWithoutOverlapRec : Int -> Dict Int Int -> List (List Int) -> String
 findClaimWithoutOverlapRec width cloth inputAsMatrix =
@@ -58,15 +64,7 @@ findClaimWithoutOverlapRec width cloth inputAsMatrix =
 findClaimWithoutOverlap : Int -> Dict Int Int -> List Int -> Bool
 findClaimWithoutOverlap width cloth claim =
   let
-    column = getAt claim 1
-    columnOffset = getAt claim 3
-    columns = List.range column (column+columnOffset-1)
-    row = getAt claim 2
-    rowOffset = getAt claim 4
-    rows = List.range row (row+rowOffset-1)
-    to1DIndexCurried = to1DIndex width
-    coordinates2D = List.Extra.lift2 (\a b -> (a, b)) rows columns
-    coordinates1D = List.map to1DIndexCurried coordinates2D
+    coordinates1D = getClaimCoords width claim
     inchCoverage = calcInchCoverage cloth coordinates1D 0
   in
     case inchCoverage of
@@ -75,6 +73,20 @@ findClaimWithoutOverlap width cloth claim =
     
         Just v ->
             v == List.length coordinates1D
+            
+getClaimCoords : Int -> List Int -> List Int
+getClaimCoords width claim = 
+  let
+    column = getAt claim 1
+    columnOffset = getAt claim 3
+    columns = List.range column (column+columnOffset-1)
+    row = getAt claim 2
+    rowOffset = getAt claim 4
+    rows = List.range row (row+rowOffset-1)
+    to1DIndexCurried = to1DIndex width
+    coordinates2D = List.Extra.lift2 (\a b -> (a, b)) rows columns
+  in
+    List.map to1DIndexCurried coordinates2D
   
 calcInchCoverage : Dict Int Int -> List Int -> Int -> Maybe Int
 calcInchCoverage cloth keys coverage =
@@ -97,16 +109,7 @@ calcInchCoverage cloth keys coverage =
 foldClothClaims : Int -> List Int -> Dict Int Int -> Dict Int Int
 foldClothClaims width claim cloth =
   let
-    column = getAt claim 1
-    columnOffset = getAt claim 3
-    columns = List.range column (column+columnOffset-1)
-    row = getAt claim 2
-    rowOffset = getAt claim 4
-    rows = List.range row (row+rowOffset-1)
-    to1DIndexCurried = to1DIndex width
-    coordinates2D = List.Extra.lift2 (\a b -> (a, b)) rows columns
-    coordinates1D = List.map to1DIndexCurried coordinates2D
-
+    coordinates1D = getClaimCoords width claim
     clothNew =  updateClothRec cloth coordinates1D 
   in
     clothNew
@@ -142,12 +145,10 @@ matchIndex coordinates1D index value =
     isRelevant = Set.member index coordinates1D
   in
     if isRelevant then (value + 1) else value
-  
 
 to1DIndex : Int -> (Int, Int) -> Int
 to1DIndex width (column, row) =
   width * row + column
-  
   
 findClothDimension : List Int -> (Int, Int) -> (Int, Int)
 findClothDimension claim (width, height) =
