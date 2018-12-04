@@ -5,4 +5,4 @@
 Trying to build solutions with https://golang.org/[Go], https://isocpp.org/[C++] and potentially falling back to https://nodejs.org/en/[Node.js] if I just need to get things done.
 
 
-include::generatedDays[]
+include::generatedDays.adoc[]

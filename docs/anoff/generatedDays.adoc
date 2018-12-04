@@ -1,12 +1,16 @@
-=== Day 01
+=== Day 01: javascript
 
 include::../../day01/javascript/anoff/README.adoc[leveloffset=+2]
 
-=== Day 01
+=== Day 01: go
 
 include::../../day01/go/anoff/README.adoc[leveloffset=+2]
 
-=== Day 02
+=== Day 02: go
 
 include::../../day02/go/anoff/README.adoc[leveloffset=+2]
+
+=== Day 03: go
+
+include::../../day03/go/anoff/README.adoc[leveloffset=+2]
 

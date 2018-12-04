@@ -1,4 +1,4 @@
-=== Day 01
+=== Day 01: python
 
 include::../../day01/python/sancho1241/README.adoc[leveloffset=+2]
 

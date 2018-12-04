@@ -1,4 +1,4 @@
-=== Day 02
+=== Day 02: swift
 
 include::../../day02/swift/hcsama/README.adoc[leveloffset=+2]
 

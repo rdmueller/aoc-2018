@@ -14,4 +14,4 @@ Just prepend the following shebang to your file
 and make the file executable with a `chmod u+x filename.py`.
 You can then execute the file as `./filename.py`.
 
-include::generatedDays[]
+include::generatedDays.adoc[]
