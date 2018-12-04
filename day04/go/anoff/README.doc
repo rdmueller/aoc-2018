@@ -1,0 +1,102 @@
+== Part 1
+
+Wow, this was a tougher one. Thought I could finish it quickly before work and took me 70mins to get part 1 done.
+
+One thing that made this more challenging than previous tasks was the increased complexity in interpreting the input data. For this challenge parsing the input data means aggregating multiple lines into one meaningful dataset. For this I introduced the struct `Shift` that represents a single guards shift.
+
+[source, go]
+....
+include::./solution.go[tags=StructDef]
+....
+
+The struct holds the guards ID, date of the shift and the minutes the guard was asleep. For flexibility - not knowing part2 of the puzzle - I stored all minutes the guard was asleep as their integer value in the `Shift.asleep` slice.
+
+For extracting the data from the array of strings (input.txt) I wrote the following helper function that uses the occurence of a guard change to instantiate a new `Shift` struct.
+
+[source, go]
+....
+include::./solution.go[tags=generateShifts]
+....
+
+After the shifts are extracted solution for part 1 (strategy 1) can be visualized as:
+
+IMPORTANT: I got lazy drawing if conditions so please forgive me for simplifying this diagram 🙃
+
+[plantuml, day04-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:initialize empty //guard:sleepDuration// map;
+while (for each //shift//)
+  if (on-duty guard was not mapped?) then (y)
+    :calculate on-duty guards
+    total sleep duration over all shifts;
+    :store total sleep duration in map;
+  endif
+endwhile
+while (for each guard in //guard:sleepDuration// map)
+  :identify longest sleeping guard;
+endwhile
+while (for each shift of //longest sleeping guard//)
+  while (for minute = 0..59)
+    :identify minute with most sleep
+    occurences over all shifts;
+  endwhile
+endwhile
+:print result;
+end
+@enduml
+....
+
+== Part 2
+
+Having already created the basic array of `Shift` structs the second strategy seemed rather easy to implement.
+
+[plantuml, day04-part2, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:initialize empty //sleepMap// for
+k=guard, v=[60]int, representing minutes 0..59
+//where each array value is the count of shifts asleep//
+//for the given minute//;
+while (for each shift)
+  :pouplate the map by inc the array
+  at given index for each shift.asleep value;
+endwhile
+:initialize overall temp vars
+for max values (minute, sleepCount, guardId);
+while (min = 0..59)
+  :init per-minute temp vars#
+  sleepCount, guardId;
+  while (for each guard in //sleepMap//)
+    if (guard slept the most
+    at the given //min//) then (y)
+      :update per-minute vars;
+    endif
+  endwhile
+  if (per-minute temp vars
+  are a new global maximum) then (y)
+    :update global maximum if necessary;
+  endif
+endwhile
+:print global maximum sleep count,
+guard ID and minute;
+end
+@enduml
+....
+
+== Go solution
+
+Can be run with `cat input.txt | go run *.go`
+
+[source, go]
+....
+include::./solution.go[**]
+....

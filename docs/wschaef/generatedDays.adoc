@@ -2,3 +2,7 @@
 
 include::../../day01/typescript/wschaef/README.adoc[leveloffset=+2]
 
+=== Day 02: typescript
+
+include::../../day02/typescript/wschaef/README.adoc[leveloffset=+2]
+

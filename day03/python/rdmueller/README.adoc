@@ -1,5 +1,5 @@
 This solution is written in Python.
-This time I will try to make use class objects.
+This time I will try to make use of class objects.
 
 https://adventofcode.com/2018/day/3
 
