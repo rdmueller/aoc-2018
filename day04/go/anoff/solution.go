@@ -17,7 +17,7 @@ type Shift struct {
 func main() {
 	input := getInput(true)
 	
-	fmt.Println(strings.Join(input, "\n"))
+	// fmt.Println(strings.Join(input, "\n"))
 	strategy1(input)
 }
 
@@ -47,7 +47,7 @@ func strategy1(log []string /* sorted input */) {
 		if strings.Contains(entry, "wakes up") {
 			if fellAsleep > -1 {
 				wakeupMin := extractMinute(entry)
-				for i := fellAsleep; i <= wakeupMin; i++ {
+				for i := fellAsleep; i < wakeupMin; i++ {
 					activeShift.asleep = append(activeShift.asleep, i)
 				}
 			} else {
@@ -58,7 +58,49 @@ func strategy1(log []string /* sorted input */) {
 	// make sure last shift is also stored (no shift change in file)
 	shifts = append(shifts, activeShift)
 
-	fmt.Println(shifts)
+	// fmt.Println(shifts)
+
+	// find longest sleeping guard
+	guardsSleepDuration := make(map[int]int)
+	for _, shift := range shifts {
+		if _, exists := guardsSleepDuration[shift.guard]; !exists { // see https://stackoverflow.com/questions/2050391/how-to-check-if-a-map-contains-a-key-in-go
+			guardsSleepDuration[shift.guard] = sumSleepTimes(shifts, shift.guard)
+		}
+	}
+	// fmt.Println(guardsSleepDuration)
+
+	longestSleepingGuard := -1
+	longestSleep := -1
+	for guard, duration := range guardsSleepDuration {
+		if duration > longestSleep {
+			longestSleep = duration
+			longestSleepingGuard = guard
+		}
+	}
+	fmt.Printf("Longest sleeping guard: #%d @ %d min\n", longestSleepingGuard, longestSleep)
+
+	// find out which minute he was asleep the most
+	sleepMap := make(map[int]int) // key=min0-59, val=#shifts asleep
+	for _, shift := range shifts {
+		if shift.guard == longestSleepingGuard {
+			for min := 0; min < 60; min++ {
+				for _, asleepMin := range shift.asleep {
+					if asleepMin == min {
+						sleepMap[min]++
+					}
+				}
+			}
+		}
+	}
+
+	// fmt.Println(sleepMap)
+	maxShiftsAsleep := 0
+	for min, duration := range sleepMap {
+		if sleepMap[maxShiftsAsleep] < duration {
+			maxShiftsAsleep = min
+		}
+	}
+	fmt.Printf("Solution for part1: %d \nat minute %d guard#%d is asleep the most often (%d shifts)\n", maxShiftsAsleep * longestSleepingGuard, maxShiftsAsleep, longestSleepingGuard, sleepMap[maxShiftsAsleep])
 }
 
 // extract the guard id from a new shift entry
@@ -81,4 +123,15 @@ func extractMinute(entry string) int {
 	min := entry[15:17]
 	num, _ := strconv.Atoi(min)
 	return num
+}
+
+// get the overall sum of sleep times of a specific guard
+func sumSleepTimes(shifts []Shift, guardId int) int {
+	counter := 0
+	for _, shift := range shifts {
+		if shift.guard == guardId {
+			counter += len(shift.asleep)
+		}
+	}
+	return counter
 }
