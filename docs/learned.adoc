@@ -71,3 +71,12 @@ a| * how classes work in Python
 | ..go is fast 💨
 
 |====
+
+=== Day 4
+
+[cols="1,10"]
+|====
+|{rdmueller}
+a| * how to create your own python modules
+
+|====
