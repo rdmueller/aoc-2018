@@ -1,7 +1,15 @@
+package event;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import sleeplog.GuardState;
+import sleeplog.SleepLog;
+
+@EqualsAndHashCode(callSuper=true)
+@Getter
 public class WakesUpEvent extends Event {
 
 	public static final String REGEX = "^\\[([^\\]]+)] wakes up$";
@@ -13,12 +21,12 @@ public class WakesUpEvent extends Event {
 
 	@Override
 	public String toString() {
-		return "[" + this.timestamp.format(Event.FORMATTER) + "] wakes up";
+		return super.toString() + " wakes up";
 	}
 	
 	@Override
 	public void applyTo(SleepLog dayLog) {
-		dayLog.setStateFromTime(GuardState.AWAKE, this.timestamp);
+		dayLog.setStateFromTime(GuardState.AWAKE, this.getTimestamp());
 	}
 
 	public static Event parse(String str) {

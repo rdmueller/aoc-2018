@@ -1,3 +1,4 @@
+package sleeplog;
 
 public enum GuardState {
 	UNKNOWN,

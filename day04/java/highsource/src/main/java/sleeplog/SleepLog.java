@@ -1,3 +1,4 @@
+package sleeplog;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -5,10 +6,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
 public class SleepLog {
 
-	public final LocalDate date;
-	public final int id;
+	private final LocalDate date;
+	private final int guardId;
 
 	private final List<GuardState> states = new ArrayList<>(60);
 	{
@@ -17,21 +23,8 @@ public class SleepLog {
 		}
 	}
 
-	public SleepLog(DateId dateId) {
-		this(dateId.date, dateId.id);
-	}
-
-	public SleepLog(LocalDate date, int id) {
-		this.date = date;
-		this.id = id;
-	}
-
-	public LocalDate getDate() {
-		return date;
-	}
-
-	public int getId() {
-		return id;
+	public SleepLog(ShiftOnDateByGuardId dateId) {
+		this(dateId.getDate(), dateId.getGuardId());
 	}
 
 	public void setStateFromTime(GuardState state, LocalDateTime timestamp) {
@@ -45,7 +38,7 @@ public class SleepLog {
 			this.states.set(index, state);
 		}
 	}
-
+	
 	public int getMinutesAsleep() {
 		return (int) this.states.stream().filter(state -> state == GuardState.ASLEEP).count();
 	}

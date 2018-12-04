@@ -4,6 +4,11 @@ import java.time.LocalDateTime;
 
 import org.junit.Test;
 
+import event.BeginsShiftEvent;
+import event.Event;
+import event.FallsAsleepEvent;
+import event.WakesUpEvent;
+
 public class EventTest {
 
 	@Test

@@ -1,23 +1,22 @@
 import static java.util.Comparator.comparing;
-import static java.util.Comparator.comparingInt;
 import static java.util.Comparator.comparingLong;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.summingInt;
-import static java.util.stream.Collectors.toMap;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.function.Function;
+
+import event.BeginsShiftEvent;
+import event.Event;
+import sleeplog.CountByMinuteByGuardId;
+import sleeplog.GuardSleepLogs;
+import sleeplog.ShiftOnDateByGuardId;
+import sleeplog.SleepLog;
 
 public class Solution {
 
@@ -33,24 +32,25 @@ public class Solution {
 				events.add(event);
 			}
 
-			Collections.sort(events, comparing(event -> event.timestamp));
+			Collections.sort(events, comparing(Event::getTimestamp));
 
 			int currentId = -1;
 
-			Comparator<DateId> dateIdComparator = comparing(dateId -> dateId.date);
-			dateIdComparator = dateIdComparator.thenComparingInt(dateId -> dateId.id);
-
-			final Map<DateId, SleepLog> logs = new TreeMap<>(dateIdComparator);
+			final Map<ShiftOnDateByGuardId, SleepLog> logs = new TreeMap<>(
+					//
+					comparing(ShiftOnDateByGuardId::getDate).
+					//
+							thenComparingInt(ShiftOnDateByGuardId::getGuardId));
 
 			SleepLog currentLog;
 
 			for (Event event : events) {
-
 				if (event instanceof BeginsShiftEvent) {
 					BeginsShiftEvent beginsShiftEvent = (BeginsShiftEvent) event;
-					currentId = beginsShiftEvent.id;
+					currentId = beginsShiftEvent.getGuardId();
 				} else {
-					final DateId currentDateId = new DateId(event.timestamp.toLocalDate(), currentId);
+					final ShiftOnDateByGuardId currentDateId = new ShiftOnDateByGuardId(event.getTimestamp().toLocalDate(),
+							currentId);
 					currentLog = logs.computeIfAbsent(currentDateId, SleepLog::new);
 					event.applyTo(currentLog);
 				}
@@ -58,78 +58,46 @@ public class Solution {
 
 			// Part 1
 			{
-				Map<Integer, Integer> sleepMinutesByGuard = logs.values().stream()
-						.collect(groupingBy(dayLog -> dayLog.id, summingInt(SleepLog::getMinutesAsleep)));
 
-				Entry<Integer, Integer> mostSleepyGuardEntry = sleepMinutesByGuard.entrySet().stream()
-						.max(comparingInt(Entry::getValue)).orElseThrow(IllegalStateException::new);
+				final CountByMinuteByGuardId mostSleepyMinuteByGuard = 
 
-				int mostSleepyGuardId = mostSleepyGuardEntry.getKey();
-				int mostSleepyGuardMinutes = mostSleepyGuardEntry.getValue();
+						logs.values().stream()
+								// Group by guard
+								.collect(groupingBy(SleepLog::getGuardId)).entrySet().stream()
+								// Create sleep logs per guard
+								.map(GuardSleepLogs::new)
+								// Find the guard with greatest slept duration
+								.max(comparingLong(GuardSleepLogs::getSleptDuration))
+								.orElseThrow(IllegalStateException::new)
+								// Find the most sleepy minute of this guard
+								.findMostSleepyMinite();
 
-				System.out.println("The guard [" + mostSleepyGuardId + "] is the most sleepy guard, slept ["
-						+ mostSleepyGuardMinutes + "] minutes.");
+				final Integer mostSleepyGuardId = mostSleepyMinuteByGuard.getGuardId();
+				final Integer mostSleepyMinuteOfMostSleepyGuard = mostSleepyMinuteByGuard.getMinute();
 
-				Map<Integer, List<SleepLog>> logsByGuard = logs.values().stream()
-						.collect(groupingBy(dayLog -> dayLog.id));
-
-				List<SleepLog> mostSleepyGuardLogs = logsByGuard.get(mostSleepyGuardId);
-
-				final Map<Integer, Long> mostSleepyGuardSleptCountByMinute = mostSleepyGuardLogs.stream()
-						.flatMap(SleepLog::minutesAsleep).collect(groupingBy(identity(), counting()));
-
-				final Integer mostSleepyMinuteOfMostSleepyGuard = mostSleepyGuardSleptCountByMinute.entrySet().stream()
-						.max(comparingLong(Entry::getValue)).orElseThrow(IllegalStateException::new).getKey();
-
-				System.out.println(
-						"Most sleepy guard was most sleepy on the minute [" + mostSleepyMinuteOfMostSleepyGuard + "].");
+				System.out.println("The guard [" + mostSleepyGuardId + "] is the most sleepy guard on minute ["
+						+ mostSleepyMinuteOfMostSleepyGuard + "].");
 
 				System.out.println("The result is [" + (mostSleepyGuardId * mostSleepyMinuteOfMostSleepyGuard) + "].");
-
 			}
 
 			// Part 2
 			{
-				final Map<Integer, List<SleepLog>> sleepLogsByGuard = logs.values().stream()
-						.collect(groupingBy(SleepLog::getId));
-
-				final Function<List<SleepLog>, Entry<Integer, Long>> getMaxSleepyCountByMinute = ls -> {
-					return ls.stream().
-					//
-					flatMap(SleepLog::minutesAsleep).
-					//
-					collect(groupingBy(identity(), counting())).
-					//
-					entrySet().
-					//
-					stream().
-					//
-					max(Entry.comparingByValue()).
-					//
-					orElseThrow(IllegalStateException::new);
-				};
-
-				final Map<Integer, Entry<Integer, Long>> maxSleepyCountByMinuteByGuard = sleepLogsByGuard.entrySet()
-						.stream().
+				final CountByMinuteByGuardId mostSleepyMinuteByGuard = logs.values().stream()
+						// Group by guard
+						.collect(groupingBy(SleepLog::getGuardId)).entrySet().stream()
+						// Create sleep logs by guard
+						.map(GuardSleepLogs::new)
+						// Find most sleepy minute per guard
+						.map(GuardSleepLogs::findMostSleepyMinite)
+						// Find most sleepy minute across guards
+						.max(comparingLong(CountByMinuteByGuardId::getCount))
 						//
-						collect(
-								//
-								toMap(
-										//
-										Map.Entry::getKey,
-										//
-										entry -> getMaxSleepyCountByMinute.apply(entry.getValue())));
+						.orElseThrow(IllegalStateException::new);
 
-				final Entry<Integer, Entry<Integer, Long>> mostSleepyGuardEntry = maxSleepyCountByMinuteByGuard
-						.entrySet().stream().
-						//
-						max(comparingLong(entry -> entry.getValue().getValue())).
-						//
-						orElseThrow(IllegalStateException::new);
-
-				final Integer mostSleepyGuardId = mostSleepyGuardEntry.getKey();
-				final Integer mostSleepyGuardMinute = mostSleepyGuardEntry.getValue().getKey();
-				final Long mostSleepyGuardCount = mostSleepyGuardEntry.getValue().getValue();
+				final Integer mostSleepyGuardId = mostSleepyMinuteByGuard.getGuardId();
+				final Integer mostSleepyGuardMinute = mostSleepyMinuteByGuard.getMinute();
+				final Long mostSleepyGuardCount = mostSleepyMinuteByGuard.getCount();
 
 				System.out.println("The guard [" + mostSleepyGuardId + "] is the most sleepy guard with ["
 						+ mostSleepyGuardCount + "] minutes asleep on minute [" + mostSleepyGuardMinute + "].");
