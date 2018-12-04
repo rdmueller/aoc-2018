@@ -1,12 +1,17 @@
-=== Day 01: kotlin
+=== Day 01: Kotlin
 
 include::../../day01/kotlin/gysel/README.adoc[leveloffset=+2]
 
-=== Day 02: kotlin
+=== Day 02: Kotlin
 
 include::../../day02/kotlin/gysel/README.adoc[leveloffset=+2]
 
-=== Day 03: kotlin
+=== Day 03: Kotlin
 
 include::../../day03/kotlin/gysel/README.adoc[leveloffset=+2]
+
+=== Day 04: Kotlin
+
+include::../../day04/kotlin/gysel/README.adoc[leveloffset=+2]
+
 

@@ -31,21 +31,21 @@ fun main() {
             calculateSleepHabitsOfGuard(napsOfGuard, sleepyGuard)
         }
 
-        val mostSleepyMinute = sleepHabitsOfGuards.maxBy { it.totalSleepDuration }
+        val guardWithLongestNapDuration = sleepHabitsOfGuards.maxBy { it.totalSleepDuration }
                 ?: throw IllegalStateException("No max found!")
-        val (guard, minute, total) = mostSleepyMinute
+        val (guard, minute, total) = guardWithLongestNapDuration
         println("Guard $guard slept for a total of $total")
         println("Most sleepy minute of guard $guard was minute $minute")
         println("Answer of part 1 is ${guard * minute}")
 
         // Part 2
 
-        val sleepyGuard = sleepHabitsOfGuards.maxBy { it.numberOfNapsAtMinuteOfMostNaps }
+        val guardMostLikelyToBeSleeping = sleepHabitsOfGuards.maxBy { it.numberOfNapsAtMinuteOfMostNaps }
                 ?: throw IllegalStateException("No max found!")
-        println("Most sleepy guard is ${sleepyGuard.guard}, most likely asleep at 00:${sleepyGuard.minuteOfMostNaps}")
-        println("Answer of part 2 is ${sleepyGuard.guard * sleepyGuard.minuteOfMostNaps}")
+        println("Most sleepy guard is ${guardMostLikelyToBeSleeping.guard}, most likely asleep at 00:${guardMostLikelyToBeSleeping.minuteOfMostNaps}")
+        println("Answer of part 2 is ${guardMostLikelyToBeSleeping.guard * guardMostLikelyToBeSleeping.minuteOfMostNaps}")
     }
-    
+
     println("Calculated solution in ${millis}ms")
 }
 
