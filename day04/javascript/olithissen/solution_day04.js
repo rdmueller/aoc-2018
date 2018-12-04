@@ -2,10 +2,7 @@
 
 const fs = require("fs");
 const assert = require("assert");
-const {
-  performance,
-  PerformanceObserver
-} = require("perf_hooks");
+const { performance, PerformanceObserver } = require("perf_hooks");
 
 const obs = new PerformanceObserver(list => {
   list
@@ -44,17 +41,20 @@ const mapGuardDuty = line => {
   let id = null;
   let state;
   if (tryExtractId) {
-    id = tryExtractId[1];
+    id = parseInt(tryExtractId[1]);
     state = "start shift";
   } else {
-    state = result[5]
+    state = result[5];
   }
 
   return {
     id: id,
     // I'm going to regeret this. Damn elves might have 66 minutes per hour ...
-    time: new Date(Date.UTC(result[0], result[1] - 1, result[2], result[3], result[4], 0)),
-    state: state,
+    time: new Date(
+      Date.UTC(result[0], result[1] - 1, result[2], result[3], result[4], 0)
+    ),
+    minute: result[4],
+    state: state
   };
 };
 
@@ -68,17 +68,34 @@ const enrichId = item => {
   return item;
 };
 
-const reduceGuardCycles = (acc, cur) => {
+const reduceGuardSleepCycles = (acc, cur) => {
   if (!acc[cur.id]) {
     acc[cur.id] = {
       id: cur.id,
-      cycles: []
+      cycles: [],
+      sleepDuration: 0,
+      sleepingMinutes: {}
     };
   }
   acc[cur.id].cycles.push({
     state: cur.state,
-    time: cur.time
+    time: cur.time,
+    minute: cur.minute
   });
+
+  if (cur.state == "wakes up") {
+    const lastOnStack = acc[cur.id].cycles.slice(-1)[0];
+    const lastMinus1OnStack = acc[cur.id].cycles.slice(-2)[0];
+    acc[cur.id].sleepDuration +=
+      (lastOnStack.time - lastMinus1OnStack.time) / 60000;
+    for (let i = lastMinus1OnStack.minute; i < lastOnStack.minute; i++) {
+      if (!acc[cur.id].sleepingMinutes[i]) {
+        acc[cur.id].sleepingMinutes[i] = 0;
+      }
+      acc[cur.id].sleepingMinutes[i]++;
+    }
+  }
+
   return acc;
 };
 
@@ -88,21 +105,35 @@ const reduceGuardCycles = (acc, cur) => {
  * @param  {} data Input data as array
  */
 function part1(data) {
-  // Convert input data to claim objects
-  let currentId;
+  // Convert input data to guard objects
   const guardDuties = data
     .map(mapGuardDuty)
     .sort((a, b) => a.time - b.time)
     .map(enrichId);
 
-  const guardSleepCycles = guardDuties.reduce(reduceGuardCycles, {});
-  const guardSleepDuration = guardSleepCycles.map(guard => {
-    return guard;
-  })
+  const guardSleepCycles = guardDuties.reduce(reduceGuardSleepCycles, {});
 
-  console.log(JSON.stringify(guardSleepCycles, null, 2));
+  // OMFG, I've lost all hope
+  const sleepiestGuard = parseInt(
+    Object.values(guardSleepCycles).sort(
+      (a, b) => b.sleepDuration - a.sleepDuration
+    )[0].id
+  );
 
-  return 0;
+  const sleepiestGuardSleepingMinutes = Object.values(guardSleepCycles).filter(
+    guard => guard.id == sleepiestGuard
+  )[0].sleepingMinutes;
+
+  // Oh my god, I am so sorry!
+  const sleepiestMinutePerGuard = parseInt(
+    Object.keys(sleepiestGuardSleepingMinutes).reduce((a, b) =>
+      sleepiestGuardSleepingMinutes[a] > sleepiestGuardSleepingMinutes[b]
+        ? a
+        : b
+    )
+  );
+
+  return sleepiestGuard * sleepiestMinutePerGuard;
 }
 
 /**
@@ -111,10 +142,24 @@ function part1(data) {
  * @param  {} data Input data as array
  */
 function part2(data) {
-  // Convert input data to claim objects
-  const claims = data.map(mapGuardDuty);
+  // Convert input data to guard objects
+  const guardDuties = data
+    .map(mapGuardDuty)
+    .sort((a, b) => a.time - b.time)
+    .map(enrichId);
 
-  return 0;
+  const guardSleepCycles = Object.values(
+    guardDuties.reduce(reduceGuardSleepCycles, {})
+  );
+
+  const result = guardSleepCycles.map(item => {
+    const maxMinute = Object.keys(item.sleepingMinutes).reduce((a, b) =>
+      item.sleepingMinutes[a] > item.sleepingMinutes[b] ? a : b, 0
+    );
+    return { id: item.id, maxMinute: parseInt(maxMinute), count: item.sleepingMinutes[maxMinute] };
+  }).sort((a, b) => b.count - a.count);
+
+  return result[0].id * result[0].maxMinute;
 }
 
 const testdataPart01 = readInputAsArray("testdata.txt");
@@ -123,14 +168,14 @@ const testdataPart01 = readInputAsArray("testdata.txt");
 const testResult01 = part1(testdataPart01);
 console.log("Test result: " + testResult01);
 assert(testResult01 == 240);
-// obs.observe({ entryTypes: ["function"] });
-// const timerify_part1 = performance.timerify(part1);
-// console.log("RESULT:" + timerify_part1(readInputAsArray()));
+obs.observe({ entryTypes: ["function"] });
+const timerify_part1 = performance.timerify(part1);
+console.log("RESULT: " + timerify_part1(readInputAsArray("input.txt")));
 
 // Part 2
-// const testResult02 = part2(testdataPart01);
-// console.log("Test result: " + testResult02);
-// assert(testResult02 == 3);
-// obs.observe({ entryTypes: ["function"] });
-// const timerify_part2 = performance.timerify(part2);
-// console.log("RESULT: " + timerify_part2(readInputAsArray()));
+const testResult02 = part2(testdataPart01);
+console.log("Test result: " + testResult02);
+assert(testResult02 == 4455);
+obs.observe({ entryTypes: ["function"] });
+const timerify_part2 = performance.timerify(part2);
+console.log("RESULT: " + timerify_part2(readInputAsArray("input.txt")));
