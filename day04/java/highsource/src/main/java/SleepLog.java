@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SleepLog {
 
@@ -26,6 +26,14 @@ public class SleepLog {
 		this.id = id;
 	}
 
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public int getId() {
+		return id;
+	}
+
 	public void setStateFromTime(GuardState state, LocalDateTime timestamp) {
 		if (!Objects.equals(this.date, timestamp.toLocalDate())) {
 			throw new IllegalArgumentException("Wrong date [" + timestamp + "], expected [" + this.date + "].");
@@ -42,7 +50,7 @@ public class SleepLog {
 		return (int) this.states.stream().filter(state -> state == GuardState.ASLEEP).count();
 	}
 
-	public IntStream minutesAsleep() {
+	public Stream<Integer> minutesAsleep() {
 
 		List<Integer> minutesAsleep = new ArrayList<>();
 		for (int minute = 0; minute < 60; minute++) {
@@ -51,6 +59,6 @@ public class SleepLog {
 			}
 		}
 
-		return minutesAsleep.stream().mapToInt(Integer::intValue);
+		return minutesAsleep.stream();
 	}
 }
