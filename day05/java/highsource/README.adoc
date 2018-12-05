@@ -1,0 +1,9 @@
+== Solution written in Java
+
+To build:
+
+    mvn clean install
+
+To run:
+
+   java -jar target/aoc-2018-day05.jar
