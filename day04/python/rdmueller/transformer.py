@@ -1,4 +1,6 @@
 
+
+# tag::main[]
 def transform(log):
     guards = {}
     currentGuard = -1
@@ -22,8 +24,10 @@ def transform(log):
                 guards[currentGuard][minute] += 1
             start = 0
     return guards
+# end::main[]
 
 
+# tag::starOne[]
 def countMinutes(guards):
     maxGuard = -1
     maxSleep = -1
@@ -43,8 +47,10 @@ def countMinutes(guards):
             maxMinute = i
         i += 1
     return (maxGuard * maxMinute)
+# end::starOne[]
 
 
+# tag::starTwo[]
 def countMinutes2(guards):
     maxGuard = -1
     maxSleep = -1
@@ -58,3 +64,4 @@ def countMinutes2(guards):
                 maxMinute = i
             i += 1
     return (maxGuard * maxMinute)
+# end::starTwo[]

@@ -17,9 +17,28 @@ Then I need to transform the logs to a 2D array (list of lists)
 
 [source, python]
 ....
-include::transformer.py[]
+include::transformer.py[tags=main]
 ....
 
 Now I can easily count how many minutes every guard is asleep.
 
-TODO(RDM): finish this README
+I had quite some problems with the python modules - so I gave up on the clean solution and just added the code to calculate the results to the transformer module:
+
+But the test driven development approach really helped me as usual.
+
+== First Star
+
+[source, python]
+....
+include::transformer.py[tags=starOne]
+....
+
+== Second Star
+
+[source, python]
+....
+include::transformer.py[tags=starTwo]
+....
+
+I think for day 5 I wills tay with python, but don't use modules anymore.
+A single file as script is enough for these challenges - there seems not to be much reusability.

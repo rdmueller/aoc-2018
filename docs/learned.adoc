@@ -89,3 +89,15 @@ a| * you can destructure in Kotlin from an Array, a List, or e Map.Entry (and pr
 * How to use `fold` with a stateful accumulator
 
 |====
+
+
+=== Day 5
+
+[cols="1,10"]
+|====
+|{anoff}
+a| * if you struggle with a problem, **take a break**, clear your head and get a new perspective
+* never assume any part of your code is too simple to have an error
+* pipes do not __only__ split on new lines - also if chunks are too large
+
+|====

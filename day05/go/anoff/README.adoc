@@ -1,0 +1,117 @@
+== Part 1
+
+The first part of the challenge requires to remove adjacent characters from a string if they are the same char but different cases e.g. `Aa` or `bB` but not `bb/BB`. My initial approach was to recursively loop over the string and create a new substring that excludes all those matches.
+
+It works but is painfully slow, around `17s` on a MacBook non-pro with the input of `50,000 characters`.
+
+[plantuml, day05-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:read input;
+repeat
+  :initialize slice of strings;
+  while (for each char\nat string[i])
+    if (string[i] and string[i-1]
+    are NOT a matching pair) then (y)
+      :append string[i] to new slice;
+    endif
+  endwhile
+  :convert slice to new string;
+repeat while (new string is shorter
+than previous string)
+:print resulting string;
+end
+@enduml
+....
+
+== Part 2
+
+For the second part the character removal from part 1 is required again. This time removing all appearances of a specific letter (a..z, lower&uppercase) before running the removal process and evaluating which combination (a..z removed) gives the shortest overall string.
+
+This took `7m 44s` which means I need to learn https://flaviocopes.com/golang-profiling/[how to] https://golang.org/pkg/runtime/pprof/[profile] go code.
+
+== Profiling in Go
+
+https://github.com/google/pprof[pprof] has a nice overview on their GitHub page, don't bother reading outdated (sometimes 2011..) blog posts.
+
+=== Prerequisites
+
+[source, bash]
+....
+brew install graphviz
+go get github.com/pkg/profile
+go get github.com/google/pprof
+....
+
+By adding the following line to the `main()` function a CPU profile will be made.
+
+[source, go]
+....
+import (
+	..
+	"github.com/pkg/profile"
+)
+
+func main() {
+	defer profile.Start().Stop()
+  ..
+....
+
+=== Running the profiler
+
+After building and running the program `go build` and `cat input.txt |./pipe-reader` the pprof tool can be used to create a visualization of the CPU usage.
+
+[source, bash]
+....
+# local web server
+go tool pprof -http=localhost:8080 ./pipe-reader /var/folders/7s/0pyrdrhd2t18fnmdqggkgy8r0000gn/T/profile108827510/cpu.pprof
+
+# generate svg
+go tool pprof -svg ./pipe-reader /var/folders/7s/0pyrdrhd2t18fnmdqggkgy8r0000gn/T/profile108827510/cpu.pprof
+....
+
+.CPU profile for initial version
+image::profile.svg[pprof]
+
+Main problem seems to be that I iterate over the entire string ~1,500 times. Each time I replicate most of the original string into a slice which means increasingly allocating a slice of up to ~50,000 elements...1,500 times. Doesn't seem smart.
+
+== Refactor
+
+A second idea I had how to solve the problem of removing duplicates was to simply brute-force all combinations and call `strings.Replace` on the combinations.
+
+[plantuml, day05-refactor, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:read input;
+repeat
+  while (char a..z)
+    :generate uppercase &
+    lowercase of char;
+    :remove uppercase+lowercase (Aa);
+    :remove lowercase+uppercase (aA);
+  endwhile
+repeat while (new string is shorter
+than previous string)
+:print resulting string;
+end
+@enduml
+....
+
+This now approach - even though not very pretty - gives a significant performance increase. Including on the fly compilation the run now takes `0.5s` compared to the previous `17s` (for part 1). When building the binary in advance it only takes `250ms` to get solution 1 👯‍
+
+== Go solution (optimized)
+
+Can be run with `cat input.txt | go run *.go`
+
+[source, go]
+....
+include::./solution.go[]
+....

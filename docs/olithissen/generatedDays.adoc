@@ -10,3 +10,11 @@ include::../../day02/javascript/olithissen/README.adoc[leveloffset=+2]
 
 include::../../day03/javascript/olithissen/README.adoc[leveloffset=+2]
 
+=== Day 04: javascript
+
+include::../../day04/javascript/olithissen/README.adoc[leveloffset=+2]
+
+=== Day 05: javascript
+
+include::../../day05/javascript/olithissen/README.adoc[leveloffset=+2]
+
