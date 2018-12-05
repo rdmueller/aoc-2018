@@ -11,7 +11,7 @@ To run:
 
 == Solution part 1
 
-Model the polymer as a string buffer for easier character manipulation.
+Model the polymer as a string builder for easier character manipulation.
 
 Implement a `react` routine which simply loops over the string buffer and removes "adjacent units of the same type and opposite polarity"
 i.e. adjacent characters which only differ in case. The routine returns `true` iff something was removed.
