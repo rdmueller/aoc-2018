@@ -1,3 +1,4 @@
+./gradlew clean
 cd docs
 ./generateIndex.groovy
 cd ..
