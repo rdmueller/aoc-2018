@@ -7,7 +7,8 @@ import (
 
 func main() {
 	input := getInput(false)
-	chain := string(input[0])
+	chain := strings.Join(input, "")
+	fmt.Println(chain, len(chain))
 	imploded := implodeString(chain)
 	fmt.Printf("Solution for part 1: %d, (%s)\n", len(imploded), imploded)
 }
