@@ -1,0 +1,22 @@
+This solution is written in Python.
+
+https://adventofcode.com/2018/day/5
+
+== First Star
+
+Seems to be easy.
+I will do it just brute force in several iterations.
+
+I first thought that this would be a good fit for mapreduce, but I lack the time.
+
+[source, python]
+....
+include::solution.py[tags=starOne]
+....
+
+== Second Star
+
+[source, python]
+....
+include::solution.py[tags=starTwo]
+....
