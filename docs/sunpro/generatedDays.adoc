@@ -1,0 +1,4 @@
+=== Day 05: python
+
+include::../../day05/python/sunpro/README.adoc[leveloffset=+2]
+

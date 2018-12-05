@@ -14,3 +14,7 @@ include::../../day02/go/anoff/README.adoc[leveloffset=+2]
 
 include::../../day03/go/anoff/README.adoc[leveloffset=+2]
 
+=== Day 04: go
+
+include::../../day04/go/anoff/README.adoc[leveloffset=+2]
+

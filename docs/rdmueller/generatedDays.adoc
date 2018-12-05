@@ -14,3 +14,7 @@ include::../../day03/python/rdmueller/README.adoc[leveloffset=+2]
 
 include::../../day04/python/rdmueller/README.adoc[leveloffset=+2]
 
+=== Day 05: python
+
+include::../../day05/python/rdmueller/README.adoc[leveloffset=+2]
+
