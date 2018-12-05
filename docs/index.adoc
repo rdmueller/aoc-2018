@@ -1,8 +1,10 @@
 
-== Advent of Code 2018
+= Advent of Code 2018
+:source-highlighter: prettify
 
 https://adventofcode.com[Advent of Code Website]
 
+https://github.com/rdmueller/aoc-2018/[Github Repository]
 
 WARNING: Spoiler Alert! If you want to solve the aoc problems on your own, do not read any further.
 This repository contains solutions for the problems in several languages.
