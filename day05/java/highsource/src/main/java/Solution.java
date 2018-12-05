@@ -17,24 +17,24 @@ public class Solution {
 	}
 
 	private static String solvePart1(String str) {
-		return fullyReact(new StringBuffer(str)).toString();
+		return fullyReact(new StringBuilder(str)).toString();
 	}
 
-	private static StringBuffer fullyReact(final StringBuffer stringBuffer) {
+	private static StringBuilder fullyReact(final StringBuilder stringBuilder) {
 		do {
-		} while (react(stringBuffer));
-		return stringBuffer;
+		} while (react(stringBuilder));
+		return stringBuilder;
 	}
 
-	private static boolean react(final StringBuffer stringBuffer) {
+	private static boolean react(final StringBuilder stringBuilder) {
 		boolean somethingWasRemoved;
 		somethingWasRemoved = false;
-		for (int index = 0; index < stringBuffer.length() - 1; index++) {
-			char currentChar = stringBuffer.charAt(index);
-			char nextChar = stringBuffer.charAt(index + 1);
+		for (int index = 0; index < stringBuilder.length() - 1; index++) {
+			char currentChar = stringBuilder.charAt(index);
+			char nextChar = stringBuilder.charAt(index + 1);
 			if (Character.isUpperCase(currentChar) && (Character.toLowerCase(currentChar) == nextChar)
 					|| Character.isLowerCase(currentChar) && (Character.toUpperCase(currentChar) == nextChar)) {
-				stringBuffer.delete(index, index + 2);
+				stringBuilder.delete(index, index + 2);
 				somethingWasRemoved = true;
 			}
 		}
@@ -46,25 +46,25 @@ public class Solution {
 
 		str.chars().mapToObj(c -> (char) Character.toLowerCase(c)).distinct().
 		//
-				map(c -> removeUnitType(new StringBuffer(str), c)).
+				map(c -> removeUnitType(new StringBuilder(str), c)).
 				//
 				map(Solution::fullyReact).
 				//
-				min(Comparator.comparingInt(StringBuffer::length)).
+				min(Comparator.comparingInt(StringBuilder::length)).
 				//
 				map(Object::toString).
 				//
 				orElseThrow(IllegalArgumentException::new);
 	}
 
-	private static StringBuffer removeUnitType(StringBuffer stringBuffer, char c) {
-		for (int index = 0; index < stringBuffer.length() - 1; index++) {
-			char currentChar = stringBuffer.charAt(index);
+	private static StringBuilder removeUnitType(StringBuilder stringBuilder, char c) {
+		for (int index = 0; index < stringBuilder.length() - 1; index++) {
+			char currentChar = stringBuilder.charAt(index);
 			if (Character.toLowerCase(currentChar) == Character.toLowerCase(c)) {
-				stringBuffer.delete(index, index + 1);
+				stringBuilder.delete(index, index + 1);
 				index--;
 			}
 		}
-		return stringBuffer;
+		return stringBuilder;
 	}
 }
