@@ -3,11 +3,9 @@ package main
 import (
 	"fmt"
 	"strings"
-	"github.com/pkg/profile"
 )
 
 func main() {
-	defer profile.Start().Stop()
 	input := getInput(false)
 	chain := strings.Join(input, "")
 
@@ -33,25 +31,14 @@ func main() {
 
 // go over the string and remove same characters with inverse capitalization
 func removeCaseNeighbors(input string) string {
-	var deduped string
-	removedLastChar := false
-	for i := 1; i < len(input); i++ {
-		a := string(input[i-1])
-		b := string(input[i])
-		if a != b && strings.ToLower(a) == strings.ToLower(b) {
-			// fmt.Println("Imploding..", a, b, deduped)
-			i++
-			removedLastChar = true
-		} else {
-			deduped += a
-			removedLastChar = false
-			// fmt.Println("diff", a, b, deduped)
-		}
+	chars := "abcdefghijklmnopqrstuvwxyz"
+	
+	for _, c := range chars {
+		upper := strings.ToUpper(string(c))
+		lower := string(c)
+		input = strings.Replace(strings.Replace(input, upper+lower, "", -1), lower+upper, "", -1)
 	}
-	if !removedLastChar {
-		deduped += string(input[len(input)-1])
-	}
-	return string(deduped)
+	return input
 }
 
 // recursively remove neighbors until no change occurs

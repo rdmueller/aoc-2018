@@ -4,7 +4,6 @@ For the first part of the puzzle an input is given with each line representing a
 
 As a claim for an area is given in a string format the first job is to extract the relevant information from each new line. For representing this information I use a custom struct `Area`. The following diagram `how to ref?` shows the main tasks for solving the puzzle.
 
-
 [plantuml, day03-part1, png]
 ....
 @startuml

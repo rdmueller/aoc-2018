@@ -4,20 +4,35 @@ The first part of the challenge requires to remove adjacent characters from a st
 
 It works but is painfully slow, around `17s` on a MacBook non-pro with the input of `50,000 characters`.
 
+[plantuml, day05-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:read input;
+repeat
+  :initialize slice of strings;
+  while (for each char\nat string[i])
+    if (string[i] and string[i-1]
+    are NOT a matching pair) then (y)
+      :append string[i] to new slice;
+    endif
+  endwhile
+  :convert slice to new string;
+repeat while (new string is shorter
+than previous string)
+:print resulting string;
+end
+@enduml
+....
+
 == Part 2
 
 For the second part the character removal from part 1 is required again. This time removing all appearances of a specific letter (a..z, lower&uppercase) before running the removal process and evaluating which combination (a..z removed) gives the shortest overall string.
 
 This took `7m 44s` which means I need to learn https://flaviocopes.com/golang-profiling/[how to] https://golang.org/pkg/runtime/pprof/[profile] go code.
-
-== Go solution
-
-Can be run with `cat input.txt | go run *.go`
-
-[source, go]
-....
-include::./solution.go[]
-....
 
 == Profiling in Go
 
@@ -46,6 +61,8 @@ func main() {
   ..
 ....
 
+=== Running the profiler
+
 After building and running the program `go build` and `cat input.txt |./pipe-reader` the pprof tool can be used to create a visualization of the CPU usage.
 
 [source, bash]
@@ -59,3 +76,42 @@ go tool pprof -svg ./pipe-reader /var/folders/7s/0pyrdrhd2t18fnmdqggkgy8r0000gn/
 
 .CPU profile for initial version
 image::profile.svg[pprof]
+
+Main problem seems to be that I iterate over the entire string ~1,500 times. Each time I replicate most of the original string into a slice which means increasingly allocating a slice of up to ~50,000 elements...1,500 times. Doesn't seem smart.
+
+== Refactor
+
+A second idea I had how to solve the problem of removing duplicates was to simply brute-force all combinations and call `strings.Replace` on the combinations.
+
+[plantuml, day05-refactor, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:read input;
+repeat
+  while (char a..z)
+    :generate uppercase &
+    lowercase of char;
+    :remove uppercase+lowercase (Aa);
+    :remove lowercase+uppercase (aA);
+  endwhile
+repeat while (new string is shorter
+than previous string)
+:print resulting string;
+end
+@enduml
+....
+
+This now approach - even though not very pretty - gives a significant performance increase. Including on the fly compilation the run now takes `0.5s` compared to the previous `17s` (for part 1). When building the binary in advance it only takes `250ms` to get solution 1 👯‍
+
+== Go solution (optimized)
+
+Can be run with `cat input.txt | go run *.go`
+
+[source, go]
+....
+include::./solution.go[]
+....
