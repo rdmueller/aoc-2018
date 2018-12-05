@@ -5,9 +5,9 @@ https://adventofcode.com/2018/day/5
 == First Star
 
 Seems to be easy.
-I will do it just brute force in several iterations.
-
 I first thought that this would be a good fit for mapreduce, but I lack the time.
+
+So, my solution just walks over every character and when it finds a pair, it removes it and jumps back a character in case that this is a chain of reactions.
 
 [source, python]
 ....
@@ -15,6 +15,8 @@ include::solution.py[tags=starOne]
 ....
 
 == Second Star
+
+So, for the second star, I just use the function from the first to iterate over the alphabet and see which element yields the biggest reaction.
 
 [source, python]
 ....

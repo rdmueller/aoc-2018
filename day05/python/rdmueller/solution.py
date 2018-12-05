@@ -2,32 +2,38 @@
 
 
 # tag::starOne[]
-input = open("testinput.txt").read()
-changed = True
-output = ""
-skip = False
-print(input)
-while changed:
-    changed = False
-    for i in range(0, len(input)-1):
-        if (skip == True):
-            skip = False
-        else:
-            if (input[i].lower() == input[i+1].lower()):
-                if (input[i] != input[i+1]):
-                    skip = True
-                    changed = True
-            else:
-                output += input[i]
-    if (not (skip == True)):
-        output += input[-1]
-    print(output)
-    input = output
-    output = ""
-print(input)
-print(len(input))
-assert input == "dabCBAcaDA"
+
+def doReaction(input):
+    pos = 0
+    while True:
+        # print(input)
+        if (input[pos].lower() == input[pos+1].lower()):
+            if (input[pos] != input[pos+1]):
+                # print(len(input), pos, input[pos], input[pos+1])
+                input = input[0:pos]+input[pos+2:]
+                pos -= 2
+                if (pos<0):
+                    pos = -1
+        pos += 1
+        if (pos==len(input)-1):
+            break
+    return len(input)
+
+
+input = open("input.txt").read()
+print("Star One: ", doReaction(input))
 # end::starOne[]
 
 # tag::starTwo[]
+minLenght = 9390
+minChar = ""
+for char in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+    input = open("input.txt").read()
+    input = input.replace(char, "")
+    input = input.replace(char.lower(), "")
+    length = doReaction(input)
+    if (length < minLenght):
+        minLenght = length
+        minChar = char
+print(minLenght, minChar)
 # end::starTwo[]
