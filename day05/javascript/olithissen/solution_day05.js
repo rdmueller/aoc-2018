@@ -16,8 +16,14 @@ function readInputAsArray(file) {
   return fs.readFileSync(file, "utf8").split("");
 }
 
+/**
+ * Tries to react to polymers manipulating the underlying array in-place
+ * 
+ * @param  {} array Array
+ * @param  {} pivot Pivot point
+ */
 function react(array, pivot) {
-  if (pivot >= 0 && pivot + 1 < array.length) {
+  if (pivot >= 0) {
     if (isPairReactable(array[pivot], array[pivot + 1])) {
       array.splice(pivot, 2);
       return true;
@@ -25,20 +31,15 @@ function react(array, pivot) {
   }
   return false;
 }
-
+/**
+ * Checks if two polymers are reactable
+ * 
+ * @param  {} char1
+ * @param  {} char2
+ * @returns true if reactable
+ */
 function isPairReactable(char1, char2) {
-  return (
-    char1.toLowerCase() == char2.toLowerCase() &&
-    ((isLowerCase(char1) && isUpperCase(char2)) || (isUpperCase(char1) && isLowerCase(char2)))
-  );
-}
-
-function isUpperCase(char) {
-  return char == char.toUpperCase();
-}
-
-function isLowerCase(char) {
-  return char == char.toLowerCase();
+  return char1 !== char2 && char1.toLowerCase() == char2.toLowerCase();
 }
 
 /**
@@ -51,8 +52,6 @@ function part1(data) {
 
   let i = 0;
   while (i < array.length - 1) {
-    // This is awesome! Changing from i = 0 to i-- is 11x faster!
-    // react(array, i) ? i = 0 : i++;
     react(array, i) ? i-- : i++;
   }
 
