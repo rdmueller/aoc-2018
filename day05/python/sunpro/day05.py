@@ -12,7 +12,7 @@ def findlen(ins):
         diff = ind - ine
         flag = 1
         i = 0
-        r =np.array([]) 
+        r =np.array([],dtype = np.int16) 
         same = np.where(abs(diff) == 32)[0]
 #         print(same)
         for i in same:
