@@ -32,12 +32,14 @@ func main() {
 	fmt.Println(coords)
 	//fmt.Printf("Solution for part 1: %d, (%s)\n", len(imploded), imploded)
 
-	grid := generateGrid(coords, 10, 10)
+	grid := generateGrid(coords, gridYmax+1, gridXmax+1)
 	
-	//infiniteCoords := identifyInfiniteCoords(grid, gridXmax, gridYmax)
+	infiniteCoords := identifyInfiniteCoords(grid)
 	for i := range grid {
 		fmt.Println(grid[i])
 	}
+
+	fmt.Println(infiniteCoords)
 }
 
 func extractCoords(input string) Coord {
@@ -94,8 +96,33 @@ func init2dSlice(d1 int, d2 int) [][]uint8 {
 	}
 	return s
 }
-/*
-func identifyInfiniteCoords(grid [][]int, gridXmax, gridYmax) []int {
 
+// returns unique elements in the 4 outer borders of the "grid"
+func identifyInfiniteCoords(grid [][]uint8) []uint8 {
+	m := make(map[uint8]int)
+	cols := len(grid[0])-1
+	rows := len(grid)-1
+	// top row
+	for x := 0; x < cols; x++ {
+		m[grid[0][x]]++
+	}
+	// bottom row
+	for x := 0; x < cols; x++ {
+		m[grid[rows][x]]++
+	}
+	// "right" column
+	for y := 0; y < rows; y++ {
+		m[grid[y][0]]++
+	}
+	// "left" column
+	for y := 0; y < rows; y++ {
+		m[grid[y][cols]]++
+	}
+
+	var s []uint8
+	for k, _ := range m {
+		s = append(s, k)
+	}
+
+	return s
 }
-*/
