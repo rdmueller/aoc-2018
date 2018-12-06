@@ -1,0 +1,12 @@
+{
+  "name": "aoc-2018-day06",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && ava"
+  },
+  "devDependencies": {
+    "ava": "^1.0.0-rc.2",
+    "standard": "^12.0.1"
+  },
+  "private": true
+}

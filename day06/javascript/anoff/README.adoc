@@ -1,0 +1,8 @@
+== Part 1
+
+Wanted to see if I can also do a challenge without using for/while loops. Takes ages and feels like I need to take extra corners to get around traditional loops. Also makes the whole thing pretty slow with `1.4s` for part 1.
+
+[source, javascript]
+....
+include::./solution.js[]
+....
