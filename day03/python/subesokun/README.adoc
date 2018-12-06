@@ -1,0 +1,13 @@
+== Part 1
+
+For part 1 I'm going to create a map of fabric pieces where the fabric piece coordinate is the item key and a list of claim IDs for that particular fabric piece the item value.
+
+The solution gets calculated by simply looping over the fabric pieces map and counting all pieces that have two or more claims.
+
+== Part 2
+
+For part 2 an additional map gets created to identify the claims that have no overlaps. That after we can simply loop over this map to find the unique claim that has no overlap.
+
+== Run solution
+
+Can be run with `python main.py`

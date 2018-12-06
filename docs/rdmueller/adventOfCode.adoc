@@ -14,14 +14,4 @@ Just prepend the following shebang to your file
 and make the file executable with a `chmod u+x filename.py`.
 You can then execute the file as `./filename.py`.
 
-=== Day 1
-
-include::../../day01/python/rdmueller/README.adoc[leveloffset=+2]
-
-=== Day 2
-
-include::../../day02/python/rdmueller/README.adoc[leveloffset=+2]
-
-=== Day 3
-
-include::../../day03/python/rdmueller/README.adoc[leveloffset=+2]
+include::generatedDays.adoc[]
