@@ -31,7 +31,13 @@ func main() {
 	}
 	// fmt.Println(coords)
 
-	grid := generateGrid(coords, gridXmax+1, gridYmax+1)
+	part1(coords, gridXmax, gridYmax)
+
+	part2(coords, gridXmax, gridYmax)
+}
+
+func part1(coords []Coord, gridXmax int, gridYmax int) {
+	grid := generateGrid1(coords, gridXmax+1, gridYmax+1)
 	
 	infiniteElms:= identifyInfiniteElements(grid)
 
@@ -64,6 +70,24 @@ func main() {
 	fmt.Printf("Solution for part 1: %d occurences of type #%d\n", maxVal, maxElm)
 }
 
+func part2(coords []Coord, cols int, rows int) {
+	locationCountBelow10000 := 0
+	for x := 0; x < cols; x++ {
+		for y := 0; y < rows; y++ {
+			distSum := 0
+			for _, coord := range coords {
+				dist := manhattenDistance(x, y, coord.x, coord.y)
+				distSum += dist
+			}
+			if distSum < 10000 {
+				locationCountBelow10000++
+			}
+		}
+	}
+
+	fmt.Printf("Solution for part 2: %d locations\n", locationCountBelow10000)
+}
+
 func extractCoords(input string) Coord {
 	parts := strings.Split(input, ", ")
 	x, _ := strconv.Atoi(parts[0])
@@ -90,7 +114,8 @@ func manhattenDistance(x1 int, y1 int, x2 int, y2 int) int {
 	return diff
 }
 
-func generateGrid(coords []Coord, dimX int, dimY int) [][]uint8 {
+// generate a 2D slice (grid) with solution1 mapping (value = closest coord#)
+func generateGrid1(coords []Coord, dimX int, dimY int) [][]uint8 {
 	grid := init2dSlice(dimY, dimX)
 	for x := 0; x < dimX; x++ {
 		for y := 0; y < dimY; y++ {
