@@ -1,6 +1,5 @@
 
 = Advent of Code 2018
-:source-highlighter: prettify
 
 https://adventofcode.com[Advent of Code Website]
 
