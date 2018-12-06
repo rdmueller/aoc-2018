@@ -29,17 +29,39 @@ func main() {
 			gridYmax = coord.y
 		}
 	}
-	fmt.Println(coords)
-	//fmt.Printf("Solution for part 1: %d, (%s)\n", len(imploded), imploded)
+	// fmt.Println(coords)
 
-	grid := generateGrid(coords, gridYmax+1, gridXmax+1)
+	grid := generateGrid(coords, gridXmax+1, gridYmax+1)
 	
-	infiniteCoords := identifyInfiniteCoords(grid)
-	for i := range grid {
-		fmt.Println(grid[i])
-	}
+	infiniteElms:= identifyInfiniteElements(grid)
 
-	fmt.Println(infiniteCoords)
+	occurences := identifyGridOccupation(grid)
+
+	// find max occurence that is not an infinite group
+	maxVal := 0
+	maxElm := 0
+	for k, v := range occurences {
+		if v > maxVal {
+			isFinite := true
+			for _, inf := range infiniteElms {
+				if inf == k {
+					isFinite = false
+				}
+			}
+			if isFinite {
+				maxVal = v
+				maxElm = int(k)
+			}
+		}
+	}
+	// for i := range grid {
+	// 	fmt.Println(grid[i])
+	// }
+
+	// fmt.Println(infiniteElms)
+	// fmt.Println(occurences)
+
+	fmt.Printf("Solution for part 1: %d occurences of type #%d\n", maxVal, maxElm)
 }
 
 func extractCoords(input string) Coord {
@@ -98,17 +120,17 @@ func init2dSlice(d1 int, d2 int) [][]uint8 {
 }
 
 // returns unique elements in the 4 outer borders of the "grid"
-func identifyInfiniteCoords(grid [][]uint8) []uint8 {
+func identifyInfiniteElements(grid [][]uint8) []uint8 {
 	m := make(map[uint8]int)
-	cols := len(grid[0])-1
-	rows := len(grid)-1
+	cols := len(grid[0])
+	rows := len(grid)
 	// top row
 	for x := 0; x < cols; x++ {
 		m[grid[0][x]]++
 	}
 	// bottom row
 	for x := 0; x < cols; x++ {
-		m[grid[rows][x]]++
+		m[grid[rows-1][x]]++
 	}
 	// "right" column
 	for y := 0; y < rows; y++ {
@@ -116,7 +138,7 @@ func identifyInfiniteCoords(grid [][]uint8) []uint8 {
 	}
 	// "left" column
 	for y := 0; y < rows; y++ {
-		m[grid[y][cols]]++
+		m[grid[y][cols-1]]++
 	}
 
 	var s []uint8
@@ -125,4 +147,18 @@ func identifyInfiniteCoords(grid [][]uint8) []uint8 {
 	}
 
 	return s
+}
+
+// calculate a map of how often elements in the grid occur in total
+func identifyGridOccupation(grid [][]uint8) map[uint8]int {
+	m := make(map[uint8]int)
+	cols := len(grid[0])
+	rows := len(grid)
+
+	for x := 0; x < cols; x++ {
+		for y := 0; y < rows; y++ {
+			m[grid[y][x]]++
+		}
+	}
+	return m
 }
