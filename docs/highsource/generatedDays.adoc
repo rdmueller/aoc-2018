@@ -22,3 +22,11 @@ include::../../day04/java/highsource/README.adoc[leveloffset=+2]
 
 include::../../day05/java/highsource/README.adoc[leveloffset=+2]
 
+=== Day 06: sql
+
+include::../../day06/sql/highsource/README.adoc[leveloffset=+2]
+
+=== Day 06: java
+
+include::../../day06/java/highsource/README.adoc[leveloffset=+2]
+
