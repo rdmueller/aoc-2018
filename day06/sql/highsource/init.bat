@@ -1,0 +1,1 @@
+createdb -U postgres aoc_2018_day_06 
