@@ -5,6 +5,7 @@
 :robertwalter83: image:https://avatars2.githubusercontent.com/u/5462981?s=40[link=https://github.com/robertwalter83]
 :gysel: image:https://avatars0.githubusercontent.com/u/1065960?s=40[link=https://github.com/gysel]
 :tschulte: image:https://avatars1.githubusercontent.com/u/203910?s=40[link=https://github.com/tschulte]
+:olithissen: image:https://avatars1.githubusercontent.com/u/13063051?s=40[link=https://github.com/olithissen]
 
 == Today I learned..
 
@@ -15,7 +16,7 @@ A collection of everyones daily learnings
 [cols="1,10"]
 |====
 |{anoff}
-| .. that Go only has for loops
+a| * .. that Go only has for loops
 
 |{rdmueller}
 a| * Elm is a language which seems to compile / transpile to JavaScript
@@ -40,7 +41,7 @@ a| * How to read a file in JavaScript and split by line ending
 [cols="1,10"]
 |====
 |{anoff}
-| .. all my go projects need to go into `~/go/src`, which solves the dependency link problem for go
+a| * .. all my go projects need to go into `~/go/src`, which solves the dependency link problem for go
 
 |{rdmueller}
 a| * Documentation driven development: first write the docs, then do the coding.
@@ -67,7 +68,52 @@ a| * how classes work in Python
 * Asciidoctor lets you https://asciidoctor.org/docs/user-manual/#tag-filtering[exclude tags] in the `include` statement
 
 |{anoff}
-| ..https://gobyexample.com/structs[structs] and https://gobyexample.com/maps[maps] are super powerful 🤯
-| ..go is fast 💨
+a| * .. https://gobyexample.com/structs[structs] and https://gobyexample.com/maps[maps] are super powerful 🤯
+ * ..go is fast 💨
+
+|{olithissen}
+a| * Get the test input working first and assert that the results match the example
+ 
+
+|====
+
+=== Day 4
+
+[cols="1,10"]
+|====
+|{anoff}
+a| * being able to increment a non-existant integer value without checking for its existence first is super convenient
+* splitting strings is easier than regexing
+
+|{rdmueller}
+a| * how to create your own python modules
+
+|{gysel}
+a| * you can destructure in Kotlin from an Array, a List, or e Map.Entry (and probably more...)
+* Kotlin's `Iterable<T>.groupingBy` offers a nice way to group and then aggregate.
+* How to use `fold` with a stateful accumulator
+
+|{olithissen}
+a| * Sometimes you spend so much time on a solution that you are afraid to start over again
+* I started measuring function execution performance
+* Once you solved a task, add asserts for your correct answers so you don't mess up during optimization
+
+|====
+
+
+=== Day 5
+
+[cols="1,10"]
+|====
+|{anoff}
+a| * if you struggle with a problem, **take a break**, clear your head and get a new perspective
+* never assume any part of your code is too simple to have an error
+* pipes do not __only__ split on new lines - also if chunks are too large
+
+|{olithissen}
+a| * Wake up, read the task, get a rough plan while falling asleep again
+* Javascripts `Array.splice()` is blazingly fast and works in-place
+* Loops are costly. Knowing what you are doing can make your code faster (In this case: From 3,960 msec to 360 msec)
+* Get feedback! Hints from {anoff} and {rdmueller} helped cut another 60 msec
 
 |====

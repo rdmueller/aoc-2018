@@ -1,0 +1,37 @@
+== Solution written in Kotlin
+
+To build and run the tests:
+
+    ./gradlew build
+
+To run:
+
+   ./gradlew run
+
+== Solution
+
+The data is parsed from a text file in `src/main/resources`.
+
+My goal was to familiarize myself more with Kotlin's functional parts. I solved both
+parts without a single loop.
+
+=== Part 1
+
+After loading the data and parsing it into a list of `GuardNap` (with time of start and end),
+I group the naps by guard and then transform it into a List<SleepHabits>.
+
+The class `SleepHabits` has an instance per guard and contains the following information:
+
+[source,kotlin]
+----
+data class SleepHabits(val guard: Int,
+                       val minuteOfMostNaps: Int,
+                       val numberOfNapsAtMinuteOfMostNaps: Int,
+                       val totalSleepDuration: Int)
+----
+
+The solution of part 1 is the `SleepHabit` with the maximum of `totalSleepDuration`.
+
+=== Part 2
+
+The solution of part 2 is the `SleepHabit` with the maximum of `numberOfNapsAtMinuteOfMostNaps`.

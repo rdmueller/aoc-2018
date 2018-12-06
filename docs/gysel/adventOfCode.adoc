@@ -1,4 +1,4 @@
-== Advent of Code 2018
-
+= Advent of Code 2018
+:source-highlighter: prettify
 
 include::generatedDays.adoc[]

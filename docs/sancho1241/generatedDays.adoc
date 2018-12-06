@@ -2,3 +2,11 @@
 
 include::../../day01/python/sancho1241/README.adoc[leveloffset=+2]
 
+=== Day 02: python
+
+include::../../day02/python/sancho1241/README.adoc[leveloffset=+2]
+
+=== Day 03: python
+
+include::../../day03/python/sancho1241/README.adoc[leveloffset=+2]
+

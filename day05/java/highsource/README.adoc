@@ -1,0 +1,33 @@
+== Solution written in Java
+
+To build:
+
+    mvn clean install
+
+To run:
+
+   java -jar target/aoc-2018-day05.jar
+
+
+== Solution part 1
+
+Model the polymer as a string builder for easier character manipulation.
+
+Implement a `react` routine which simply loops over the string buffer and removes "adjacent units of the same type and opposite polarity"
+i.e. adjacent characters which only differ in case. The routine returns `true` iff something was removed.
+
+For full reaction, apply `react` routine as long as something gets removed.
+
+== Solution part 2
+
+Implement a `removeUnitType` routine which removes certain unit type from the polymer. I.e. deletes all characters same as the given character,
+no matter the case.
+
+Then the solution can be implemented with stream operation chaining:
+
+* Get characters of the string.
+* Convert them all to lowercase.
+* Get distinct characters.
+* Try removing each character.
+* Fully react the resulting polymer.
+* Look for the shortest result.

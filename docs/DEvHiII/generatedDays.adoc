@@ -2,3 +2,7 @@
 
 include::../../day01/java/DEvHiII/README.adoc[leveloffset=+2]
 
+=== Day 02: java
+
+include::../../day02/java/DEvHiII/README.adoc[leveloffset=+2]
+

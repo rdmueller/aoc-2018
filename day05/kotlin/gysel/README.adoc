@@ -1,0 +1,46 @@
+== Solution written in Kotlin
+
+To build and run the tests:
+
+    ./gradlew build
+
+To run:
+
+   ./gradlew run
+
+== Solution
+
+The data is parsed from a text file in `src/main/resources`.
+
+=== Part 1
+
+The first part is a little function to check whether two units (characters)
+ react. Luckily Kotlin provides an `ignoreCase` flag to the `Char.equals` method.
+
+[source,kotlin]
+----
+include::src/main/kotlin/Main.kt[tags=charactersAreReacting]
+----
+
+The next step is to fully react the polymer (String). An elegant way to
+do this, is to move the chars from one queue (`LinkedList`) to another one.
+The processing is finished as soon as the original queue is empty.
+
+[source,kotlin]
+----
+include::src/main/kotlin/Main.kt[tags=performReaction]
+----
+
+Unfortunately adding the chars into the queue and converting a queue back
+to a string is a bit fiddly, especially if you want to remain efficient.
+
+
+=== Part 2
+
+The solution to part two is to simply wrap the code from part 1 into a `('a'..'z')`
+combined with a `minBy()`.
+
+[source,kotlin]
+----
+include::src/main/kotlin/Main.kt[tags=partTwo]
+----
