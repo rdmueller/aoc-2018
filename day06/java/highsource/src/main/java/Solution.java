@@ -62,29 +62,46 @@ public class Solution {
 				}
 			}
 
-			final Set<Character> borderIds = board.stream().filter(Coord::hasId).filter(coord -> (
-			//
-			coord.getX() == bufferedMinX ||
-			//
-					coord.getY() == bufferedMinY ||
-					//
-					coord.getX() == bufferedMaxX ||
-					//
-					coord.getY() == bufferedMaxY)).map(Coord::getId).collect(Collectors.toSet());
+			// Part 1
+			{
 
-			Entry<Character, List<Coord>> largestAreaEntry = board.stream()
-					//
-					.filter(coord -> !borderIds.contains(coord.getId()))
-					//
-					.collect(groupingBy(Coord::getId))
-					//
-					.entrySet().stream()
-					//
-					.max(Entry.comparingByValue(Comparator.comparingInt(Collection::size)))
-					.orElseThrow(IllegalStateException::new);
+				final Set<Character> borderIds = board.stream().filter(Coord::hasId).filter(coord -> (
+				//
+				coord.getX() == bufferedMinX ||
+				//
+						coord.getY() == bufferedMinY ||
+						//
+						coord.getX() == bufferedMaxX ||
+						//
+						coord.getY() == bufferedMaxY)).map(Coord::getId).collect(Collectors.toSet());
+				borderIds.add((char) 0);
 
-			System.out.println("Largest area around: [" + largestAreaEntry.getKey() + "] has size ["
-					+ largestAreaEntry.getValue().size() + "].");
+				Entry<Character, List<Coord>> largestAreaEntry = board.stream()
+						//
+						.filter(coord -> !borderIds.contains(coord.getId()))
+						//
+						.collect(groupingBy(Coord::getId))
+						//
+						.entrySet().stream()
+						//
+						.max(Entry.comparingByValue(Comparator.comparingInt(Collection::size)))
+						.orElseThrow(IllegalStateException::new);
+
+				System.out.println("Largest area around: [" + largestAreaEntry.getKey() + "] has size ["
+						+ largestAreaEntry.getValue().size() + "].");
+			}
+
+			// Part 2
+			{
+
+				System.out.println("Size of the area of coordinates with total distances less than 10000  ["
+						+ board.stream().map(c -> {
+							final int totalDistance = coords.stream().mapToInt(c::manhattanDistance).sum();
+							return new CoordDistance(c.getId(), c.getX(), c.getY(), totalDistance);
+						}).filter(c -> c.getD() < 10000).count() + "].");
+
+			}
+
 		}
 	}
 }
