@@ -32,25 +32,12 @@ func main() {
 	fmt.Println(coords)
 	//fmt.Printf("Solution for part 1: %d, (%s)\n", len(imploded), imploded)
 
-	var grid [10][10]uint8
-	for x := 0; x <= gridXmax; x++ {
-		for y := 0; y <= gridYmax; y++ {
-			shortestDistance := 500
-			closestNeighbor := 0
-			for _, coord := range coords {
-				dist := manhattenDistance(coord.x, coord.y, x, y)
-				if dist < shortestDistance {
-					shortestDistance = dist
-					closestNeighbor = coord.id
-				} else if (dist == shortestDistance) {
-					closestNeighbor = 0 // 0 represents a tie (multiple closest neighbors)
-				}
-			}
-			grid[x][y] = uint8(closestNeighbor)
-		}
+	grid := generateGrid(coords, 10, 10)
+	
+	//infiniteCoords := identifyInfiniteCoords(grid, gridXmax, gridYmax)
+	for i := range grid {
+		fmt.Println(grid[i])
 	}
-
-	fmt.Println(grid)
 }
 
 func extractCoords(input string) Coord {
@@ -78,3 +65,37 @@ func manhattenDistance(x1 int, y1 int, x2 int, y2 int) int {
 
 	return diff
 }
+
+func generateGrid(coords []Coord, dimX int, dimY int) [][]uint8 {
+	grid := init2dSlice(dimY, dimX)
+	for x := 0; x < dimX; x++ {
+		for y := 0; y < dimY; y++ {
+			shortestDistance := 500
+			closestNeighbor := 0
+			for _, coord := range coords {
+				dist := manhattenDistance(coord.x, coord.y, x, y)
+				if dist < shortestDistance {
+					shortestDistance = dist
+					closestNeighbor = coord.id
+				} else if (dist == shortestDistance) {
+					closestNeighbor = 0 // 0 represents a tie (multiple closest neighbors)
+				}
+			}
+			grid[y][x] = uint8(closestNeighbor)
+		}
+	}
+	return grid
+}
+
+func init2dSlice(d1 int, d2 int) [][]uint8 {
+	s := make([][]uint8, d1)
+	for i := range s {
+			s[i] = make([]uint8, d2)
+	}
+	return s
+}
+/*
+func identifyInfiniteCoords(grid [][]int, gridXmax, gridYmax) []int {
+
+}
+*/
