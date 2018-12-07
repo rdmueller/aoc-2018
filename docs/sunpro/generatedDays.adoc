@@ -2,3 +2,7 @@
 
 include::../../day05/python/sunpro/README.adoc[leveloffset=+2]
 
+=== Day 06: python
+
+include::../../day06/python/sunpro/README.adoc[leveloffset=+2]
+
