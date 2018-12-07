@@ -1,0 +1,30 @@
+== Solution written in elm 0.19
+
+goto https://guide.elm-lang.org/install.html to find your elm installation guide
+
+to build:
+
+    elm make src/Main.elm
+
+This should produce index.html in the root directory, which you can open locally (also checked in for convenience).
+
+== Input
+
+The input is a string, which we convert to a list of strings (for each line one entry).
+
+=== Part 1
+
+These are the steps of my solution:
+
+  . sort the input strings by date
+  . parse the sorted input to map the guard ids to a 1D array of integers where we count for each minute whether or not a guard was asleep
+  . search for the guard id where the sum of the array with the sleep times per minute is highest
+  . find the index (i.e. the minute) with the highest number for the guard that sleeps the most
+  . multiply that index with the guard's id
+
+=== Part 2
+
+  . we use the same "guard id to sleep info" map as in part 1
+  . find the id of the guard that is most freuqently asleep at a certain minute => find the array that contains the highest number at any index
+  . multiply that index with the guard's id
+  
