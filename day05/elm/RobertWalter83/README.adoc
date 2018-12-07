@@ -1,0 +1,36 @@
+== Solution written in elm 0.19
+
+goto https://guide.elm-lang.org/install.html to find your elm installation guide
+
+to build:
+
+    elm make src/Main.elm
+
+This should produce index.html in the root directory, which you can open locally (also checked in for convenience).
+
+== Input
+
+The input is a string, which we convert to a character array.
+
+=== Part 1
+
+These are the steps of my solution:
+
+  . we recurse over the characters, remembering the last character and the current index
+  . if both characters (last and the one at the current index) are lower or upper case, we make a short cut since they cannot react
+  . if the characters have different casing we check if they match
+    .. if they match, we 
+      ... cut out both characters and produce a new polymer
+      ... recurse down with this new polymer, readjusted index (moved back two steps) and a new last character (the one at the new index)
+    .. if not, we recurse down with the current polymer, an increased index and a new last character
+
+=== Part 2
+
+My algorithm is really slow here, my solution brute force:
+
+  . find all characters that appear at least once in the input data (a set of characters to try and remove) => the candidates
+  . iterate over each candidate character 
+    .. remove it from the input data
+    .. use the reduction of part1 and measure the length of the resulting polymer
+  . get the minimum length for all candidates => solution
+
