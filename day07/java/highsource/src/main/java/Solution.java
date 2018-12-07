@@ -74,17 +74,12 @@ public class Solution {
 			Set<Character> done = new LinkedHashSet<>();
 			Set<Character> workInProgress = new LinkedHashSet<>();
 			int time = 0;
-//			Map<Integer, Integer> workerBusyUntil = IntStream.range(0, WORKERS_COUNT).boxed()
-//					.collect(toMap(w -> w, w -> -1, (u, v) -> {
-//						throw new IllegalStateException(String.format("Duplicate key %s", u));
-//					}, TreeMap::new));
 
 			Worker[] workers = new Worker[WORKERS_COUNT];
 			for (int workerIndex = 0; workerIndex < WORKERS_COUNT; workerIndex++) {
 				workers[workerIndex] = new Worker();
 			}
 
-//			for (int ix = 0; ix < 20; ix++)
 			do
 			{
 //				System.out.print(time);
@@ -128,6 +123,5 @@ public class Solution {
 			System.out.println("It takes [" + (time - 1) + "] to complete all the steps.");
 
 		}
-
 	}
 }
