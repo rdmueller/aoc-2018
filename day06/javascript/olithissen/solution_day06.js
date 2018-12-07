@@ -2,7 +2,10 @@
 
 const fs = require("fs");
 const assert = require("assert");
-const { performance, PerformanceObserver } = require("perf_hooks");
+const {
+  performance,
+  PerformanceObserver
+} = require("perf_hooks");
 
 const obs = new PerformanceObserver(list => {
   list.getEntries().forEach(item => console.log(item.name + ": " + item.duration));
@@ -17,20 +20,66 @@ function readInputAsArray(file) {
     return String.fromCharCode(c.charCodeAt(0) + 1);
   }
 
-  let char = "A";
-
+  let char = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let charPointer = 0;
   return fs
     .readFileSync(file, "utf8")
     .split("\r\n")
     .map(line => line.split(",").map(coord => parseInt(coord)))
     .map(line => {
-      char = nextChar(char);
-      return { id: char, coord: line };
+      return {
+        id: char.substr(++charPointer, 1),
+        coord: line
+      };
     });
 }
 
 function manhattanDistance(coord1, coord2) {
   return Math.abs(coord1[0] - coord2[0]) + Math.abs(coord1[1] - coord2[1]);
+}
+
+function getSizes(claims) {
+  return claims
+    .filter(coord => coord !== "disputed")
+    .reduce((acc, cur) => {
+      if (!acc[cur.id]) {
+        acc[cur.id] = 1;
+      } else {
+        acc[cur.id]++;
+      }
+      return acc;
+    }, {});
+}
+
+function getClaimsWithinBounds(minX, maxX, minY, maxY, data) {
+  const claims = [];
+  for (let x = minX; x <= maxX; x++) {
+    for (let y = minY; y <= maxY; y++) {
+      const closest = getClosestToCoordinate(x, y, data);
+      claims.push(closest);
+    }
+  }
+  return claims;
+}
+
+function getClosestToCoordinate(x, y, data) {
+  const distances = getDistances(x, y, data);
+  const indexOfShortest = Math.min(...Object.keys(distances));
+  const closest = distances[indexOfShortest].length > 1 ? "disputed" : distances[indexOfShortest][0];
+  return closest;
+}
+
+function getDistances(x, y, data) {
+  const distances = {};
+  const currentCoord = [x, y];
+  for (coord of data) {
+    const distance = manhattanDistance(currentCoord, coord.coord);
+    if (!distances[distance]) {
+      distances[distance] = [];
+    }
+    distances[distance].push(coord);
+  }
+  return distances;
 }
 
 /**
@@ -44,72 +93,17 @@ function part1(data) {
   const maxX = Math.max(...data.map(coord => coord.coord[0]));
   const maxY = Math.max(...data.map(coord => coord.coord[1]));
 
-  const infinites = data.filter(
-    coord =>
-      coord.coord[0] == minX ||
-      coord.coord[0] == maxX ||
-      coord.coord[1] == minY ||
-      coord.coord[1] == maxY
-  );
+  const claims = getClaimsWithinBounds(minX, maxX, minY, maxY, data);
+  const claimsExtent = getClaimsWithinBounds(minX - 1, maxX + 1, minY - 1, maxY + 1, data);
 
-  const claims = [];
-  const owners = {};
-  for (let x = minX; x <= maxX; x++) {
-    for (let y = minY; y <= maxY; y++) {
-      const distances = {};
-      const currentCoord = [x, y];
-      for (coord of data) {
-        if (!distances[manhattanDistance(currentCoord, coord.coord)]) {
-          distances[manhattanDistance(currentCoord, coord.coord)] = [];
-        }
-        distances[manhattanDistance(currentCoord, coord.coord)].push(coord);
-      }
+  const sizes = getSizes(claims);
+  const sizesExtent = getSizes(claimsExtent);
 
-      const indexOfShortest = Math.min(...Object.keys(distances));
+  const finites = Object.keys(sizes).filter(item => {
+    return sizes[item] === sizesExtent[item];
+  });
 
-      owners[currentCoord] =
-        distances[indexOfShortest].length > 1 ? { id: "." } : distances[indexOfShortest][0];
-
-      claims.push(
-        distances[indexOfShortest].length > 1 ? "disputed" : distances[indexOfShortest][0]
-      );
-    }
-  }
-
-  visualize(owners);
-
-  const finites = claims
-    .filter(coord => coord !== "disputed")
-    .filter(coord => infinites.indexOf(coord) === -1)
-    .reduce((acc, cur) => {
-      if (!acc[cur.id]) {
-        acc[cur.id] = 1;
-      } else {
-        acc[cur.id]++;
-      }
-      return acc;
-    }, {});
-
-  console.log(JSON.stringify(finites));
-
-  return Math.max(...Object.values(finites));
-}
-
-function visualize(grid) {
-  const data = Object.keys(grid).map(item => item.split(","));
-  const minX = Math.min(...data.map(coord => coord[0]));
-  const minY = Math.min(...data.map(coord => coord[1]));
-  const maxX = Math.max(...data.map(coord => coord[0]));
-  const maxY = Math.max(...data.map(coord => coord[1]));
-
-  let string = "";
-  for (let y = minY; y <= maxY; y++) {
-    for (let x = minX; x <= maxX; x++) {
-      string += grid[[x, y]].id;
-    }
-    string += "\r\n";
-  }
-  fs.writeFileSync("out.txt", string);
+  return Math.max(...finites.map(item => sizes[item]));
 }
 
 /**
@@ -117,8 +111,25 @@ function visualize(grid) {
  *
  * @param  {} data Input data as array
  */
-function part2(data) {
-  return 0;
+function part2(data, maxDistance) {
+  const minX = Math.min(...data.map(coord => coord.coord[0]));
+  const minY = Math.min(...data.map(coord => coord.coord[1]));
+  const maxX = Math.max(...data.map(coord => coord.coord[0]));
+  const maxY = Math.max(...data.map(coord => coord.coord[1]));
+
+  let results = [];
+  for (let x = minX; x <= maxX; x++) {
+    for (let y = minY; y <= maxY; y++) {
+      let distances = getDistances(x, y, data);
+      const absDistance = Object.keys(distances).map(dist => dist * distances[dist].length).reduce((a,c) => a += c);
+      results.push({pos: [x, y], distance: absDistance});
+    }
+  }
+
+  const filtered = results.filter(item => item.distance < maxDistance);
+
+  console.log(filtered.length);
+  return filtered.length;
 }
 
 /**
@@ -127,24 +138,25 @@ function part2(data) {
 
 const testdataPart01 = readInputAsArray("testdata.txt");
 const realData01 = readInputAsArray("input.txt");
+
 // Part 1
 const testResult01 = part1(testdataPart01);
 console.log("Test result: " + testResult01);
 assert(testResult01 == 17);
 
-obs.observe({ entryTypes: ["function"] });
+obs.observe({entryTypes: ["function"]});
 const timerify_part1 = performance.timerify(part1);
 const realResult01 = timerify_part1(realData01);
-// assert(realResult01 == 10450, "Good job, you broke a working solution ... ");
+assert(realResult01 == 3251, "Good job, you broke a working solution ... ");
 console.log("RESULT: " + realResult01);
 
 // Part 2
-// const testResult02 = part2(testdataPart01);
-// console.log("Test result: " + testResult02);
-// assert(testResult02 == 4);
+const testResult02 = part2(testdataPart01, 32);
+console.log("Test result: " + testResult02);
+assert(testResult02 == 16);
 
-// obs.observe({ entryTypes: ["function"] });
-// const timerify_part2 = performance.timerify(part2);
-// const realResult02 = timerify_part2(realData01);
-// assert(realResult02 == 4624, "Good job, you broke a working solution ... ");
-// console.log("RESULT: " + realResult02);
+obs.observe({ entryTypes: ["function"] });
+const timerify_part2 = performance.timerify(part2);
+const realResult02 = timerify_part2(realData01, 10000);
+assert(realResult02 == 47841, "Good job, you broke a working solution ... ");
+console.log("RESULT: " + realResult02);
