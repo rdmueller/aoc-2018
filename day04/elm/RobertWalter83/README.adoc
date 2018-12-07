@@ -10,7 +10,7 @@ This should produce index.html in the root directory, which you can open locally
 
 == Input
 
-The input is a string, which we concert to a list of strings (for each line one entry).
+The input is a string, which we convert to a list of strings (for each line one entry).
 
 === Part 1
 
