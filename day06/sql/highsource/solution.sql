@@ -129,3 +129,18 @@ GROUP BY
 ORDER BY
 	area DESC
 LIMIT 1;
+
+CREATE OR REPLACE VIEW board_with_total_distance AS
+SELECT
+	board_x, board_y, sum(distance) as total_distance
+FROM
+	board_with_distance_per_coord
+GROUP BY
+	board_x, board_y;
+
+SELECT
+	COUNT(*)
+FROM
+	board_with_total_distance
+WHERE
+	total_distance < 10000;
