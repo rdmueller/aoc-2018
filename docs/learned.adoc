@@ -22,7 +22,7 @@ a| * .. that Go only has for loops
 a| * Elm is a language which seems to compile / transpile to JavaScript
 
 |{robertwalter83}
-| * I learned how to use List.foldl/foldr in elm
+a| * I learned how to use List.foldl/foldr in elm
 
 |{gysel}
 a| * How to create an infinite, repeating Sequence in Kotlin.
@@ -51,7 +51,7 @@ Works great on top of test driven development!
 * All your tests might run fine but the solution is still wrong
 
 |{robertwalter83}
-| * that it is hard to drop the imperative mindset if you are used to it too much
+a| * that it is hard to drop the imperative mindset if you are used to it too much
 
 |{gysel}
 a| * The zip operator in Kotlin combines two Lists into a List<Pair>>
@@ -75,7 +75,7 @@ a| * .. https://gobyexample.com/structs[structs] and https://gobyexample.com/map
 a| * Get the test input working first and assert that the results match the example
 
 |{robertwalter83}
-| * that parsing the input data is sometimes the most challenging part of these early tasks
+a| * that parsing the input data is sometimes the most challenging part of these early tasks
  
 
 |====
@@ -102,8 +102,8 @@ a| * Sometimes you spend so much time on a solution that you are afraid to start
 * Once you solved a task, add asserts for your correct answers so you don't mess up during optimization
 
 |{robertwalter83}
-| * that the elm compiler is awesome
-| * how to effectivley use elm's REPL
+a| * that the elm compiler is awesome
+* how to effectivley use elm's REPL
 
 |====
 
