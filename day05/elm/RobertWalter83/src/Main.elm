@@ -17,8 +17,8 @@ init : Model
 init =
   let
     -- part1
-    polymer = String.toList inputData |> Array.fromList
-    indiciesReacted = reduce3 polymer Set.empty -1 0 ' '
+    polymer = String.toList inputData |> Array.fromList |> Array.map (\c -> Char.toCode c)
+    indiciesReacted = reduce3 polymer Set.empty -1 0 -1
 
     -- part2
     candidates = findAllCandidateUnits polymer
@@ -26,54 +26,48 @@ init =
       in
     { solution = ((Array.length polymer - Set.size indiciesReacted), (List.minimum reductionLengths |> withDefault -1))}
 
-findAllCandidateUnits : Array Char -> Set Char
+findAllCandidateUnits : Array Int -> Set Int
 findAllCandidateUnits polymer =
-  Array.foldl (\char set -> Set.insert (Char.toLower char) set) Set.empty polymer
+  Array.foldl (\code set -> Set.insert (if code < 91 then (code+32) else code) set) Set.empty polymer
 
-checkReductionWithout : Char -> Array Char -> Int
-checkReductionWithout char polymer =
+checkReductionWithout : Int -> Array Int -> Int
+checkReductionWithout code polymer =
   let
-    polymerWithoutChar = Array.filter (\c -> (Char.toLower c) /= char) polymer
-    setOfIndiciesReacted = reduce3 polymerWithoutChar Set.empty -1 0 ' ' 
+    polymerWithoutChar = Array.filter (\c -> c /= code && c /= (code - 32)) polymer
+    setOfIndiciesReacted = reduce3 polymerWithoutChar Set.empty -1 0 -1 
   in
     Array.length polymerWithoutChar - (Set.size setOfIndiciesReacted)
 
 -- fastest solution, not rebuilding the polymer, but remembering indicies
-reduce3 : Array Char -> Set Int -> Int -> Int -> Char -> Set Int
-reduce3 polymer indiciesReacted indexLast index charLast =
+reduce3 : Array Int -> Set Int -> Int -> Int -> Int -> Set Int
+reduce3 polymer indiciesReacted indexLast index codeLast =
   let
-    mbCharCur = Array.get index polymer   
+    mbCodeCur = Array.get index polymer   
   in
-    case mbCharCur of
-      Just charCur ->
+    case mbCodeCur of
+      Just codeCur ->
         let
-          bothLowerOrUpper = Char.isLower charLast && Char.isLower charCur || Char.isUpper charLast && Char.isUpper charCur
+          match = abs (codeCur - codeLast) == 32
         in
-          if bothLowerOrUpper then
-            reduce3 polymer indiciesReacted index (index+1) charCur
-          else
+          if match then
             let
-              match = Char.toLower charLast == Char.toLower charCur
+              indexNew = adjustIndex (indexLast-1) indiciesReacted
+              mbCodeNew = Array.get indexNew polymer
             in
-              if match then
-                let
-                  indexNew = adjustIndex (indexLast-1) indiciesReacted
-                  mbCharNew = Array.get indexNew polymer
-                in
-                  case mbCharNew of
-                    Just charNew ->
-                      let
-                        indiciesReactedNew = 
-                          Set.insert indexLast indiciesReacted |>
-                            Set.insert index
-                      in
-                        reduce3 polymer indiciesReactedNew indexNew (index+1) charNew      
-                
-                    Maybe.Nothing ->
-                      indiciesReacted
-                  
-              else
-                reduce3 polymer indiciesReacted index (index+1) charCur 
+              case mbCodeNew of
+                Just codeNew ->
+                  let
+                    indiciesReactedNew = 
+                      Set.insert indexLast indiciesReacted |>
+                        Set.insert index
+                  in
+                    reduce3 polymer indiciesReactedNew indexNew (index+1) codeNew      
+            
+                Maybe.Nothing ->
+                  indiciesReacted
+              
+          else
+            reduce3 polymer indiciesReacted index (index+1) codeCur
     
       Maybe.Nothing ->
         indiciesReacted
@@ -85,73 +79,7 @@ adjustIndex index prohibited =
   else
     index
 
--- a solution for using foldl on the caller side: very slow
-reduce2 : Char -> (Int, Char, Array Char) -> (Int, Char, Array Char)
-reduce2 charCur (index, charLast, polymer) =
-  let
-    bothLowerOrUpper = 
-      Char.isLower charLast && Char.isLower charCur 
-      || Char.isUpper charLast && Char.isUpper charCur
-  in
-    if bothLowerOrUpper then
-      ((index+1), charCur, polymer)
-    else
-      let
-        match = Char.toLower charLast == Char.toLower charCur
-      in
-        if match then
-          let
-            frontNew = Array.slice 0 (index-1) polymer
-            endNew = Array.slice (index+1) (Array.length polymer) polymer 
-            mbCharNew = Array.get (index-2) polymer
-          in
-            case mbCharNew of
-              Just charNew ->
-                ((index-1), charNew, (Array.append frontNew endNew))
-          
-              Maybe.Nothing ->
-                ((index+1), charCur, polymer)
-            
-        else
-          ((index+1), charCur, polymer) 
 
--- a recursive solution, but also very slow to to rebuilding the polymer
-reduce : Array Char -> Int -> Char -> Array Char
-reduce polymer index charLast =
-  let
-    mbCharCur = Array.get index polymer   
-  in
-    case mbCharCur of
-      Just charCur ->
-        let
-          bothLowerOrUpper = Char.isLower charLast && Char.isLower charCur || Char.isUpper charLast && Char.isUpper charCur
-        in
-          if bothLowerOrUpper then
-            reduce polymer (index+1) charCur
-          else
-            let
-              match = Char.toLower charLast == Char.toLower charCur
-            in
-              if match then
-                let
-                  frontNew = Array.slice 0 (index-1) polymer
-                  endNew = Array.slice (index+1) (Array.length polymer) polymer 
-                  mbCharNew = Array.get (index-2) polymer
-                in
-                  case mbCharNew of
-                    Just charNew ->
-                      reduce (Array.append frontNew endNew) (index-1) charNew      
-                
-                    Maybe.Nothing ->
-                      polymer
-                  
-              else
-                reduce polymer (index+1) charCur 
-    
-      Maybe.Nothing ->
-        polymer
-            
-  
   
 
 -- UPDATE (no op)
