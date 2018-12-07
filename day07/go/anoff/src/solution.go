@@ -16,7 +16,7 @@ func main() {
 	nodes := getNodes(input)
 	graph := graf.BuildGraph(edges, nodes)
 
-	//part1(graph)
+	part1(graph)
 	for k, v := range graph.Vertices {
 		fmt.Println(k, "=>", v)
 	}
