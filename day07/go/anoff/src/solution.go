@@ -17,7 +17,10 @@ func main() {
 	graph := graf.BuildGraph(edges, nodes)
 
 	//part1(graph)
-	part2(graph, 2)
+	for k, v := range graph.Vertices {
+		fmt.Println(k, "=>", v)
+	}
+	part2(graph, 5)
 }
 
 func getEdges(input []string) []graf.Edge {
@@ -79,6 +82,7 @@ func part2(graph graf.Graph, workerCount int) []graf.Node {
 	var queueIds []string
 	knownNodes := make(map[graf.Node]bool) // nodes that are in the queue
 	startNodes := graf.FindStartNodes(graph)
+	fmt.Println("starters", startNodes)
 	queueIds = graf.Nodes2Strings(startNodes)
 	for _, n := range startNodes {
 		knownNodes[n] = true
@@ -106,22 +110,24 @@ func part2(graph graf.Graph, workerCount int) []graf.Node {
 				break
 			}
 		}
-		sort.Strings(queueIds)
 
 		for i, w := range workers {
-			if w.finishedAt <= time { // can be re-assigned
-				if w.finishedAt == time && w.item.Id != "."{ // has been reached now -> traversed
-					traversed = append(traversed, w.item)
-					childNodes := graf.GetChildNodes(graph, w.item)
-					for _, n := range childNodes {
-						if _, exists := knownNodes[n]; !exists {
-							queueIds = append(queueIds, n.Id)
-							knownNodes[n] = true
-						}
+			if w.finishedAt == time && w.item.Id != "."{ // has been reached now -> traversed
+				traversed = append(traversed, w.item)
+				childNodes := graf.GetChildNodes(graph, w.item)
+				for _, n := range childNodes {
+					if _, exists := knownNodes[n]; !exists {
+						queueIds = append(queueIds, n.Id)
+						knownNodes[n] = true
 					}
-					workers[i].item = graf.Node{"."}
 				}
+				workers[i].item = graf.Node{"."}
+			}
+		}
+		for i, w := range workers {
+			if w.finishedAt <= time { // can be re-assigned
 				// get next reachable node
+				sort.Strings(queueIds)
 				var nextNode graf.Node
 				for i := 0; i < len(queueIds); i++ {
 					node := graf.Node{queueIds[i]}
@@ -151,5 +157,5 @@ func part2(graph graf.Graph, workerCount int) []graf.Node {
 }
 
 func getTaskDuration(id string) int {
-	return int(id[0]) - 64 + 0
+	return int(id[0]) - 64 + 60
 }
