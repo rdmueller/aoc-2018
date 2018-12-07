@@ -15,7 +15,7 @@ public class Solution {
 
 	public static void main(String[] args) throws IOException {
 
-		final Map<Character, Collection<Character>> graph = new TreeMap<>();
+		final Map<Character, Collection<Character>> outgoingEdges = new TreeMap<>();
 
 		try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(Solution.class.getResourceAsStream("test1.txt")))) {
@@ -27,10 +27,20 @@ public class Solution {
 					Character from = matcher.group(1).charAt(0);
 					Character to = matcher.group(2).charAt(0);
 					System.out.println(from + "->" + to);
-					graph.computeIfAbsent(from, c -> new TreeSet<>()).add(to);
+					outgoingEdges.computeIfAbsent(from, c -> new TreeSet<>()).add(to);
 				}
 			}
 		}
-		System.out.println(graph);
+		System.out.println(outgoingEdges);
+
+		final Map<Character, Collection<Character>> incomingEdges = new TreeMap<>();
+		outgoingEdges.entrySet().stream().forEach(entry -> {
+
+			final Character from = entry.getKey();
+			entry.getValue().stream().forEach(to -> {
+				incomingEdges.computeIfAbsent(to, c -> new TreeSet<>()).add(from);
+			});
+		});
+		System.out.println(incomingEdges);
 	}
 }
