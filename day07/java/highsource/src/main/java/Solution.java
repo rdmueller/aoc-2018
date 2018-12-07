@@ -1,7 +1,3 @@
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toMap;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,10 +11,14 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static java.util.stream.Collectors.*;
+import static java.util.function.Function.*;
+
 public class Solution {
 
 	private static final String REGEX = "^Step (.) must be finished before step (.) can begin.$";
 	private static final Pattern PATTERN = Pattern.compile(REGEX);
+	private static final int WORKERS_COUNT = 5;
 
 	public static void main(String[] args) throws IOException {
 
@@ -68,5 +68,66 @@ public class Solution {
 			}
 			System.out.println("Order of steps: " + finishedSteps.stream().map(Object::toString).collect(joining()));
 		}
+
+		// Part 2
+		{
+			Set<Character> done = new LinkedHashSet<>();
+			Set<Character> workInProgress = new LinkedHashSet<>();
+			int time = 0;
+//			Map<Integer, Integer> workerBusyUntil = IntStream.range(0, WORKERS_COUNT).boxed()
+//					.collect(toMap(w -> w, w -> -1, (u, v) -> {
+//						throw new IllegalStateException(String.format("Duplicate key %s", u));
+//					}, TreeMap::new));
+
+			Worker[] workers = new Worker[WORKERS_COUNT];
+			for (int workerIndex = 0; workerIndex < WORKERS_COUNT; workerIndex++) {
+				workers[workerIndex] = new Worker();
+			}
+
+//			for (int ix = 0; ix < 20; ix++)
+			do
+			{
+//				System.out.print(time);
+				
+				for (int workerIndex = 0; workerIndex < WORKERS_COUNT; workerIndex++) {
+					Worker worker = workers[workerIndex];
+					
+					Character processedStep = worker.tick(time);
+					
+					if (processedStep != null) {
+						done.add(processedStep);
+					}
+				}
+
+				TreeSet<Character> nextSteps = incomingEdges.entrySet().stream()
+						// Steps in progress does not contain "to"
+						.filter(toFrom -> !workInProgress.contains(toFrom.getKey()))
+						// Finished steps does not contain "to"
+						.filter(toFrom -> !done.contains(toFrom.getKey()))
+						// Finished steps do contain all "from"
+						.filter(toFrom -> done.containsAll(toFrom.getValue())).map(Entry::getKey)
+						.collect(toCollection(TreeSet::new));
+
+				for (int workerIndex = 0; workerIndex < WORKERS_COUNT; workerIndex++) {
+					Worker worker = workers[workerIndex];
+					if (!nextSteps.isEmpty()) {
+						if (worker.isAvailable()) {
+							final Character nextStep = nextSteps.pollFirst();
+							worker.startProcessingStep(nextStep, time);
+							workInProgress.add(nextStep);
+						}
+					}
+//					System.out.print("\t");
+//					System.out.print(worker.getProcessingStep());
+				}
+
+//				System.out.println();
+				time++;
+			}
+			while (done.size() != incomingEdges.size());
+			System.out.println("It takes [" + (time - 1) + "] to complete all the steps.");
+
+		}
+
 	}
 }
