@@ -15,14 +15,12 @@ The input is a string, which we convert to a character array.
 === Part 1
 
 These are the steps of my solution:
+The idea is to 
 
-  . we recurse over the characters, remembering the last character and the current index
-  . if both characters (last and the one at the current index) are lower or upper case, we make a short cut since they cannot react
-  . if the characters have different casing we check if they match
-    .. if they match, we 
-      ... cut out both characters and produce a new polymer
-      ... recurse down with this new polymer, readjusted index (moved back two steps) and a new last character (the one at the new index)
-    .. if not, we recurse down with the current polymer, an increased index and a new last character
+  . iterate over the polymer with two pointers: first one walks from character to character, second one points at last entry not yet folded
+  . store the indicies of the characters that reacted (making a black list of characters)
+  . we use this black list in each run to determine what the last character was that hasn't reacted yet  
+  . in the end, we can subtract the number of reacted indicies from the original polymer length
 
 === Part 2
 
