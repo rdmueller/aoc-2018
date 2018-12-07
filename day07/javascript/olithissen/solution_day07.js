@@ -23,17 +23,37 @@ function readInputAsArray(file) {
     });
 }
 
+const reduceTuples = (a, c) => {
+  a.push(c[0], c[1]);
+  return a;
+};
+const makeUnique = (a, c) => {
+  if (a.indexOf(c) === -1) {
+    a.push(c);
+  }
+  return a;
+};
 /**
  * Solution for part 1
  *
  * @param  {} data Input data as array
  */
 function part1(data) {
-  let result = data.reduce((a, c) => {
-    a.push(c[0], c[1]);
-    return a;
-  }, []);
-  console.log(result);
+  let nodes = data
+    .reduce(reduceTuples, [])
+    .reduce(makeUnique, [])
+    .map(item => {
+      const prev = data.filter(t => t[1] === item).map(t => t[0]);
+      const next = data.filter(t => t[0] === item).map(t => t[1]);
+      return { 
+        id: item, 
+        locked: true,
+        next: next,
+        prev: prev
+      };
+    });
+
+  console.log(nodes);
 }
 
 /**
