@@ -3,6 +3,7 @@
 const assert = require("assert");
 const parseLine = require("./part1.js").parseLine;
 const intersection = require("./part1.js").intersection;
+const intersections = require("./part1.js").intersections;
 const intersectingInches = require("./part1.js").intersectingInches;
 
 const rectangle = parseLine("#123 @ 3,2: 5x4");
@@ -52,28 +53,35 @@ const rect5 = parseLine(line5);
 assert.deepEqual(intersection(rect1, rect3), null);
 assert.deepEqual(intersection(rect2, rect3), null);
 assert.deepEqual(intersection(rect1, rect2), {
+  ids: [1, 2],
   x: 3,
   y: 3,
   width: 2,
   height: 2
 });
 assert.deepEqual(intersection(rect1, rect4), {
+  ids: [1, 4],
   x: 2,
   y: 3,
   width: 3,
   height: 3
 });
 assert.deepEqual(intersection(rect2, rect4), {
+  ids: [2, 4],
   x: 3,
   y: 2,
   width: 3,
   height: 3
 });
 assert.deepEqual(intersection(rect3, rect4), {
+  ids: [3, 4],
   x: 5,
   y: 5,
   width: 1,
   height: 1
 });
 
-assert.equal(intersectingInches([rect1, rect2, rect3, rect4, rect5]), 15);
+assert.equal(
+  intersectingInches(intersections([rect1, rect2, rect3, rect4, rect5])),
+  15
+);

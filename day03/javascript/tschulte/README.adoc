@@ -25,3 +25,11 @@ and lastly the intersecting inches are counted
 include::part1.js[tags=intersectingInches]
 ....
 
+== Second Star
+
+Now the second star was just
+
+[source, js]
+....
+include::solution.js[tags=part2]
+....

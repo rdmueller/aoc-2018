@@ -21,6 +21,7 @@ exports.intersection = function(rect1, rect2) {
   const height = Math.min(rect1.y + rect1.height, rect2.y + rect2.height) - y;
   if (width > 0 && height > 0) {
     return {
+      ids: [rect1.id, rect2.id],
       x: x,
       y: y,
       width: width,
@@ -47,8 +48,7 @@ exports.intersections = function(rects) {
 // end::intersections[]
 
 // tag::intersectingInches[]
-exports.intersectingInches = function(rects) {
-  const intersections = exports.intersections(rects);
+exports.intersectingInches = function(intersections) {
   const map = {};
   let intersectingInches = 0;
   intersections.forEach(rect => {
