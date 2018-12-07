@@ -1,4 +1,4 @@
-package main
+package helpers
 
 import (
 	"bufio"
@@ -24,7 +24,7 @@ func getPipeReader() *bufio.Reader {
 }
 
 // parse all input lines into string slice
-func getInput(sorted bool) []string {
+func GetInput(sorted bool) []string {
 	reader := getPipeReader()
 	var input []string
 
