@@ -1,0 +1,108 @@
+== Part 1
+
+For this solution I created a surprising amount of helper functions 🤔
+
+. `Coord` struct that has the properties _id_ (line number in input file), _x_ and _y_ positions
+. `init2dSlice(d1 int, d2 int) [][]int` to create a 2D slice of `uint8` values with a fixed size (to prevent reallocation of memory)
+. `generateGrid1(coords []Coord, dimX int, dimY int) [][]uint8` generate a 2D grid and populate it with the `Coord.id` of the closest coordinate according to manhatten distance, this generates a grid similar to the example but with numbers instead of letters
+. `identifyInfiniteElements(grid [][]uint8) []uint8` takes a grid and returns a slice of integers representing all the _infinite IDs_ that occupy the outer border of the grid
+. `identifyGridOccupation(grid [][]uint8) map[uint8]int` loop over the grid and return a map of `(k)Coord.id=(v)count within grid`
+. `manhattenDistance(x1 int, y1 int, x2 int, y2 int) int` calculate the manhatten distance between two points
+. `extractCoords(input string) Coord` create a `Coord` struct for a single entry from the input
+
+Using the above functions solution for part1 is the following
+
+[plantuml, day06-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:init coords slice;
+:init helpers for max X,Y;
+while (for each input line)
+  :_extractCoords_ and append to slice;
+  :check if new X, Y max is reached;
+endwhile
+:generateGrid1 with max X,Y dimension
+and populating with all coords;
+:identifyInfiniteElements;
+:identifyGridOccupation;
+:init max occurence helpers;
+while (for each occuring coord)
+  if (current coord has
+  new max occurence) then (y)
+    if (current coord
+    is finite (not touching border)) then (y)
+      :update max occurence;
+    endif
+  endif
+endwhile
+:print max occuring count + coord.ID;
+end
+@enduml
+....
+
+== Part 2
+
+Again the second part seemed to be easier than the first even though it has little reuse of the first solution.
+
+The goal is to find the count of all elements that have a combined manhatten distance `< 10,000` to all coordinates.
+
+
+[plantuml, day06-part2, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:init coords slice;
+:init helpers for max X,Y;
+while (for each input line)
+  :_extractCoords_ and append to slice;
+  :check if new X, Y max is reached;
+endwhile
+:init elementCounter with 0;
+while (for each x in grid)
+  while (for each y in grid)
+    :init distanceSum with 0;
+    while (for each coordinate)
+      :calculate manhatten distance
+      (x,y) to (coord.x, coord.y);
+      :add distance to sum;
+    endwhile
+    if (sum < 10000) then (y)
+      :inc elementCounter by 1;
+    endif
+  endwhile
+endwhile
+:print count of elements
+with distance < 10000;
+end
+@enduml
+....
+
+== Go solution
+
+Install dependencies using `GOPATH=$PWD go get -v "github.com/stretchr/testify/assert"`
+
+Run tests with `GOPATH=$PWD go test ./src`
+
+Solution can be run with `cat input.txt | GOPATH=$PWD go run src/solution.go`
+
+=== My graph library
+
+
+[source, go]
+....
+include::./src/graf/main.go[]
+....
+
+=== Solution
+
+[source, go]
+....
+include::./src/solution.go[]
+....
