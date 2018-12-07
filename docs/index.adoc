@@ -1,6 +1,5 @@
 
 = Advent of Code 2018
-:source-highlighter: prettify
 
 https://adventofcode.com[Advent of Code Website]
 
@@ -11,7 +10,7 @@ This repository contains solutions for the problems in several languages.
 
 == Solutions
 
-:anof: Andreas Offenhaeuser
+:anoff: Andreas Offenhaeuser
 :rdmueller: Ralf D. Müller
 :gysel: Michi Gysel
 :tschulte: Tobias Schulte

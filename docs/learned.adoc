@@ -117,3 +117,14 @@ a| * Wake up, read the task, get a rough plan while falling asleep again
 * Get feedback! Hints from {anoff} and {rdmueller} helped cut another 60 msec
 
 |====
+
+=== Day 6
+
+[cols="1,10"]
+|====
+|{anoff}
+a| * unit tests in Go feel really verbose to write (no assertions only failure checking)
+* writing modular/cleaner code seems to result in more loops than necessary
+* (again) structs and maps are profit!
+
+|====
