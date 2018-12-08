@@ -2,7 +2,10 @@
 
 const fs = require("fs");
 const assert = require("assert");
-const { performance, PerformanceObserver } = require("perf_hooks");
+const {
+  performance,
+  PerformanceObserver
+} = require("perf_hooks");
 
 const obs = new PerformanceObserver(list => {
   list.getEntries().forEach(item => console.log(item.name + ": " + item.duration));
@@ -16,7 +19,7 @@ const obs = new PerformanceObserver(list => {
 function readInputAsArray(file) {
   return fs
     .readFileSync(file, "utf8")
-    .split("\r\n")
+    .split("\n")
     .map(line => {
       let items = line.split(/Step ([A-Z]) must be finished before step ([A-Z]) can begin\./);
       return [items[1], items[2]];
@@ -33,27 +36,55 @@ const makeUnique = (a, c) => {
   }
   return a;
 };
+
+
+const flatten = (a, c) => {
+  a.push(...c);
+  return a;
+};
 /**
  * Solution for part 1
  *
  * @param  {} data Input data as array
  */
 function part1(data) {
+  const mapNodeInfo = item => {
+    const prev = data.filter(t => t[1] === item).map(t => t[0]);
+    const next = data.filter(t => t[0] === item).map(t => t[1]);
+    return {
+      id: item,
+      processed: false,
+      locked: prev.length > 0 ? true : false,
+      next: next,
+      prev: prev
+    };
+  };
+
   let nodes = data
     .reduce(reduceTuples, [])
     .reduce(makeUnique, [])
-    .map(item => {
-      const prev = data.filter(t => t[1] === item).map(t => t[0]);
-      const next = data.filter(t => t[0] === item).map(t => t[1]);
-      return { 
-        id: item, 
-        locked: true,
-        next: next,
-        prev: prev
-      };
-    });
+    .map(mapNodeInfo);
 
-  console.log(nodes);
+  const workNodes = nodes.slice(0);
+  let chain = [];
+
+  while (!workNodes.every(item => item.processed)) {
+    const unlocked = workNodes.filter(item => !item.locked && !item.processed).sort((a, b) => a.id.charCodeAt(0) - b.id.charCodeAt(0));
+    const node = unlocked[0];
+    chain.push(node);
+    node.processed = true;
+    workNodes.filter(item => {
+      let predecessors = item.prev.map(id => workNodes.filter(n1 => n1.id === id)).reduce(flatten, []);
+      let allPredecessorsProcessed = predecessors.every(pd => pd.processed);
+      return allPredecessorsProcessed;
+    }).forEach(item => item.locked = false);
+  }
+
+  return chain.map(item => item.id).join('');
+}
+
+function taskDuration(id, delay) {
+  return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(id) + 1 + delay;
 }
 
 /**
@@ -61,7 +92,41 @@ function part1(data) {
  *
  * @param  {} data Input data as array
  */
-function part2(data) {}
+function part2(data, delay, workers) {
+  const mapNodeInfo = item => {
+    const prev = data.filter(t => t[1] === item).map(t => t[0]);
+    const next = data.filter(t => t[0] === item).map(t => t[1]);
+    return {
+      id: item,
+      processed: false,
+      locked: prev.length > 0 ? true : false,
+      next: next,
+      prev: prev
+    };
+  };
+
+  let nodes = data
+    .reduce(reduceTuples, [])
+    .reduce(makeUnique, [])
+    .map(mapNodeInfo);
+
+  const workNodes = nodes.slice(0);
+  let chain = [];
+
+  while (!workNodes.every(item => item.processed)) {
+    const unlocked = workNodes.filter(item => !item.locked && !item.processed).sort((a, b) => a.id.charCodeAt(0) - b.id.charCodeAt(0));
+    const node = unlocked[0];
+    chain.push(node);
+    node.processed = true;
+    workNodes.filter(item => {
+      let predecessors = item.prev.map(id => workNodes.filter(n1 => n1.id === id)).reduce(flatten, []);
+      let allPredecessorsProcessed = predecessors.every(pd => pd.processed);
+      return allPredecessorsProcessed;
+    }).forEach(item => item.locked = false);
+  }
+
+  return chain.map(item => item.id).join('');
+}
 
 /**
  * Runners, reference tests and performance data
@@ -75,16 +140,18 @@ const testResult01 = part1(testdataPart01);
 console.log("Test result: " + testResult01);
 assert(testResult01 == "CABDFE");
 
-// obs.observe({ entryTypes: ["function"] });
-// const timerify_part1 = performance.timerify(part1);
-// const realResult01 = timerify_part1(realData01);
-// assert(realResult01 == 10450, "Good job, you broke a working solution ... ");
-// console.log("RESULT: " + realResult01);
+obs.observe({
+  entryTypes: ["function"]
+});
+const timerify_part1 = performance.timerify(part1);
+const realResult01 = timerify_part1(realData01);
+console.log("RESULT: " + realResult01);
+assert(realResult01 == "CQSWKZFJONPBEUMXADLYIGVRHT", "Good job, you broke a working solution ... ");
 
 // Part 2
-// const testResult02 = part2(testdataPart01);
-// console.log("Test result: " + testResult02);
-// assert(testResult02 == 4);
+const testResult02 = part2(testdataPart01, 0, 2);
+console.log("Test result: " + testResult02);
+assert(testResult02 == 15);
 
 // obs.observe({ entryTypes: ["function"] });
 // const timerify_part2 = performance.timerify(part2);
