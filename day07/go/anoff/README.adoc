@@ -18,14 +18,13 @@ without incoming edges;
 :add start nodes to queue;
 while (queue is not empty)
   :sort queue alphabetically;
-  :identify reachable
-  nodes from queue;
   :take first reachable
   node from queue;
   :append node to path string;
-  :add node children to queue;
-end
+  :add child nodes to queue;
+endwhile
 :print path;
+end
 @enduml
 ....
 
