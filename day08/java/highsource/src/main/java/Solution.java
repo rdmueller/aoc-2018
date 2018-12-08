@@ -6,7 +6,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Solution {
 
@@ -21,11 +23,11 @@ public class Solution {
 				final Node root;
 				{
 					// Read data
-					Stack<Integer> dataToRead = new Stack<Integer>();
-					List<Integer> reverseData = new ArrayList<>(data);
+					final Stack<Integer> dataToRead = new Stack<Integer>();
+					final List<Integer> reverseData = new ArrayList<>(data);
 					Collections.reverse(reverseData);
 					dataToRead.addAll(reverseData);
-					root = read("", dataToRead);
+					root = read(dataToRead);
 					if (!dataToRead.isEmpty()) {
 						throw new IllegalStateException("Stack must be empty after reading.");
 					}
@@ -41,16 +43,16 @@ public class Solution {
 		}
 	}
 
-	private static Node read(String indent, Stack<Integer> data) {
+	private static Node read(Stack<Integer> data) {
 
 		int quantityOfChildNodes = data.pop();
 		int quantityOfMetadataEntries = data.pop();
 
-		List<Node> childNodes = new ArrayList<>(quantityOfChildNodes);
+		final List<Node> childNodes = new ArrayList<>(quantityOfChildNodes);
 		for (int index = 0; index < quantityOfChildNodes; index++) {
-			childNodes.add(read(indent + "\t", data));
+			childNodes.add(read(data));
 		}
-		List<Integer> metadataEntries = new ArrayList<>();
+		final List<Integer> metadataEntries = new ArrayList<>();
 		for (int index = 0; index < quantityOfMetadataEntries; index++) {
 			metadataEntries.add(data.pop());
 		}

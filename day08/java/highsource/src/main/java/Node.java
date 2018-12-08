@@ -1,4 +1,3 @@
-import java.util.Collections;
 import java.util.List;
 
 import lombok.Getter;
@@ -7,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public class Node {
-
-	private static final Node NULL = new Node(Collections.emptyList(), Collections.emptyList());
 
 	private final List<Node> childNodes;
 	private final List<Integer> metadataEntries;
