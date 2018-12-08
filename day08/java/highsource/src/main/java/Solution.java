@@ -18,33 +18,33 @@ public class Solution {
 				final List<Integer> data = Arrays.asList(line.split(" ")).stream().map(Integer::parseInt)
 						.collect(Collectors.toList());
 
-				// Read data
-				Stack<Integer> dataToRead = new Stack<Integer>();
-				List<Integer> reverseData = new ArrayList<>(data);
-				Collections.reverse(reverseData);
-				dataToRead.addAll(reverseData);
-				Node root = read("", dataToRead);
-				if (!dataToRead.isEmpty()) {
-					throw new IllegalStateException("Stack must be empty after reading.");
+				final Node root;
+				{
+					// Read data
+					Stack<Integer> dataToRead = new Stack<Integer>();
+					List<Integer> reverseData = new ArrayList<>(data);
+					Collections.reverse(reverseData);
+					dataToRead.addAll(reverseData);
+					root = read("", dataToRead);
+					if (!dataToRead.isEmpty()) {
+						throw new IllegalStateException("Stack must be empty after reading.");
+					}
 				}
-				
+
 				// Part 1
-				System.out.print("Sum of all metadata entries: " + root.sumMetadata());
-				
-				
+				System.out.println("Sum of all metadata entries: " + root.sumOfMetadataEntries());
+
+				// Part 2
+				System.out.println("Value of the root node: " + root.value());
+
 			}
 		}
 	}
 
 	private static Node read(String indent, Stack<Integer> data) {
-		
-//		System.out.println(indent + "=======================");
-//		System.out.println(indent + "Stack: " + data);
 
 		int quantityOfChildNodes = data.pop();
 		int quantityOfMetadataEntries = data.pop();
-//		System.out.println(indent + "Quantity of child nodes: " + quantityOfChildNodes);
-//		System.out.println(indent + "Quantity of metadata entries: " + quantityOfMetadataEntries);
 
 		List<Node> childNodes = new ArrayList<>(quantityOfChildNodes);
 		for (int index = 0; index < quantityOfChildNodes; index++) {
@@ -54,7 +54,6 @@ public class Solution {
 		for (int index = 0; index < quantityOfMetadataEntries; index++) {
 			metadataEntries.add(data.pop());
 		}
-//		System.out.println(indent + "Metadata: " + quantityOfChildNodes);
 		return new Node(childNodes, metadataEntries);
 	}
 }
