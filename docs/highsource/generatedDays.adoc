@@ -1,10 +1,10 @@
-=== Day 01: java
-
-include::../../day01/java/highsource/README.adoc[leveloffset=+2]
-
 === Day 01: go
 
 include::../../day01/go/highsource/README.adoc[leveloffset=+2]
+
+=== Day 01: java
+
+include::../../day01/java/highsource/README.adoc[leveloffset=+2]
 
 === Day 02: java
 
