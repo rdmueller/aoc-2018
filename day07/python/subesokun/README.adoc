@@ -1,0 +1,3 @@
+== Run solution
+
+Can be run with `python main.py`

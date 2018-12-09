@@ -138,7 +138,6 @@ function part2(data, maxDistance) {
 
 const testdataPart01 = readInputAsArray("testdata.txt");
 const realData01 = readInputAsArray("input.txt");
-
 // Part 1
 const testResult01 = part1(testdataPart01);
 console.log("Test result: " + testResult01);

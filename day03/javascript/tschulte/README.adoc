@@ -1,0 +1,35 @@
+This solution is written in JavaScript.
+
+https://adventofcode.com/2018/day/3
+
+== First Star
+
+A line i transformed to a rectangle
+
+[source, js]
+....
+include::part1.js[tags=parseLine]
+....
+
+The intersections between all combinations of rectangles is generated
+
+[source, js]
+....
+include::part1.js[tags=intersection]
+....
+
+and lastly the intersecting inches are counted
+
+[source, js]
+....
+include::part1.js[tags=intersectingInches]
+....
+
+== Second Star
+
+Now the second star was just
+
+[source, js]
+....
+include::solution.js[tags=part2]
+....

@@ -1,4 +1,4 @@
-#!/usr/bin/env groovy
+#!./groovy/groovy-2.5.4/bin/groovy
 
 def src = new File('../.')
 

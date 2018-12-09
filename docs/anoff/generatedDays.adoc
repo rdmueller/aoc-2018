@@ -22,3 +22,11 @@ include::../../day04/go/anoff/README.adoc[leveloffset=+2]
 
 include::../../day05/go/anoff/README.adoc[leveloffset=+2]
 
+=== Day 06: javascript
+
+include::../../day06/javascript/anoff/README.adoc[leveloffset=+2]
+
+=== Day 06: go
+
+include::../../day06/go/anoff/README.adoc[leveloffset=+2]
+

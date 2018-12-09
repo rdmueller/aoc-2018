@@ -1,0 +1,92 @@
+== Part 1
+
+For the first challenge a graph is needed with a (alphabetically) sorted priority queue. I built the basics for a graph with `Edges` and `Nodes` that generate a graph where `Vertices` represent the a node incl. all outgoing links.
+
+
+[plantuml, day07-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:init empty path string;
+:generate graph
+from edges & nodes;
+:find start nodes
+without incoming edges;
+:add start nodes to queue;
+while (queue is not empty)
+  :sort queue alphabetically;
+  :take first reachable
+  node from queue;
+  :append node to path string;
+  :add child nodes to queue;
+endwhile
+:print path;
+end
+@enduml
+....
+
+== Part 2
+
+In the second challenge  processing a node takes time and multiple nodes are processed in parallel.
+
+[plantuml, day07-part2, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:generate graph
+from edges & nodes;
+:initialize //N//
+idleing workers;
+:find start nodes
+without incoming edges;
+:add start nodes to queue;
+:start timer counter;
+while (queue is full or \nat least one worker is busy)
+  while (for each worker)
+    if (node is fully processed) then (y)
+      :set worker to idle mode;
+      :add child nodes to queue;
+    endif
+  endwhile
+  :sort queue alphabetically;
+  while (for each worker)
+    if (reachable node\nin queue) then (y)
+      :assign node to worker;
+    endif
+  endwhile
+  :inc timer;
+endwhile
+:print timer count
+as solution;
+end
+@enduml
+....
+
+== Go solution
+
+Install dependencies using `GOPATH=$PWD go get -v "github.com/stretchr/testify/assert"`
+
+Run tests with `GOPATH=$PWD go test ./src`
+
+Solution can be run with `cat input.txt | GOPATH=$PWD go run src/solution.go`
+
+=== My graph library
+
+
+[source, go]
+....
+include::./src/graf/main.go[]
+....
+
+=== Solution
+
+[source, go]
+....
+include::./src/solution.go[]
+....
