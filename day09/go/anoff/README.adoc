@@ -1,0 +1,46 @@
+== Part 1
+
+The marble game seems pretty straight forward once you understand the whole concept of _current marble_ and determining the _next current marble_ from there.
+
+NOTE: At several steps index range errors need to be handled, this is not pictured.
+
+[plantuml, day08-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:init circle slice
+with //0// as first marble;
+:init current = 0;
+:init scores for each player;
+while (for each turn)
+  if (marble is %23) then (Y)
+    :inc score for player
+    by turn + circle[current - 7];
+    :remove circle[current - 7];
+    :set current = current - 7;
+  else (N)
+    :set current = current + 1;
+    :insert new value into
+    circle[current] of value //turn//;
+  endif
+endwhile
+:print highest score;
+end
+@enduml
+....
+
+== Part 2
+
+I couldn't think of a smarter data structure so I brute forced the solution in `2h 50m 22s` on my Macbook Pro (2015).
+
+== Go solution
+
+Solution can be run with `go run src/solution.go`
+
+[source, go]
+....
+include::./src/solution.go[]
+....

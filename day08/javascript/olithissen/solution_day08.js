@@ -67,7 +67,22 @@ function processNode(data, parent = 0) {
     node.children.push(child.node);
   }
 
-  (node.meta = data.slice(2 + length, numMeta + 2 + length)), (length += parseInt(numMeta) + 2);
+  node.meta = data.slice(2 + length, numMeta + 2 + length);
+  length += parseInt(numMeta) + 2;
+
+  // This is just for part 2
+  if (numChildren == 0) {
+    node.metaSum = node.meta.reduce((a, b) => parseInt(a) + parseInt(b), 0);
+  } else {
+    node.metaSum = node.meta.map(meta => {
+      const childNode = node.children[parseInt(meta) - 1];
+      if (childNode) {
+        return childNode.metaSum || 0;
+      }
+      return 0;
+    }).reduce((a, b) => a + b);
+  }
+
   return { node, length };
 }
 
@@ -77,7 +92,8 @@ function processNode(data, parent = 0) {
  * @param  {} data Input data as array
  */
 function part2(data) {
-  return 0;
+  const node = processNode(data).node;
+  return node.metaSum;
 }
 
 /**
@@ -94,23 +110,23 @@ const realData01 = readInputAsArray("input.txt");
 // console.log(JSON.stringify(processNode(testdataPart01.slice(7)).node, null, 2));
 // console.log(JSON.stringify(flattenTree(processNode(testdataPart01.slice(7)).node)));
 
-const testResult01 = part1(testdataPart01);
-console.log("Test result: " + testResult01);
-assert(testResult01 == 138);
-
-obs.observe({ entryTypes: ["function"] });
-const timerify_part1 = performance.timerify(part1);
-const realResult01 = timerify_part1(realData01);
-console.log("RESULT: " + realResult01);
-assert(realResult01 == 43351, "Good job, you broke a working solution ... ");
-
-// Part 2
-// const testResult02 = part2(testdataPart01);
-// console.log("Test result: " + testResult02);
-// assert(testResult02 == 4);
+// const testResult01 = part1(testdataPart01);
+// console.log("Test result: " + testResult01);
+// assert(testResult01 == 138);
 
 // obs.observe({ entryTypes: ["function"] });
-// const timerify_part2 = performance.timerify(part2);
-// const realResult02 = timerify_part2(realData01);
-// console.log("RESULT: " + realResult02);
-// assert(realResult02 == 1, "Good job, you broke a working solution ... ");
+// const timerify_part1 = performance.timerify(part1);
+// const realResult01 = timerify_part1(realData01);
+// console.log("RESULT: " + realResult01);
+// assert(realResult01 == 43351, "Good job, you broke a working solution ... ");
+
+// Part 2
+const testResult02 = part2(testdataPart01);
+console.log("Test result: " + testResult02);
+assert(testResult02 == 66);
+
+obs.observe({ entryTypes: ["function"] });
+const timerify_part2 = performance.timerify(part2);
+const realResult02 = timerify_part2(realData01);
+console.log("RESULT: " + realResult02);
+assert(realResult02 == 21502, "Good job, you broke a working solution ... ");

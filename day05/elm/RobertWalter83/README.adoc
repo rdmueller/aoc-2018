@@ -24,8 +24,6 @@ The idea is to
 
 === Part 2
 
-My algorithm is really slow here, my solution brute force:
-
   . find all characters that appear at least once in the input data (a set of characters to try and remove) => the candidates
   . iterate over each candidate character 
     .. remove it from the input data
