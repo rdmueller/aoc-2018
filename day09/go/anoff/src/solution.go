@@ -2,24 +2,27 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 type Score struct {
 	player int
 	score int
 }
 func main() {
-	fmt.Println("asdf")
-	circle, scores := marbleGame(7, 95)
-	fmt.Println(circle, getHighscore(scores))
+	_, scores := marbleGame(477, 70851*100)
+	fmt.Println("Solution for part1: ", getHighscore(scores))
 }
 
 func marbleGame(players int, maxTurns int) (circle []int, scores []Score) {
 	scores = make([]Score, players)
-
+	start := time.Now()
 	current := 0
 	circle = append(circle, 0)
 	circleLength := 1
 	for turn := 1; turn < maxTurns+1; turn++ {
+		if turn%10000 ==0 {
+			fmt.Printf("Turn: %d, elapsed: %ds\n", turn, int(time.Now().Sub(start)/1e9))
+		}
 		if turn%23 > 0 {
 			current = nextIndex(current, circleLength)
 			//fmt.Println(turn, circleLength, current)
