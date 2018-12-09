@@ -1,0 +1,109 @@
+== Parsing the input
+The main challenge for puzzle 8 is to parse the input correctly. At first I tried implementing a state machine that keeps track of whether I am currently parsing metadata and keep a _stack_ of nodes that are open for processing but failed and couldn't wrap my head around the issue.
+
+Next I approached the issue with a recursive node parser that takes a part of the input and reads the headers and calls itself in case any children are present.
+
+TIP: To prevent the input from being parsed str->int more than necessary I parsed the whole input array once before starting the recursion.
+
+I intend to build up a huge flat slice containing all the nodes, where each node is of the following type:
+
+[source, go]
+....
+include::./src/solution.go[tags=StructDef]
+....
+
+The `Node.id` allows me to find specific nodes later on in the slice by using the `getNodeById` method.
+
+The recursive `getNode(input []int, nodes *[]Node) (Node, int)` function takes the input.txt as an array of integers and a reference to the global node slice as input. It returns the next node available in the input and an integer that represents the offset of how many items of the input have been parsed to fully define this node. In case any children are within this node the `getNode` function is called again to define those.
+
+[plantuml, day08-parsing, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:init a new //Node//
+set childCount and metaCount;
+:init input offset;
+while (i < childCount)
+  :call getNode to get
+  childnode definition;
+  :increase input offset
+  by the amount of items
+  consumed by previous call;
+  :add child node to
+  global nodes slice;
+endwhile
+while (i < metaCount)
+  :append metadata value
+  to node.meta field;
+endwhile
+:return node, offset;
+end
+@enduml
+....
+
+[source, go]
+....
+include::./src/solution.go[tags=recursion]
+....
+
+== Part 1
+
+After having the global list of __Node__s available part 1 is just iterating over all of them and summing up their metadata values.
+
+[plantuml, day08-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:create nodes slice
+by parsing the input;
+:init score=0;
+while (for each node)
+  while (for each meta value)
+    :inc score by meta value
+  endwhile
+endwhile
+:print score;
+end
+@enduml
+....
+
+== Part 2
+
+The second part requires to calculate the value of an individual node based on its children. Again I am using a recursive function to handle the (unknown) depth of nested children.
+
+I implemented a function that calculates the **Value** of any given node according to the rules.
+
+[plantuml, day08-part2, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:given any node;
+if (child count) then (0)
+  :calculate sum of
+  all meta values;
+else (> 0)
+  :init sum=0;
+  while (for each meta value)
+    if (meta points
+    to existing child) then (Y)
+      :inc sum by value of child;
+    endif
+  endwhile
+endif;
+:return sum;
+end
+@enduml
+....
+
+== Go solution
+
+Solution can be run with `cat input.txt | GOPATH=$PWD go run src/solution.go`

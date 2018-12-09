@@ -7,7 +7,7 @@ import (
 	"helpers"
 	"strconv"
 )
-
+// tag::StructDef[]
 type Node struct {
 	id int
 	childCount int
@@ -15,6 +15,7 @@ type Node struct {
 	children []int // ref by id
 	meta []int
 }
+// end::StructDef[]
 func main() {
 	input := helpers.AggregateInputStream()
 	strInts := strings.Split(input[0], " ")
@@ -23,13 +24,10 @@ func main() {
 		ints[i], _ = strconv.Atoi(s)
 	}
 
-	parseNodes(ints)
-}
+	nodes, root := parseNodes(ints)
 
-func parseNodes(def []int) {
-	var nodes []Node
-
-	getNode(def, &nodes)
+	// part 1
+	// tag::p1[]
 	score := 0
 	for _, n := range nodes {
 		for _, m := range n.meta {
@@ -37,8 +35,18 @@ func parseNodes(def []int) {
 		}
 	}
 	fmt.Println("Solution part1:", score)
+	// tag::p2[]
+	// part 2
+	fmt.Println("Solution part2:", getValue(root, &nodes))
 }
 
+func parseNodes(def []int) ([]Node, Node) {
+	var nodes []Node
+	root, _ := getNode(def, &nodes)
+	return nodes, root
+}
+
+// tag::recursion[]
 func getNode(def []int, nodes *[]Node) (Node, int) {
 	n := Node{id: rand.Int(), childCount: def[0], metaCount: def[1]}
 	offset := 2
@@ -53,4 +61,31 @@ func getNode(def []int, nodes *[]Node) (Node, int) {
 	}
 	*nodes = append(*nodes, n)
 	return n, offset
+}
+// end::recursion[]
+func getValue(n Node, nodes *[]Node) int {
+	sum := 0
+	if n.childCount == 0 {
+		for _, m := range n.meta {
+			sum += m
+		}
+	} else {
+		for _, m := range n.meta {
+			m--
+			if m < n.childCount {
+				c := getNodeById(n.children[m], *nodes)
+				sum += getValue(c, nodes)
+			}
+		}
+	}
+	return sum
+}
+
+func getNodeById(id int, nodes []Node) Node {
+	for _, n := range nodes {
+		if n.id == id {
+			return n
+		}
+	}
+	return Node{}
 }
