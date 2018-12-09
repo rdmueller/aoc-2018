@@ -1,0 +1,48 @@
+This solution is written in JavaScript.
+
+https://adventofcode.com/2018/day/4
+
+== First Star
+
+The idea is to first sort all lines alphabetically, wich will work, because the date format uses the year-month-day format.
+Since the lines with the start and end of sleep do not state the guard, the lines can not be parsed in isolation this time.
+Instead, it is necessary to use reduce on the lines array.
+
+We need a parseLine method, that is passed the result of the previous parseLine call and the new line.
+We than only need to parse the minute part of the date and if this is the start of a new guard duty, or if it is the beginning of sleep or the end.
+
+[source, js]
+....
+include::part1.js[tags=parseLine]
+....
+
+[source, js]
+....
+include::part1.js[tags=splitLine]
+....
+
+[source, js]
+....
+include::part1.js[tags=guardBeginsShift]
+....
+
+With that data, we can find the guard, that is most asleep
+
+[source, js]
+....
+include::part1.js[tags=guardMostAsleep]
+....
+
+And get the overlapping sleep times of that guard
+
+[source, js]
+....
+include::part1.js[tags=overlappingSleepTimes]
+....
+
+And put it all together
+
+[source, js]
+....
+include::solution.js[tags=part1]
+....
