@@ -9,21 +9,38 @@ type Score struct {
 }
 func main() {
 	fmt.Println("asdf")
-	circle, _ := marbleGame(7, 25)
-	fmt.Println(circle)
+	circle, scores := marbleGame(7, 25)
+	fmt.Println(circle, getHighscore(scores))
 }
 
 func marbleGame(players int, maxTurns int) (circle []int, scores []Score) {
-	circle = make([]int, maxTurns)
 	scores = make([]Score, players)
 
 	current := 0
-	circle[0] = 0
+	circle = append(circle, 0)
 	for turn := 1; turn < maxTurns+1; turn++ {
-		next := nextIndex(current, turn)
-		//fmt.Println(current, turn, next)
-		circle[next] = turn // also the "value" of the marble
-		current = next
+		if turn%23 > 0 {
+			current = nextIndex(current, turn)
+			circle = append(circle, -1)
+			if current < turn { // shift slice around to allow "insert" in the middle of the slice
+				copy(circle[current+1:], circle[current:])
+			}
+			circle[current] = turn // also the "value" of the marble
+		} else {
+			// special elve case %23
+			currentPlayer := (turn%players) -1 // index
+			targetMarble := current - 7
+			if targetMarble < 0 {
+				targetMarble =+ turn
+			} else if targetMarble > turn {
+				targetMarble =- turn 
+			}
+			scores[currentPlayer].score += 23 + circle[targetMarble]
+
+			// handle marble removal
+			circle = append(circle[:targetMarble], circle[targetMarble+1:]...)
+			current = targetMarble
+		}
 	}
 	return circle, scores
 }
