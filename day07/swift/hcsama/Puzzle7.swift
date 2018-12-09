@@ -130,5 +130,5 @@ func Puzzle7()
         }
         resultSequence += String(intermediateSequence.sorted())
     }
-    print("07-01: " + resultSequence, String(timeIndex))
+    print("07-02: " + resultSequence, String(timeIndex))
 }

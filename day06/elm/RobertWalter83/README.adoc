@@ -1,0 +1,33 @@
+== Solution written in elm 0.19
+
+goto https://guide.elm-lang.org/install.html to find your elm installation guide
+
+to build:
+
+    elm make src/Main.elm
+
+This should produce index.html in the root directory, which you can open locally (also checked in for convenience).
+
+== Input
+
+The input is a string which gets parsed to a list of coordinates of type (Int, Int)
+
+=== Part 1
+
+  . First, find the grid dimensions by searching for the highest x and y coordinate parts respectively => This gives us our grid we work in
+  . The idea is to iterate over the grid and measure the distance to each point
+    .. only the shortest distance is kept in a dictionary, together with the points that have that shortest distance
+  . then, we count how often each point appears in the dictionary 
+    .. we only consider those appearances of single points (i.e. if a coordinate has the same minimal distance to more than one point, it does not count)
+  . we consider an area finite if it does not contain a coordinate that touches the edge of the grid
+    .. the exception are those coordinates that belong to more than one point since those could seal an area
+    .. as soon as a point 'owns' a coordinate that is on the edge and is not shared with exactly one other point => it is finite
+  . count the number of coordinates that belong to the finite areas, the biggest one wins
+
+=== Part 2
+
+  . iterate over the grid
+  . for each coordinate, sum up the distances to all points
+    .. if it is lower than the threshhold, mark it as 'part of the region'
+    .. otherwise, ignore it
+  . count the coordinates that are marked
