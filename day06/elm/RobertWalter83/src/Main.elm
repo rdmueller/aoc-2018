@@ -29,9 +29,10 @@ init =
   let
     (xMax, yMax) = findDim coordinates
     
+    grid = createGrid (xMax, yMax)
     -- part1
     
-    coordMap = List.foldl (calcShortestDistances2 coordinates) Dict.empty (createGrid (xMax, yMax)) 
+    coordMap = List.foldl (calcShortestDistances2 coordinates) Dict.empty grid
     appearances = List.map (\v -> Tuple.second v) (Dict.values coordMap) 
     
     finiteAreas = Dict.foldl (findFiniteAreas (xMax, yMax)) Dict.empty coordMap 
@@ -39,9 +40,17 @@ init =
     part1 = Dict.values finiteAreas |> List.filter (\mbval -> mbval /= Maybe.Nothing) |> List.map (\mbval -> Maybe.withDefault -1 mbval) |> List.foldl (\val cur -> max val cur) -1
     
     -- part2
-    part2 = 0
+    part2 = List.map (findRegionClosest 10000 coordinates) grid |> List.foldl (\b count -> if b then count+1 else count) 0 
   in
     { solution = (part1, part2)}
+
+findRegionClosest : Int -> List Coord -> Coord -> Bool
+findRegionClosest maxDistance points coord =
+  let
+    distanceSum = List.map (\p -> distance coord p) points |> List.sum --|> Debug.log "sum: "
+  in
+    distanceSum < maxDistance
+  
 
 findFiniteAreas : Coord -> Coord -> (Int, List Coord) -> Dict Coord (Maybe Int) -> Dict Coord (Maybe Int)
 findFiniteAreas coordMax coordKey (_, points) areas =
@@ -107,7 +116,7 @@ calcShortestDistances2 points coord coordMap =
 calcShortestDistance : Coord -> Coord -> (Int, CoordToPointDistance) -> (Int, CoordToPointDistance)
 calcShortestDistance (xC, yC) (xP, yP) (dMin, coordMap) =
   let
-    dVal = abs (xP-xC) + abs (yP-yC)  
+    dVal = distance (xC, yC) (xP, yP) 
   in
     if dMin == -1 then
       -- first point we check => add new entry
@@ -122,7 +131,11 @@ calcShortestDistance (xC, yC) (xP, yP) (dMin, coordMap) =
           (dVal, Dict.update (xC, yC) (updateValue (xP, yP))  coordMap)
         else
           (dVal, Dict.insert (xC, yC) (dVal, [(xP, yP)]) coordMap )
-        
+
+distance : Coord -> Coord -> Int
+distance (xC, yC) (xP, yP) =
+  abs (xP-xC) + abs (yP-yC) 
+
 updateValue : Coord -> Maybe (Int, List Coord) -> Maybe (Int, List Coord)
 updateValue coord mbValue =
   case mbValue of
@@ -131,7 +144,7 @@ updateValue coord mbValue =
 
     Maybe.Nothing ->
       Maybe.Nothing
-      
+
 findDim : List Coord -> Coord
 findDim coords =
   List.foldl 
