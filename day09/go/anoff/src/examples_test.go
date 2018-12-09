@@ -10,6 +10,7 @@ type game struct {
 }
 func TestMarbleGame(t *testing.T) {
 	m := make(map[int]game)
+	m[32] = game{7, 25}
 	m[8317] = game{10, 1618}
 	m[146373] = game{13, 7999}
 	m[2764] = game{17, 1104}
