@@ -9,19 +9,19 @@ In order not to lose any time, I've already prepared my working folder and prepa
 
 [source, groovy]
 ....
-include::solution.py[tags=helper]
+include::solution.groovy[tags=helper]
 ....
 
 == First Star
 
 [source, groovy]
 ....
-include::solution.py[tags=starOne,!starTwo]
+include::solution.groovy[tags=starOne,!starTwo]
 ....
 
 == Second Star
 
 [source, groovy]
 ....
-include::solution.py[tags=starTwo]
+include::solution.groovy[tags=starTwo]
 ....
