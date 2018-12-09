@@ -1,68 +1,74 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public class MarbleCircle {
-	
-	private final List<Marble> marbles;
-	
-	private int currentMarbleIndex;
-	
-	public MarbleCircle() {
-		this.marbles = new ArrayList<>();
-		currentMarbleIndex = -1;
+
+	private static final int SPECIAL_MARBLE_VALUE_DIVISOR = 23;
+
+	private Slot firstSlot;
+	private Slot currentSlot;
+
+	private class Slot {
+		private int value;
+		private Slot previous;
+		private Slot next;
 	}
-	
-	public void place(Marble marble) {
-		if (marbles.size() == 0) {
-			if (currentMarbleIndex != -1 ) {
-				throw new IllegalStateException();
-			}
-			if (marble.getValue() != 0) {
-				throw new IllegalArgumentException("First marble placed in the circle must have the value [0].");
-			}
-			this.currentMarbleIndex = marbles.size();
-			this.marbles.add(marble);
-		}
-		else if (marbles.size() == 1) {
-			if (currentMarbleIndex != 0 ) {
-				throw new IllegalStateException();
-			}
-			if (marble.getValue() != 1) {
-				throw new IllegalArgumentException("Second marble placed in the circle must have the value [1].");
-			}
-			this.currentMarbleIndex = marbles.size();
-			this.marbles.add(marble);
-		}
-		else if (marble.isSpecial()) {
-			// Do not place the marble
-			final int nextMarbleIndex = ((currentMarbleIndex - 7) % marbles.size());
-			Marble marble7 = this.marbles.remove(nextMarbleIndex);
-			this.currentMarbleIndex = nextMarbleIndex;
-		}
-		else {
-			final int nextMarbleIndex = ((currentMarbleIndex + 1) % marbles.size()) + 1;
-			this.marbles.add(nextMarbleIndex, marble);
-			this.currentMarbleIndex = nextMarbleIndex;
+
+	public MarbleCircle() {
+		final Slot slot = new Slot();
+		slot.value = 0;
+		slot.next = slot;
+		slot.previous = slot;
+		firstSlot = slot;
+		currentSlot = slot;
+	}
+
+	public long place(int marble) {
+		if (marble % SPECIAL_MARBLE_VALUE_DIVISOR == 0) {
+
+			final Slot marble_7 = this.currentSlot.previous.previous.previous.previous.previous.previous.previous;
+
+			final Slot previousSlot = marble_7.previous;
+			final Slot nextSlot = marble_7.next;
+
+			previousSlot.next = nextSlot;
+			nextSlot.previous = previousSlot;
+			this.currentSlot = nextSlot;
+
+			return marble + marble_7.value;
+		} else {
+
+			final Slot newSlot = new Slot();
+			newSlot.value = marble;
+
+			final Slot previousSlot = this.currentSlot.next;
+			final Slot nextSlot = previousSlot.next;
+
+			previousSlot.next = newSlot;
+			nextSlot.previous = newSlot;
+			newSlot.previous = previousSlot;
+			newSlot.next = nextSlot;
+
+			currentSlot = newSlot;
+
+			return 0;
 		}
 	}
 
 	public String toString() {
-		
+
 		StringBuilder sb = new StringBuilder();
-		
-		for (int index = 0; index < marbles.size(); index++) {
-			final Marble marble = marbles.get(index);
-			if (index > 0) {
-				sb.append(' ');
-			}
-			if (index == currentMarbleIndex) {
+		Slot slot = firstSlot;
+
+		do {
+			sb.append(' ');
+			if (slot == currentSlot) {
 				sb.append('(');
 			}
-			sb.append(marble);
-			if (index == currentMarbleIndex) {
+			sb.append(slot.value);
+			if (slot == currentSlot) {
 				sb.append(')');
 			}
-		}
+			slot = slot.next;
+
+		} while (slot != firstSlot);
 		return sb.toString();
 	}
 }

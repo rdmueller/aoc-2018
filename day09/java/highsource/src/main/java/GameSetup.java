@@ -19,6 +19,11 @@ public class GameSetup {
 	public String toString() {
 		return numberOfPlayers + " players; last marble is worth " + lastMarbleValue + " points";
 	}
+	
+	public Game game() 
+	{
+		return new Game(numberOfPlayers, lastMarbleValue);
+	}
 
 	public static final GameSetup parse(String input) {
 		Objects.requireNonNull(input, "input must not be null.");

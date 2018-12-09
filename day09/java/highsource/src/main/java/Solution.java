@@ -9,7 +9,15 @@ public class Solution {
 		try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(Solution.class.getResourceAsStream("test1.txt")))) {
 			for (String line; (line = reader.readLine()) != null;) {
-				System.out.println(GameSetup.parse(line));
+				Game game = GameSetup.parse(line).game();
+				Player winner = game.play();
+				
+				System.out.println(
+						game.getPlayers().size() + 
+						" players; last marble is worth " + 
+						(game.getNumberOfMarbles() - 1) + 
+						" points: high score is " +
+						winner.getScore());
 			}
 		}
 	}
