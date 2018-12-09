@@ -17,3 +17,6 @@ gradle-app.setting
 .classpath
 .project
 .settings
+
+# go assertion binary
+testify
