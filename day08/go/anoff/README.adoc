@@ -65,7 +65,7 @@ by parsing the input;
 :init score=0;
 while (for each node)
   while (for each meta value)
-    :inc score by meta value
+    :inc score by meta value;
   endwhile
 endwhile
 :print score;

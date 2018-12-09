@@ -38,4 +38,9 @@ I couldn't think of a smarter data structure so I brute forced the solution in `
 
 == Go solution
 
-Solution can be run with `cat input.txt | GOPATH=$PWD go run src/solution.go`
+Solution can be run with `go run src/solution.go`
+
+[source, go]
+....
+include::./src/solution.go[]
+....
