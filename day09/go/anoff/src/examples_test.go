@@ -21,3 +21,11 @@ func TestMarbleGame(t *testing.T) {
 		assert.Equal(t, highscore, hs, "Wrong highscore for %d players doing %d rounds", setup.players, setup.rounds)
 	}
 }
+
+func TestNextIndex(t *testing.T) {
+	assert.Equal(t, 1, nextIndex(0, 1))
+	assert.Equal(t, 3, nextIndex(1, 3))
+	assert.Equal(t, 5, nextIndex(3, 10))
+	assert.Equal(t, 1, nextIndex(7, 8))
+	assert.Equal(t, 1, nextIndex(15, 16))
+}
