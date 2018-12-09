@@ -21,7 +21,7 @@ func marbleGame(players int, maxTurns int) (circle []int, scores []Score) {
 	circleLength := 1
 	for turn := 1; turn < maxTurns+1; turn++ {
 		if turn%10000 ==0 {
-			fmt.Printf("Turn: %d, elapsed: %ds\n", turn, int(time.Now().Sub(start)/1e9))
+			fmt.Printf("[%d%%] Turn: %d, elapsed: %ds\n", int(turn/70851), turn, int(time.Now().Sub(start)/1e9))
 		}
 		if turn%23 > 0 {
 			current = nextIndex(current, circleLength)
