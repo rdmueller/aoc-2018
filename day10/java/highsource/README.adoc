@@ -6,7 +6,7 @@ To build:
 
 To run:
 
-   java -jar target/aoc-2018-day10.jar
+   java -jar target/aoc-2018-day10.jar > output.txt
 
 
 == Solution part 1

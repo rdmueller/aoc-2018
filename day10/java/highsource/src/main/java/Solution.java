@@ -1,8 +1,6 @@
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
 
 public class Solution {
 
@@ -19,17 +17,15 @@ public class Solution {
 				sky.add(pointOfLight);
 			}
 
-			try (FileOutputStream fos = new FileOutputStream("output.txt"); PrintStream ps = new PrintStream(fos);) {
-				for (int i = 0; i < 20000; i++) {
-					ps.println("=[" + i + "]==============================================");
-					XY leftBottom = sky.leftBottom();
-					XY rightTop = sky.rightTop();
-					if (Math.abs(leftBottom.getX() - rightTop.getX()) < 64) {
-						sky.draw(ps);
-					}
-					ps.println(sky.leftBottom() + " " + sky.rightTop());
-					sky.next();
+			for (int i = 0; i < 20000; i++) {
+				XY leftBottom = sky.leftBottom();
+				XY rightTop = sky.rightTop();
+				if (Math.abs(leftBottom.getX() - rightTop.getX()) < 128
+						&& Math.abs(leftBottom.getX() - rightTop.getX()) < 128) {
+					System.out.println("=[" + i + "]==============================================");
+					sky.draw(System.out);
 				}
+				sky.next();
 			}
 		}
 	}

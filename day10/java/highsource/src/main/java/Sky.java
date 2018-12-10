@@ -9,10 +9,6 @@ public class Sky {
 
 	private final List<PointOfLight> pointsOfLight = new ArrayList<>();
 
-	public Sky() {
-		// TODO Auto-generated constructor stub
-	}
-
 	public void add(PointOfLight pointOfLight) {
 		Objects.requireNonNull(pointOfLight, "pointOfLight must not be null.");
 		this.pointsOfLight.add(pointOfLight);
