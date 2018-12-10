@@ -1,0 +1,3 @@
+== Run solution
+
+Can be run with `GOPATH=$PWD go run src/main.go`
