@@ -1,8 +1,8 @@
 //
-//  Puzzle8.swift
+//  Puzzle10.swift
 //  AdventOfCode2018
 //
-//  Created by Hans-Christian Fuchs on 08.12.18.
+//  Created by Hans-Christian Fuchs on 10.12.18.
 //  Copyright © 2018 Hans-Christian Fuchs. All rights reserved.
 //
 
@@ -112,6 +112,6 @@ func Puzzle10()
         }
     }
     PrintStars(stars)
-    print("09-01:", "see above")
-    print("09-02:", timeIndex)
+    print("10-01:", "see above")
+    print("10-02:", timeIndex)
 }
