@@ -14,3 +14,8 @@ include::../../day03/javascript/tschulte/README.adoc[leveloffset=+2]
 
 include::../../day04/javascript/tschulte/README.adoc[leveloffset=+2]
 
+
+=== Day 05: javascript
+
+include::../../day05/javascript/tschulte/README.adoc[leveloffset=+2]
+

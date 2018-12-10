@@ -7,9 +7,9 @@ const findShortestReduction = require("./part2.js").findShortestReduction;
 
 const fs = require("fs");
 const input = fs.readFileSync("input.txt", "utf-8");
+const lines = input.split("\n").filter(line => line);
 
 // tag::part1[]
-const lines = input.split("\n").filter(line => line);
 const reduced = reduce(lines[0]);
 
 console.log("Day 05, part 1: " + reduced.length);

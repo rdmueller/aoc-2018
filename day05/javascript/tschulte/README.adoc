@@ -1,0 +1,40 @@
+This solution is written in JavaScript.
+
+https://adventofcode.com/2018/day/5
+
+== First Star
+
+For the first star, we can recursively reduce the string.
+
+[source, js]
+....
+include::part1.js[]
+....
+
+[source, js]
+....
+include::solution.js[tags=part1]
+....
+
+== Second Star
+
+The first part of the second star is to first remove all chars of one unit and then reduce
+
+[source,js]
+....
+include::part2.js[tags=reduceWithoutUnit]
+....
+
+The second part is to iterate over all units and try to reduce to find the shortest reduction
+
+[source,js]
+....
+include::part2.js[tags=findShortestReduction]
+....
+
+And the last part is to call `findShortestReduction` with the already compressed string.
+
+[source, js]
+....
+include::solution.js[tags=part2]
+....
