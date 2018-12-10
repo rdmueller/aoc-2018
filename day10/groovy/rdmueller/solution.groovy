@@ -27,7 +27,7 @@ void printStars(stars, minMax) {
     def lines = [:]
     println "-"*80
     (minMax.minY..minMax.maxY).each { y ->
-        lines[y] = "."*(minMax.maxX-minMax.minX+3)
+        lines[y] = " "*(minMax.maxX-minMax.minX+3)
     }
     stars.each { star ->
         pos = star[0]-minMax.minX+1
@@ -57,6 +57,7 @@ minMax = getMinMax(stars)
 println minMax
 def newMinY = minMax.maxY-minMax.minY
 def currentMinY = newMinY
+def seconds = 0
 while (newMinY<=currentMinY) {
     if (currentMinY<20) {
         printStars(stars, minMax)
@@ -67,11 +68,10 @@ while (newMinY<=currentMinY) {
     minMax = getMinMax(stars)
     currentMinY = newMinY
     newMinY = minMax.maxY-minMax.minY
+    seconds++
 }
 
-//stars = readInput("input.txt")
+println seconds-1
 // end::starOne[]
 
-// tag::starTwo[]
-// end::starTwo[]
 
