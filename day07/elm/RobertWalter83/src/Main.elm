@@ -18,18 +18,31 @@ type alias Prereqs =
 type alias StartNodes =
   Set Int
 
+type alias Worker =
+  { id : Int
+  , workRemaining : Int
+  , task : Int }
+
+getWorkers : Int -> List Worker
+getWorkers n =
+  List.range 0 (n-1) |> List.map (\i -> { id = i, workRemaining = -1, task = -1})
+
 -- INIT
 init : Model
 init =
   let
-    -- PART 1
+    -- COMMON 
     startNodesCandidates = List.map Tuple.first input |> Set.fromList 
     (startNodes, prereqs, graph) = List.foldl updateGraph (startNodesCandidates, Set.empty, Dict.empty) input 
 
+    -- PART 1
     ordered = traverseGraph (Set.toList startNodes) prereqs graph [] 
     orderAsString = List.map (\i -> Char.fromCode i) ordered |> String.fromList
+
+    -- PART 2
+    time = traverseGraph2 (Set.toList startNodes) (getWorkers 5) prereqs graph 0
   in
-    { solution = (orderAsString, 0) }
+    { solution = (orderAsString, time) }
 
 updateGraph : (Int, Int) -> (StartNodes, Prereqs, Graph) -> (StartNodes, Prereqs, Graph)
 updateGraph (k, v) (startNodes, prereqs, graph) =
@@ -63,10 +76,118 @@ traverseGraph stackNodes prereqs graph orderedSteps =
           prereqsNew
           graph 
           (List.append orderedSteps [n])
+
+traverseGraph2 : List Int -> List Worker -> Prereqs -> Graph -> Int -> Int
+traverseGraph2 workItemsFree workers prereqs graph time =
+  let
+    workersFree = getAvailableWorkers workers
+    timeNew = time+1
+    (finishedTasks, workersNew, prereqsNew) = updatePrereqs (doWork workers) prereqs
+    childrenAvailableNext = availableChildrenNext graph prereqsNew finishedTasks 
+  in
+  
+    case workItemsFree of
+      [] ->
+        if (List.length workersFree) == (List.length workers) then
+          time
+        else
+          traverseGraph2
+            childrenAvailableNext
+            workersNew
+            prereqsNew
+            graph 
+            timeNew
+      
+      _ ->
+        case workersFree of
+          [] ->
+            let
+              workItemsFreeNew = List.append (List.filter (\i -> List.member i finishedTasks == False) workItemsFree) childrenAvailableNext |> Set.fromList |> Set.toList 
+            in
+              -- if no worker is available, we cycle another second
+              traverseGraph2
+                  workItemsFreeNew
+                  workersNew
+                  prereqsNew
+                  graph 
+                  timeNew
+
+          _ ->
+            let
+              (workersUpdated, workItemsFreeUpdated) = List.foldl assignNewWorker (workers, workItemsFree) workItemsFree
+              (finishedTasks2, workersNew2, prereqsNew2) = updatePrereqs (doWork workersUpdated) prereqs
+              childrenAvailableNext2 = availableChildrenNext graph prereqsNew2 finishedTasks2
+              workItemsFreeNew = availableWorkNext childrenAvailableNext2 workItemsFreeUpdated finishedTasks2
+            in
+              traverseGraph2
+                workItemsFreeNew
+                workersNew2
+                prereqsNew2
+                graph 
+                timeNew
+
+availableChildrenNext : Graph -> Prereqs -> List Int -> List Int  
+availableChildrenNext graph prereqsNew finishedTasks =
+  List.concat (List.map (\taskFinished -> Dict.get taskFinished graph |> withDefault [] |> without prereqsNew) finishedTasks)
+
+availableWorkNext : List Int -> List Int -> List Int -> List Int
+availableWorkNext childrenAvailableNext workItemsFree finishedTasks =
+  List.append (List.filter (\i -> List.member i finishedTasks == False) workItemsFree) childrenAvailableNext |> Set.fromList |> Set.toList 
+
+assignNewWorker : Int -> (List Worker, List Int) -> (List Worker, List Int)
+assignNewWorker task (workers, workItems) =
+  let
+    workersFree = getAvailableWorkers workers
+  in
+    case workersFree of
+        [] ->
+          (workers, workItems)
+    
+        free :: rest ->
+          ( List.append (List.filter (\w -> free.id /= w.id) workers) [{ id = free.id, workRemaining = (getWorkDuration task), task = task }]
+          , List.filter (\i -> i /= task) workItems
+          )
+
+getWorkDuration : Int -> Int
+getWorkDuration task =
+  task - 4
+
+
+updatePrereqs : List Worker -> Prereqs -> (List Int, List Worker, Prereqs)
+updatePrereqs workers prereqs =
+  let
+    finishedTasks = getFinishedTasks workers
+    workersNew = finishWork workers finishedTasks
+    prereqsNew = List.foldl removePrereqs prereqs finishedTasks
+  in
+    (finishedTasks, workersNew, prereqsNew)
+
+finishWork : List Worker -> List Int -> List Worker
+finishWork workers finishedTasks =
+  List.map (finishWorkItem finishedTasks) workers
+
+finishWorkItem : List Int -> Worker -> Worker
+finishWorkItem finishedTasks worker =
+  if List.member worker.task finishedTasks then
+    { id = worker.id, workRemaining = -1, task = -1  }
+  else
+    worker 
+                
+getAvailableWorkers : List Worker -> List Worker
+getAvailableWorkers workers =
+  List.filter (\w -> w.workRemaining == -1) workers
+  
+getFinishedTasks : List Worker -> List Int
+getFinishedTasks workers = 
+  List.map (\w1 -> w1.task) <| List.filter (\w2 -> w2.workRemaining == 0) workers
         
 getNodesBefore : Int -> Prereqs -> Set Int
 getNodesBefore node prereqs =
   Set.filter (\(after, _) -> after == node) prereqs |> Set.map (\(_, before) -> before)
+
+doWork : List Worker -> List Worker
+doWork workers =
+  List.map (\w -> ({ id = w.id, workRemaining = max (w.workRemaining-1) -1, task = w.task })) workers
 
 removePrereqs : Int -> Prereqs -> Prereqs
 removePrereqs prereqToRemove prereqs =
