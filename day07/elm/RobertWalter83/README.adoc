@@ -17,18 +17,15 @@ The input is a string, which we convert to a character array.
 These are the steps of my solution:
 The idea is to 
 
-  . iterate over the polymer with two pointers: first one walks from character to character, second one points at last entry not yet folded
-  . store the indicies of the characters that reacted (making a black list of characters)
-  . we use this black list in each run to determine what the last character was that hasn't reacted yet  
-  . in the end, we can subtract the number of reacted indicies from the original polymer length
+  . build a graph using the Dict type:
+    .. for each node as KEY (encoded as Int), we remember the 'following values' according to the input (VALUES, as List Int)
+  . additionally, we have a Set that remembers all pairs (Int, Int) of (after <- before) edges in the graph, i.e. the prerequisites that must be done before a node can be handled next
+  . we traverse that graph, starting with all the nodes that have no prerequisite, sorted ascending (consider it a stack)
+    .. we start with the first, remove it is a prerequisite and lookup its children that don't have any prerequisites left
+    .. we add the children to the stack (sorting it again to keep the stack ability)
+    .. we recurse, until the stack is empty
 
 === Part 2
 
-My algorithm is really slow here, my solution brute force:
-
-  . find all characters that appear at least once in the input data (a set of characters to try and remove) => the candidates
-  . iterate over each candidate character 
-    .. remove it from the input data
-    .. use the reduction of part1 and measure the length of the resulting polymer
-  . get the minimum length for all candidates => solution
+pending
 
