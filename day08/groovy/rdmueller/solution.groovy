@@ -17,7 +17,6 @@ def decodeNodes(Integer streamPos, stream, meta, nodes) {
     def node = [nodes: [], numNodes: numNodes, numMeta: numMeta, meta: [], value: 0]
 
     numNodes.times {
-        println streamPos
         def newNode
         (newNode, streamPos) = decodeNodes(streamPos, stream, meta, nodes)
         node.nodes << newNode
@@ -27,13 +26,10 @@ def decodeNodes(Integer streamPos, stream, meta, nodes) {
         meta << metaItem
         node.meta << metaItem
     }
-    println ">>"+ streamPos
     if (numNodes==0) {
         node.value = node.meta.sum()
     } else {
         node.meta.each { index ->
-            println "> "+index
-            println node
             node.value += node.nodes[index-1]?.value?:0
         }
     }
@@ -43,9 +39,8 @@ def decodeNodes(Integer streamPos, stream, meta, nodes) {
 stream = readInput("input.txt")
 
 def mainNode = decodeNodes(0, stream, meta, nodes)
-println meta
-println meta.sum()
-println mainNode.value
+println "Solution 1: " + meta.sum()
+println "Solution 2: " + mainNode.value[0]
 // end::starOne[]
 
 
