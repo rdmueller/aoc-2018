@@ -1,0 +1,27 @@
+This solution is written in Groovy.
+
+After solving day 10, I try to catch up with day 8.
+Seems to be the easiest of the three missing days 7, 8 and 9.
+
+https://adventofcode.com/2018/day/8
+
+Again, I will use my helper to read the input from day 10.
+
+[source, groovy]
+....
+include::solution.groovy[tags=helper]
+....
+
+== First Star
+
+Wow. That was fun!
+
+[source, groovy]
+....
+include::solution.groovy[tags=starOne,!starTwo]
+....
+
+== Second Star
+
+Since it is only counting the seconds, it is already included in the first part of the source.
+And yes, I've got an off by one error when I first submitted my solution *g*
