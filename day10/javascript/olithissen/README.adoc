@@ -1,0 +1,7 @@
+== Solution written in Javascript
+
+This is just a setup-test.
+
+Javascript runs out of the box in gitpod and can be started by just typing the name of the code file:
+
+    ./solution.js
