@@ -16,10 +16,21 @@ type Point struct {
 func main() {
 	input := helpers.AggregateInputStream()
 	points := generatePoints(input)
+	minSize := 1000000
 	for i := 0; i < 10; i++ {
-		fmt.Println("Iteration", i)
-		printPattern(points)
-		moveCloud(&points)
+		xmin, xmax, ymin, ymax := getPointCloudDimensions(points)
+		width := xmax - xmin
+		height := ymax - ymin
+		size := width*height
+		if size < minSize {
+			minSize = size
+		} else {
+			fmt.Println("Smallest size found for iteration", i-1)
+			moveCloud(&points, -1)
+			printPattern(points)
+			break
+		}
+		moveCloud(&points, 1)
 	}
 }
 
@@ -78,10 +89,21 @@ func getPointCloudDimensions(points []Point) (int, int, int, int) {
 	return xmin, xmax, ymin, ymax
 }
 
-func moveCloud(points *[]Point) {
+func moveCloud(points *[]Point, steps int) {
 	pts := *points
-	for i := range *points {
-		pts[i].x += pts[i].dx
-		pts[i].y += pts[i].dy
+	if steps < 0 { // iterate negative
+		for i := steps; i < 0; i++ {
+			for i := range *points {
+				pts[i].x -= pts[i].dx
+				pts[i].y -= pts[i].dy
+			}
+		}
+	} else {
+		for i := 0; i < steps; i++ {
+			for i := range *points {
+				pts[i].x += pts[i].dx
+				pts[i].y += pts[i].dy
+			}
+		}
 	}
 }
