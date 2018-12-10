@@ -40,7 +40,7 @@ init =
     orderAsString = List.map (\i -> Char.fromCode i) ordered |> String.fromList
 
     -- PART 2
-    time = traverseGraph2 (Set.toList startNodes) (getWorkers 5) prereqs graph 0
+    time = buildSleigh (Set.toList startNodes) (getWorkers 5) prereqs graph 0
   in
     { solution = (orderAsString, time) }
 
@@ -77,54 +77,51 @@ traverseGraph stackNodes prereqs graph orderedSteps =
           graph 
           (List.append orderedSteps [n])
 
-traverseGraph2 : List Int -> List Worker -> Prereqs -> Graph -> Int -> Int
-traverseGraph2 workItemsFree workers prereqs graph time =
+-- part 2 solution
+-- each run simulates a second of time
+buildSleigh : List Int -> List Worker -> Prereqs -> Graph -> Int -> Int
+buildSleigh workItemsFree workers prereqs graph time =
   let
-    workersFree = getAvailableWorkers workers
+    -- time passes
     timeNew = time+1
-    (finishedTasks, workersNew, prereqsNew) = updatePrereqs (doWork workers) prereqs
+    -- in each run, we see if there are workers available due to work that might have finished in the last run
+    workersFree = getAvailableWorkers workers
+    -- we let the workers perform there work (1 second update)
+    -- we gather finished tasks and drop prerequisites if possible
+    (finishedTasks, workersNew, prereqsNew) = updateWork (doWork workers) prereqs
+    -- based on the new prerequisites and finished tasks, we see if there are new tasks we can queue
     childrenAvailableNext = availableChildrenNext graph prereqsNew finishedTasks 
+    workItemsFreeNew = availableWorkNext childrenAvailableNext workItemsFree finishedTasks
   in
-  
-    case workItemsFree of
+    case workersFree of
       [] ->
-        if (List.length workersFree) == (List.length workers) then
-          time
-        else
-          traverseGraph2
-            childrenAvailableNext
+        -- if no worker is available, we cycle another second
+        buildSleigh
+            workItemsFreeNew
             workersNew
             prereqsNew
             graph 
             timeNew
-      
       _ ->
-        case workersFree of
-          [] ->
-            let
-              workItemsFreeNew = List.append (List.filter (\i -> List.member i finishedTasks == False) workItemsFree) childrenAvailableNext |> Set.fromList |> Set.toList 
-            in
-              -- if no worker is available, we cycle another second
-              traverseGraph2
-                  workItemsFreeNew
-                  workersNew
-                  prereqsNew
-                  graph 
-                  timeNew
-
-          _ ->
-            let
-              (workersUpdated, workItemsFreeUpdated) = List.foldl assignNewWorker (workers, workItemsFree) workItemsFree
-              (finishedTasks2, workersNew2, prereqsNew2) = updatePrereqs (doWork workersUpdated) prereqs
-              childrenAvailableNext2 = availableChildrenNext graph prereqsNew2 finishedTasks2
-              workItemsFreeNew = availableWorkNext childrenAvailableNext2 workItemsFreeUpdated finishedTasks2
-            in
-              traverseGraph2
-                workItemsFreeNew
-                workersNew2
-                prereqsNew2
-                graph 
-                timeNew
+        -- if no more work is left and all workers are done, sleigh is built and we return the current time spent
+        if (workItemsFreeNew == []) && (List.length workersFree) == (List.length workers) then
+          time
+        else
+          let
+            -- we assign available workers to avialbale tasks: this requires us to update the workers and workItems lists accordingly
+            (workersUpdated, workItemsFreeUpdated) = List.foldl assignNewWorker (workers, workItemsFree) workItemsFree
+            -- this does not operate on the work performed above but rather let the original workers work after we assigned new tasks
+            (finishedTasks2, workersNew2, prereqsNew2) = updateWork (doWork workersUpdated) prereqs
+            -- hence, in this path, we need to calculate children and workItems ourselves with different input 
+            childrenAvailableNext2 = availableChildrenNext graph prereqsNew2 finishedTasks2
+            workItemsFreeNew2 = availableWorkNext childrenAvailableNext2 workItemsFreeUpdated finishedTasks2
+          in
+            buildSleigh
+              workItemsFreeNew2
+              workersNew2
+              prereqsNew2
+              graph 
+              timeNew
 
 availableChildrenNext : Graph -> Prereqs -> List Int -> List Int  
 availableChildrenNext graph prereqsNew finishedTasks =
@@ -153,8 +150,8 @@ getWorkDuration task =
   task - 4
 
 
-updatePrereqs : List Worker -> Prereqs -> (List Int, List Worker, Prereqs)
-updatePrereqs workers prereqs =
+updateWork : List Worker -> Prereqs -> (List Int, List Worker, Prereqs)
+updateWork workers prereqs =
   let
     finishedTasks = getFinishedTasks workers
     workersNew = finishWork workers finishedTasks
