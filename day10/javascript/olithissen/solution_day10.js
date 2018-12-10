@@ -38,16 +38,17 @@ function readInputAsArray(file) {
 }
 
 function render(data) {
-  const maxX = Math.max(...data.map(item => item.x));
-  const maxY = Math.max(...data.map(item => item.y));
-  const minX = Math.min(...data.map(item => item.x));
   const minY = Math.min(...data.map(item => item.y));
-
+  const maxY = Math.max(...data.map(item => item.y));
+  
   //If the rows are more then 10 apart, there is no use in rendering them 
   if (maxY - minY > 10) {
     return "";
   }
   
+  const minX = Math.min(...data.map(item => item.x));
+  const maxX = Math.max(...data.map(item => item.x));
+
   let output = "";
   for (let row = minY; row <= maxY; row++) {
     for (let col = minX; col <= maxX; col++) {
