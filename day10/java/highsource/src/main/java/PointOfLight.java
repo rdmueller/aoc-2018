@@ -5,8 +5,10 @@ import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 @AllArgsConstructor
+@Getter
 @EqualsAndHashCode
 public class PointOfLight {
 
@@ -15,6 +17,11 @@ public class PointOfLight {
 
 	private int vx;
 	private int vy;
+	
+	public void next() {
+		x+=vx;
+		y+=vy;
+	}
 
 	@Override
 	public String toString() {
