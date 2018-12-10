@@ -20,3 +20,16 @@ const overlappingTimes = overlappingSleepTimes(foundGuard);
 
 console.log("Day 04, part 1: " + id * overlappingTimes[0].minute);
 //end::part1[]
+
+// tag::part2[]
+const part2Guards = reduced
+  .map(guard => {
+    return { guard: guard, times: overlappingSleepTimes(guard) };
+  })
+  .filter(guard => guard.times.length > 0);
+part2Guards.sort((a, b) => b.times[0].days - a.times[0].days);
+const part2Guard = part2Guards[0];
+console.log(
+  "Day 04, part 2: " + part2Guard.guard.guard * part2Guard.times[0].minute
+);
+// end::part2[]
