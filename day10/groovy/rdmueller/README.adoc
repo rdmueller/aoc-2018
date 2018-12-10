@@ -14,6 +14,8 @@ include::solution.groovy[tags=helper]
 
 == First Star
 
+Wow. That was fun!
+
 [source, groovy]
 ....
 include::solution.groovy[tags=starOne,!starTwo]
@@ -21,7 +23,5 @@ include::solution.groovy[tags=starOne,!starTwo]
 
 == Second Star
 
-[source, groovy]
-....
-include::solution.groovy[tags=starTwo]
-....
+Since it is only counting the seconds, it is already included in the first part of the source.
+And yes, I've got an off by one error when I first submitted my solution *g*
