@@ -31,16 +31,12 @@ func getPowerLevel(c *Cell, serialNumber int) int {
 func main() {
 	boxLength := 3
 	serialNumber := 1718
+	grid := createGrid(300, 300, serialNumber)
 	maxPower := -999999999
 	var maxCell Cell
 	for x := 1; x <= 300 - boxLength; x++ {
 		for y := 1; y <= 300 - boxLength; y++ {
-			sum := 0
-			for cx := 0; cx < 3; cx++ {
-				for cy := 0; cy < 3; cy++ {
-					sum += getPowerLevel(&Cell{cx+x, cy+y}, serialNumber)
-				}	
-			}
+			sum := getPowerLevelAtSquare(grid, x, y, 3)
 			if sum > maxPower {
 				maxPower = sum
 				maxCell = Cell{x, y}
@@ -48,4 +44,26 @@ func main() {
 		}
 	}
 	fmt.Printf("Solution part 1: %d,%d with max Power of %d\n", maxCell.x, maxCell.y, maxPower)
+}
+
+func createGrid(width int, height int, serialNumber int) [][]int {
+	g := make([][]int, height)
+
+	for y := 0; y < height; y++ {
+		g[y] = make([]int, width)
+		for x := 0; x < width; x++ {
+			g[y][x] = getPowerLevel(&Cell{x, y}, serialNumber)
+		}
+	}
+	return g
+}
+
+func getPowerLevelAtSquare(grid [][]int, x int, y int, size int) int {
+	sum := 0
+	for cx := 0; cx < size; cx++ {
+		for cy := 0; cy < size; cy++ {
+			sum += grid[y+cy][x+cx]
+		}	
+	}
+	return sum
 }
