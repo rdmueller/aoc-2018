@@ -38,3 +38,30 @@ coders.sort().each { coder, data ->
         daysFile.append("include::../../${datum[0]}/${datum[1]}/${coder}/README.adoc[leveloffset=+2]\n\n")
     }
 }
+def byDay = new File("generated/solutionByDay.adoc")
+byDay.write("")
+days = []
+coders.each { coder, data ->
+    data.each { datum ->
+        days << [datum[0],datum[1],coder]
+    }
+}
+def lastDay = ""
+days.sort{it[0]}.each { day ->
+    def link = "${day[0]}/${day[1]}/${day[2]}/README.adoc"
+    File readme = new File("../${link}")
+    if (readme.exists()) {
+        if (day[0]!=lastDay) {
+            col1 = day[0]
+            lastDay = day[0]
+        } else {
+            col1 = ""
+        }
+        byDay.append("""\
+| ${col1}
+| link:${link}[${day[1]}]
+| {${day[2]}}
+
+""")
+    }
+}
