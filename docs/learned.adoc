@@ -76,7 +76,7 @@ a| * Get the test input working first and assert that the results match the exam
 
 |{robertwalter83}
 a| * that parsing the input data is sometimes the most challenging part of these early tasks
- 
+
 
 |====
 
@@ -157,4 +157,7 @@ a| * graphs are fun but are super headache if you don't have 📝 (or experience
 |{anoff}
 a| * Go unit tests need to start with `func Test<Name>` whereas `Name` needs to be capitalized, otherwise *NOTHING* happens 😡 https://golang.org/pkg/testing/[rtfm]
 
+|{rdmueller}
+a| * there is no asciidoctor plugin for xcode!
+* today's solution part 2 is too slow to finish, but the solution already showed up after a few iterations 😎
 |====
