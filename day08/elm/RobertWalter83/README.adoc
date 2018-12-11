@@ -1,0 +1,48 @@
+== Solution written in elm 0.19
+
+goto https://guide.elm-lang.org/install.html to find your elm installation guide
+
+to build:
+
+    elm make src/Main.elm
+
+This should produce index.html in the root directory, which you can open locally (also checked in for convenience).
+
+== Input
+
+The input is a string, which we convert to a character array.
+
+=== Part 1
+
+These are the steps of my solution:
+The idea is to 
+
+  . build a graph using the Dict type:
+    .. for each node as KEY (encoded as Int), we remember the 'following values' according to the input (VALUES, as List Int)
+  . additionally, we have a Set that remembers all pairs (Int, Int) of (after <- before) edges in the graph, i.e. the prerequisites that must be done before a node can be handled next
+  . we traverse that graph, starting with all the nodes that have no prerequisite, sorted ascending (consider it a stack)
+    .. we start with the first, remove it is a prerequisite and lookup its children that don't have any prerequisites left
+    .. we add the children to the stack (sorting it again to keep the stack ability)
+    .. we recurse, until the stack is empty
+
+=== Part 2
+
+This is basically a similar traversal to part 1, but with some more sophisticated memory.
+
+  . we introducde a Worker Type that has
+    .. an 'id' for identification
+    .. a field 'workRemaining' where we update how much work the worker has left to do (-1 means it is free)
+    .. a 'task' field where we remember which task the worker is working on
+  . each iteration is considered a second of time passing, which we therefore keep track of
+  . in each iteration, we update the workers
+    .. we decrease their amount of workRemaining field by 1 => when it is 0, the current task is done
+    .. if we have available workers AND free tasks, we assign all free tasks to all available workers
+  . if tasks get finished during an iteration, we update the prerequisits so that children might become available
+  . the new, free work items consist of those that 
+    .. has not been assigned in the current run
+    .. are newly available due to finished tasks in the current run
+  . we break the recursion as soon as 
+    .. there are no more available work items
+    .. all workers are available (have been finished their work)
+
+
