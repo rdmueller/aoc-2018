@@ -20,8 +20,12 @@ include::generated/linksToCoders.adoc[]
 
 == Solutions by Day
 
-[cols="1,2,2"]
+[cols="1,2,2", options="header"]
 |====
+| Day
+| Language
+| Coder
+
 include::generated/solutionByDay.adoc[]
 |====
 
