@@ -9,12 +9,11 @@ import Array exposing (Array)
 type alias Model =
   { solution : (Int, Int) }
 
-type alias Node =
+type alias NodeInfo =
   { nChildren : Int, nMetadata : Int }
 
 type alias Stack =
-  List Node
-
+  List NodeInfo
 
 -- INIT
 init : Model
@@ -24,10 +23,75 @@ init =
 
     -- PART 1
     sum = sumMetadata input 0 [] 0
+  
     -- PART 2
+    (idx, values) = nodeValue input 0
   in
     { solution = (sum, 0) }
 
+-- Solution part2
+nodeValue : Array Int -> Int -> (Int, List Int)
+nodeValue licData index =
+  let
+    (indexUpdated, mbNode) = processNode2 licData index
+  in
+    case mbNode of
+      Just node ->
+        if node.nChildren == 0 then
+          processLeaf licData indexUpdated node
+        
+        else
+          let
+            counter = List.range 0 (node.nChildren-1) 
+            (indexNew, valuesNew) = 
+              List.foldl 
+                (\_ (idx, values) -> 
+                  let
+                    (idxNew, vals) = nodeValue licData idx
+                  in
+                    (idxNew, List.append values vals)
+                ) 
+                (indexUpdated, [])
+                counter
+              
+            valueArray = Array.fromList valuesNew
+            (indexFinal, pointers) = getPointers licData indexNew node.nMetadata
+            
+          in
+            (indexFinal, [List.foldl (\p sum -> sum + (Array.get (p-1) valueArray |> withDefault 0)) 0 pointers])
+          
+      Maybe.Nothing ->
+        -- error 
+        (0, []) 
+
+processLeaf : Array Int -> Int -> NodeInfo -> (Int, List Int)
+processLeaf licData index node =
+  let
+    (indexNew, metaDelta) = processMetadata licData index node.nMetadata
+  in
+    (indexNew, [metaDelta])
+    
+getPointers : Array Int -> Int -> Int -> (Int, List Int)
+getPointers licData index length =
+  let
+    mdRange = List.range index (index+length-1)
+  in
+    (index+length, List.map (\indexMetadata -> (Array.get indexMetadata licData |> withDefault 0)) mdRange)
+       
+processNode2 : Array Int -> Int -> (Int, Maybe NodeInfo)
+processNode2 licData index = 
+  let
+    mbChildren = Array.get index licData 
+    mbMeta = Array.get (index+1) licData 
+  in
+    case (mbChildren, mbMeta) of
+      (Just children, Just meta) ->
+        (index+2, Just { nChildren = children, nMetadata = meta })
+          
+      (_, _) ->
+        (index, Maybe.Nothing)  
+
+-- Solution part1
 sumMetadata : Array Int -> Int -> Stack -> Int -> Int
 sumMetadata licData index stkNodes sum =
   case stkNodes of
@@ -73,7 +137,14 @@ processMetadata licData index meta =
     mdDelta = List.foldl (\indexMetadata sum -> sum + (Array.get indexMetadata licData |> withDefault 0)) 0 mdRange
   in
     (index+meta, mdDelta)
- 
+
+getChildPointers : Array Int -> Int -> Int -> (Int, List Int)
+getChildPointers licData index meta =
+  let
+    mdRange = List.range index (index+meta-1)
+    pointers = List.map (\indexMetadata -> Array.get indexMetadata licData |> withDefault 0) mdRange
+  in
+    (index+meta, pointers)
 
 -- UPDATE (no op)
 
