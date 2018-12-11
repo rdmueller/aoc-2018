@@ -3,20 +3,35 @@ This solution is written in Groovy.
 https://adventofcode.com/2018/day/11
 
 
-[source, groovy]
-....
-include::solution.groovy[tags=helper]
-....
 
 == First Star
 
+caclulate the power of one fullcell
 
 [source, groovy]
 ....
-include::solution.groovy[tags=starOne,!starTwo]
+include::solution.groovy[tags=fuelCell]
+....
+
+caclulate the power of one square
+
+[source, groovy]
+....
+include::solution.groovy[tags=square]
+....
+
+iterate over the whole rack
+
+[source, groovy]
+....
+include::solution.groovy[tags=largest]
 ....
 
 == Second Star
 
-Since it is only counting the seconds, it is already included in the first part of the source.
-And yes, I've got an off by one error when I first submitted my solution *g*
+I've extended the functions from part one with the size parameter and had to write a new iteration:
+
+[source, groovy]
+....
+include::solution.groovy[tags=dynamicLargest]
+....
