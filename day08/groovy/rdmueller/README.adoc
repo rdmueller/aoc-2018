@@ -1,11 +1,11 @@
 This solution is written in Groovy.
 
-During the first days of this year's advent, I learned a lot about Python.
-Now I switch back to my beloved Groovy jsut to be faster.
+After solving day 10, I try to catch up with day 8.
+Seems to be the easiest of the three missing days 7, 8 and 9.
 
-https://adventofcode.com/2018/day/10
+https://adventofcode.com/2018/day/8
 
-In order not to lose any time, I've already prepared my working folder and prepared a helper method the day before:
+Again, I will use my helper to read the input from day 10.
 
 [source, groovy]
 ....

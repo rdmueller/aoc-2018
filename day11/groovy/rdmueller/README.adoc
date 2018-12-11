@@ -1,11 +1,7 @@
 This solution is written in Groovy.
 
-During the first days of this year's advent, I learned a lot about Python.
-Now I switch back to my beloved Groovy jsut to be faster.
+https://adventofcode.com/2018/day/11
 
-https://adventofcode.com/2018/day/10
-
-In order not to lose any time, I've already prepared my working folder and prepared a helper method the day before:
 
 [source, groovy]
 ....
@@ -14,7 +10,6 @@ include::solution.groovy[tags=helper]
 
 == First Star
 
-Wow. That was fun!
 
 [source, groovy]
 ....

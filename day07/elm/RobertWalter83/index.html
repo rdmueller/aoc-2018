@@ -90,6 +90,271 @@ function A9(fun, a, b, c, d, e, f, g, h, i) {
 console.warn('Compiled in DEV mode. Follow the advice at https://elm-lang.org/0.19.0/optimize for better performance and smaller assets.');
 
 
+var _List_Nil_UNUSED = { $: 0 };
+var _List_Nil = { $: '[]' };
+
+function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
+function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
+
+
+var _List_cons = F2(_List_Cons);
+
+function _List_fromArray(arr)
+{
+	var out = _List_Nil;
+	for (var i = arr.length; i--; )
+	{
+		out = _List_Cons(arr[i], out);
+	}
+	return out;
+}
+
+function _List_toArray(xs)
+{
+	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		out.push(xs.a);
+	}
+	return out;
+}
+
+var _List_map2 = F3(function(f, xs, ys)
+{
+	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
+	{
+		arr.push(A2(f, xs.a, ys.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map3 = F4(function(f, xs, ys, zs)
+{
+	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A3(f, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map4 = F5(function(f, ws, xs, ys, zs)
+{
+	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
+{
+	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
+	{
+		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
+	}
+	return _List_fromArray(arr);
+});
+
+var _List_sortBy = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		return _Utils_cmp(f(a), f(b));
+	}));
+});
+
+var _List_sortWith = F2(function(f, xs)
+{
+	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
+		var ord = A2(f, a, b);
+		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
+	}));
+});
+
+
+
+// EQUALITY
+
+function _Utils_eq(x, y)
+{
+	for (
+		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
+		isEqual && (pair = stack.pop());
+		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
+		)
+	{}
+
+	return isEqual;
+}
+
+function _Utils_eqHelp(x, y, depth, stack)
+{
+	if (depth > 100)
+	{
+		stack.push(_Utils_Tuple2(x,y));
+		return true;
+	}
+
+	if (x === y)
+	{
+		return true;
+	}
+
+	if (typeof x !== 'object' || x === null || y === null)
+	{
+		typeof x === 'function' && _Debug_crash(5);
+		return false;
+	}
+
+	/**/
+	if (x.$ === 'Set_elm_builtin')
+	{
+		x = elm$core$Set$toList(x);
+		y = elm$core$Set$toList(y);
+	}
+	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	/**_UNUSED/
+	if (x.$ < 0)
+	{
+		x = elm$core$Dict$toList(x);
+		y = elm$core$Dict$toList(y);
+	}
+	//*/
+
+	for (var key in x)
+	{
+		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+var _Utils_equal = F2(_Utils_eq);
+var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
+
+
+
+// COMPARISONS
+
+// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
+// the particular integer values assigned to LT, EQ, and GT.
+
+function _Utils_cmp(x, y, ord)
+{
+	if (typeof x !== 'object')
+	{
+		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
+	}
+
+	/**/
+	if (x instanceof String)
+	{
+		var a = x.valueOf();
+		var b = y.valueOf();
+		return a === b ? 0 : a < b ? -1 : 1;
+	}
+	//*/
+
+	/**_UNUSED/
+	if (typeof x.$ === 'undefined')
+	//*/
+	/**/
+	if (x.$[0] === '#')
+	//*/
+	{
+		return (ord = _Utils_cmp(x.a, y.a))
+			? ord
+			: (ord = _Utils_cmp(x.b, y.b))
+				? ord
+				: _Utils_cmp(x.c, y.c);
+	}
+
+	// traverse conses until end of a list or a mismatch
+	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
+	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
+}
+
+var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
+var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
+var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
+var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
+
+var _Utils_compare = F2(function(x, y)
+{
+	var n = _Utils_cmp(x, y);
+	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
+});
+
+
+// COMMON VALUES
+
+var _Utils_Tuple0_UNUSED = 0;
+var _Utils_Tuple0 = { $: '#0' };
+
+function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
+function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
+
+function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
+function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
+
+function _Utils_chr_UNUSED(c) { return c; }
+function _Utils_chr(c) { return new String(c); }
+
+
+// RECORDS
+
+function _Utils_update(oldRecord, updatedFields)
+{
+	var newRecord = {};
+
+	for (var key in oldRecord)
+	{
+		newRecord[key] = oldRecord[key];
+	}
+
+	for (var key in updatedFields)
+	{
+		newRecord[key] = updatedFields[key];
+	}
+
+	return newRecord;
+}
+
+
+// APPEND
+
+var _Utils_append = F2(_Utils_ap);
+
+function _Utils_ap(xs, ys)
+{
+	// append Strings
+	if (typeof xs === 'string')
+	{
+		return xs + ys;
+	}
+
+	// append Lists
+	if (!xs.b)
+	{
+		return ys;
+	}
+	var root = _List_Cons(xs.a, ys);
+	xs = xs.b
+	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
+	{
+		curr = curr.b = _List_Cons(xs.a, ys);
+	}
+	return root;
+}
+
+
+
 var _JsArray_empty = [];
 
 function _JsArray_singleton(value)
@@ -238,87 +503,6 @@ var _JsArray_appendN = F3(function(n, dest, source)
     }
 
     return result;
-});
-
-
-
-var _List_Nil_UNUSED = { $: 0 };
-var _List_Nil = { $: '[]' };
-
-function _List_Cons_UNUSED(hd, tl) { return { $: 1, a: hd, b: tl }; }
-function _List_Cons(hd, tl) { return { $: '::', a: hd, b: tl }; }
-
-
-var _List_cons = F2(_List_Cons);
-
-function _List_fromArray(arr)
-{
-	var out = _List_Nil;
-	for (var i = arr.length; i--; )
-	{
-		out = _List_Cons(arr[i], out);
-	}
-	return out;
-}
-
-function _List_toArray(xs)
-{
-	for (var out = []; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		out.push(xs.a);
-	}
-	return out;
-}
-
-var _List_map2 = F3(function(f, xs, ys)
-{
-	for (var arr = []; xs.b && ys.b; xs = xs.b, ys = ys.b) // WHILE_CONSES
-	{
-		arr.push(A2(f, xs.a, ys.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map3 = F4(function(f, xs, ys, zs)
-{
-	for (var arr = []; xs.b && ys.b && zs.b; xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A3(f, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map4 = F5(function(f, ws, xs, ys, zs)
-{
-	for (var arr = []; ws.b && xs.b && ys.b && zs.b; ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A4(f, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_map5 = F6(function(f, vs, ws, xs, ys, zs)
-{
-	for (var arr = []; vs.b && ws.b && xs.b && ys.b && zs.b; vs = vs.b, ws = ws.b, xs = xs.b, ys = ys.b, zs = zs.b) // WHILE_CONSES
-	{
-		arr.push(A5(f, vs.a, ws.a, xs.a, ys.a, zs.a));
-	}
-	return _List_fromArray(arr);
-});
-
-var _List_sortBy = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		return _Utils_cmp(f(a), f(b));
-	}));
-});
-
-var _List_sortWith = F2(function(f, xs)
-{
-	return _List_fromArray(_List_toArray(xs).sort(function(a, b) {
-		var ord = A2(f, a, b);
-		return ord === elm$core$Basics$EQ ? 0 : ord === elm$core$Basics$LT ? -1 : 1;
-	}));
 });
 
 
@@ -619,187 +803,63 @@ function _Debug_regionToString(region)
 
 
 
-// EQUALITY
+// MATH
 
-function _Utils_eq(x, y)
+var _Basics_add = F2(function(a, b) { return a + b; });
+var _Basics_sub = F2(function(a, b) { return a - b; });
+var _Basics_mul = F2(function(a, b) { return a * b; });
+var _Basics_fdiv = F2(function(a, b) { return a / b; });
+var _Basics_idiv = F2(function(a, b) { return (a / b) | 0; });
+var _Basics_pow = F2(Math.pow);
+
+var _Basics_remainderBy = F2(function(b, a) { return a % b; });
+
+// https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf
+var _Basics_modBy = F2(function(modulus, x)
 {
-	for (
-		var pair, stack = [], isEqual = _Utils_eqHelp(x, y, 0, stack);
-		isEqual && (pair = stack.pop());
-		isEqual = _Utils_eqHelp(pair.a, pair.b, 0, stack)
-		)
-	{}
-
-	return isEqual;
-}
-
-function _Utils_eqHelp(x, y, depth, stack)
-{
-	if (depth > 100)
-	{
-		stack.push(_Utils_Tuple2(x,y));
-		return true;
-	}
-
-	if (x === y)
-	{
-		return true;
-	}
-
-	if (typeof x !== 'object' || x === null || y === null)
-	{
-		typeof x === 'function' && _Debug_crash(5);
-		return false;
-	}
-
-	/**/
-	if (x.$ === 'Set_elm_builtin')
-	{
-		x = elm$core$Set$toList(x);
-		y = elm$core$Set$toList(y);
-	}
-	if (x.$ === 'RBNode_elm_builtin' || x.$ === 'RBEmpty_elm_builtin')
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	/**_UNUSED/
-	if (x.$ < 0)
-	{
-		x = elm$core$Dict$toList(x);
-		y = elm$core$Dict$toList(y);
-	}
-	//*/
-
-	for (var key in x)
-	{
-		if (!_Utils_eqHelp(x[key], y[key], depth + 1, stack))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-var _Utils_equal = F2(_Utils_eq);
-var _Utils_notEqual = F2(function(a, b) { return !_Utils_eq(a,b); });
-
-
-
-// COMPARISONS
-
-// Code in Generate/JavaScript.hs, Basics.js, and List.js depends on
-// the particular integer values assigned to LT, EQ, and GT.
-
-function _Utils_cmp(x, y, ord)
-{
-	if (typeof x !== 'object')
-	{
-		return x === y ? /*EQ*/ 0 : x < y ? /*LT*/ -1 : /*GT*/ 1;
-	}
-
-	/**/
-	if (x instanceof String)
-	{
-		var a = x.valueOf();
-		var b = y.valueOf();
-		return a === b ? 0 : a < b ? -1 : 1;
-	}
-	//*/
-
-	/**_UNUSED/
-	if (typeof x.$ === 'undefined')
-	//*/
-	/**/
-	if (x.$[0] === '#')
-	//*/
-	{
-		return (ord = _Utils_cmp(x.a, y.a))
-			? ord
-			: (ord = _Utils_cmp(x.b, y.b))
-				? ord
-				: _Utils_cmp(x.c, y.c);
-	}
-
-	// traverse conses until end of a list or a mismatch
-	for (; x.b && y.b && !(ord = _Utils_cmp(x.a, y.a)); x = x.b, y = y.b) {} // WHILE_CONSES
-	return ord || (x.b ? /*GT*/ 1 : y.b ? /*LT*/ -1 : /*EQ*/ 0);
-}
-
-var _Utils_lt = F2(function(a, b) { return _Utils_cmp(a, b) < 0; });
-var _Utils_le = F2(function(a, b) { return _Utils_cmp(a, b) < 1; });
-var _Utils_gt = F2(function(a, b) { return _Utils_cmp(a, b) > 0; });
-var _Utils_ge = F2(function(a, b) { return _Utils_cmp(a, b) >= 0; });
-
-var _Utils_compare = F2(function(x, y)
-{
-	var n = _Utils_cmp(x, y);
-	return n < 0 ? elm$core$Basics$LT : n ? elm$core$Basics$GT : elm$core$Basics$EQ;
+	var answer = x % modulus;
+	return modulus === 0
+		? _Debug_crash(11)
+		:
+	((answer > 0 && modulus < 0) || (answer < 0 && modulus > 0))
+		? answer + modulus
+		: answer;
 });
 
 
-// COMMON VALUES
+// TRIGONOMETRY
 
-var _Utils_Tuple0_UNUSED = 0;
-var _Utils_Tuple0 = { $: '#0' };
-
-function _Utils_Tuple2_UNUSED(a, b) { return { a: a, b: b }; }
-function _Utils_Tuple2(a, b) { return { $: '#2', a: a, b: b }; }
-
-function _Utils_Tuple3_UNUSED(a, b, c) { return { a: a, b: b, c: c }; }
-function _Utils_Tuple3(a, b, c) { return { $: '#3', a: a, b: b, c: c }; }
-
-function _Utils_chr_UNUSED(c) { return c; }
-function _Utils_chr(c) { return new String(c); }
+var _Basics_pi = Math.PI;
+var _Basics_e = Math.E;
+var _Basics_cos = Math.cos;
+var _Basics_sin = Math.sin;
+var _Basics_tan = Math.tan;
+var _Basics_acos = Math.acos;
+var _Basics_asin = Math.asin;
+var _Basics_atan = Math.atan;
+var _Basics_atan2 = F2(Math.atan2);
 
 
-// RECORDS
+// MORE MATH
 
-function _Utils_update(oldRecord, updatedFields)
-{
-	var newRecord = {};
+function _Basics_toFloat(x) { return x; }
+function _Basics_truncate(n) { return n | 0; }
+function _Basics_isInfinite(n) { return n === Infinity || n === -Infinity; }
 
-	for (var key in oldRecord)
-	{
-		newRecord[key] = oldRecord[key];
-	}
-
-	for (var key in updatedFields)
-	{
-		newRecord[key] = updatedFields[key];
-	}
-
-	return newRecord;
-}
+var _Basics_ceiling = Math.ceil;
+var _Basics_floor = Math.floor;
+var _Basics_round = Math.round;
+var _Basics_sqrt = Math.sqrt;
+var _Basics_log = Math.log;
+var _Basics_isNaN = isNaN;
 
 
-// APPEND
+// BOOLEANS
 
-var _Utils_append = F2(_Utils_ap);
-
-function _Utils_ap(xs, ys)
-{
-	// append Strings
-	if (typeof xs === 'string')
-	{
-		return xs + ys;
-	}
-
-	// append Lists
-	if (!xs.b)
-	{
-		return ys;
-	}
-	var root = _List_Cons(xs.a, ys);
-	xs = xs.b
-	for (var curr = root; xs.b; xs = xs.b) // WHILE_CONS
-	{
-		curr = curr.b = _List_Cons(xs.a, ys);
-	}
-	return root;
-}
+function _Basics_not(bool) { return !bool; }
+var _Basics_and = F2(function(a, b) { return a && b; });
+var _Basics_or  = F2(function(a, b) { return a || b; });
+var _Basics_xor = F2(function(a, b) { return a !== b; });
 
 
 
@@ -1159,66 +1219,6 @@ function _String_fromList(chars)
 	return _List_toArray(chars).join('');
 }
 
-
-
-
-// MATH
-
-var _Basics_add = F2(function(a, b) { return a + b; });
-var _Basics_sub = F2(function(a, b) { return a - b; });
-var _Basics_mul = F2(function(a, b) { return a * b; });
-var _Basics_fdiv = F2(function(a, b) { return a / b; });
-var _Basics_idiv = F2(function(a, b) { return (a / b) | 0; });
-var _Basics_pow = F2(Math.pow);
-
-var _Basics_remainderBy = F2(function(b, a) { return a % b; });
-
-// https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf
-var _Basics_modBy = F2(function(modulus, x)
-{
-	var answer = x % modulus;
-	return modulus === 0
-		? _Debug_crash(11)
-		:
-	((answer > 0 && modulus < 0) || (answer < 0 && modulus > 0))
-		? answer + modulus
-		: answer;
-});
-
-
-// TRIGONOMETRY
-
-var _Basics_pi = Math.PI;
-var _Basics_e = Math.E;
-var _Basics_cos = Math.cos;
-var _Basics_sin = Math.sin;
-var _Basics_tan = Math.tan;
-var _Basics_acos = Math.acos;
-var _Basics_asin = Math.asin;
-var _Basics_atan = Math.atan;
-var _Basics_atan2 = F2(Math.atan2);
-
-
-// MORE MATH
-
-function _Basics_toFloat(x) { return x; }
-function _Basics_truncate(n) { return n | 0; }
-function _Basics_isInfinite(n) { return n === Infinity || n === -Infinity; }
-
-var _Basics_ceiling = Math.ceil;
-var _Basics_floor = Math.floor;
-var _Basics_round = Math.round;
-var _Basics_sqrt = Math.sqrt;
-var _Basics_log = Math.log;
-var _Basics_isNaN = isNaN;
-
-
-// BOOLEANS
-
-function _Basics_not(bool) { return !bool; }
-var _Basics_and = F2(function(a, b) { return a && b; });
-var _Basics_or  = F2(function(a, b) { return a || b; });
-var _Basics_xor = F2(function(a, b) { return a !== b; });
 
 
 
@@ -4320,7 +4320,6 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Main$inputData = 'Step H must be finished before step C can begin.\r\nStep R must be finished before step S can begin.\r\nStep F must be finished before step M can begin.\r\nStep S must be finished before step Z can begin.\r\nStep X must be finished before step Z can begin.\r\nStep Q must be finished before step G can begin.\r\nStep M must be finished before step Z can begin.\r\nStep G must be finished before step V can begin.\r\nStep N must be finished before step Z can begin.\r\nStep I must be finished before step J can begin.\r\nStep Z must be finished before step T can begin.\r\nStep B must be finished before step A can begin.\r\nStep L must be finished before step T can begin.\r\nStep E must be finished before step D can begin.\r\nStep U must be finished before step Y can begin.\r\nStep W must be finished before step O can begin.\r\nStep C must be finished before step V can begin.\r\nStep O must be finished before step J can begin.\r\nStep T must be finished before step D can begin.\r\nStep A must be finished before step J can begin.\r\nStep J must be finished before step V can begin.\r\nStep D must be finished before step P can begin.\r\nStep P must be finished before step V can begin.\r\nStep K must be finished before step Y can begin.\r\nStep V must be finished before step Y can begin.\r\nStep D must be finished before step V can begin.\r\nStep W must be finished before step Y can begin.\r\nStep I must be finished before step U can begin.\r\nStep B must be finished before step V can begin.\r\nStep U must be finished before step D can begin.\r\nStep M must be finished before step C can begin.\r\nStep H must be finished before step Z can begin.\r\nStep B must be finished before step P can begin.\r\nStep X must be finished before step N can begin.\r\nStep G must be finished before step O can begin.\r\nStep I must be finished before step C can begin.\r\nStep B must be finished before step K can begin.\r\nStep J must be finished before step Y can begin.\r\nStep M must be finished before step E can begin.\r\nStep T must be finished before step J can begin.\r\nStep O must be finished before step P can begin.\r\nStep P must be finished before step Y can begin.\r\nStep R must be finished before step D can begin.\r\nStep N must be finished before step W can begin.\r\nStep H must be finished before step G can begin.\r\nStep I must be finished before step K can begin.\r\nStep L must be finished before step O can begin.\r\nStep X must be finished before step K can begin.\r\nStep B must be finished before step J can begin.\r\nStep Z must be finished before step C can begin.\r\nStep Z must be finished before step O can begin.\r\nStep F must be finished before step U can begin.\r\nStep F must be finished before step Q can begin.\r\nStep U must be finished before step K can begin.\r\nStep T must be finished before step V can begin.\r\nStep O must be finished before step D can begin.\r\nStep R must be finished before step B can begin.\r\nStep U must be finished before step J can begin.\r\nStep U must be finished before step A can begin.\r\nStep T must be finished before step K can begin.\r\nStep F must be finished before step N can begin.\r\nStep J must be finished before step P can begin.\r\nStep Z must be finished before step A can begin.\r\nStep L must be finished before step A can begin.\r\nStep R must be finished before step V can begin.\r\nStep F must be finished before step Y can begin.\r\nStep C must be finished before step A can begin.\r\nStep H must be finished before step P can begin.\r\nStep A must be finished before step K can begin.\r\nStep C must be finished before step J can begin.\r\nStep X must be finished before step T can begin.\r\nStep L must be finished before step D can begin.\r\nStep L must be finished before step J can begin.\r\nStep N must be finished before step B can begin.\r\nStep Z must be finished before step B can begin.\r\nStep G must be finished before step P can begin.\r\nStep E must be finished before step P can begin.\r\nStep L must be finished before step P can begin.\r\nStep T must be finished before step Y can begin.\r\nStep S must be finished before step U can begin.\r\nStep M must be finished before step U can begin.\r\nStep D must be finished before step K can begin.\r\nStep L must be finished before step U can begin.\r\nStep F must be finished before step S can begin.\r\nStep N must be finished before step L can begin.\r\nStep W must be finished before step P can begin.\r\nStep G must be finished before step I can begin.\r\nStep L must be finished before step Y can begin.\r\nStep D must be finished before step Y can begin.\r\nStep K must be finished before step V can begin.\r\nStep B must be finished before step O can begin.\r\nStep P must be finished before step K can begin.\r\nStep R must be finished before step C can begin.\r\nStep G must be finished before step L can begin.\r\nStep O must be finished before step A can begin.\r\nStep M must be finished before step L can begin.\r\nStep E must be finished before step K can begin.\r\nStep F must be finished before step C can begin.\r\nStep B must be finished before step L can begin.\r\nStep O must be finished before step T can begin.\r\nStep S must be finished before step O can begin.';
 var elm$core$Basics$apR = F2(
 	function (x, f) {
 		return f(x);
@@ -4328,34 +4327,9 @@ var elm$core$Basics$apR = F2(
 var elm$core$Basics$negate = function (n) {
 	return -n;
 };
-var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
-var elm$core$Array$foldr = F3(
-	function (func, baseCase, _n0) {
-		var tree = _n0.c;
-		var tail = _n0.d;
-		var helper = F2(
-			function (node, acc) {
-				if (node.$ === 'SubTree') {
-					var subTree = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
-				} else {
-					var values = node.a;
-					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
-				}
-			});
-		return A3(
-			elm$core$Elm$JsArray$foldr,
-			helper,
-			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
-			tree);
-	});
 var elm$core$Basics$EQ = {$: 'EQ'};
-var elm$core$Basics$LT = {$: 'LT'};
-var elm$core$List$cons = _List_cons;
-var elm$core$Array$toList = function (array) {
-	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
-};
 var elm$core$Basics$GT = {$: 'GT'};
+var elm$core$Basics$LT = {$: 'LT'};
 var elm$core$Dict$foldr = F3(
 	function (func, acc, t) {
 		foldr:
@@ -4381,6 +4355,7 @@ var elm$core$Dict$foldr = F3(
 			}
 		}
 	});
+var elm$core$List$cons = _List_cons;
 var elm$core$Dict$toList = function (dict) {
 	return A3(
 		elm$core$Dict$foldr,
@@ -4408,50 +4383,31 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var elm$core$Char$toCode = _Char_toCode;
-var elm$core$Basics$lt = _Utils_lt;
-var elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
-};
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
-var elm$core$String$length = _String_length;
-var elm$core$String$slice = _String_slice;
-var elm$core$String$dropLeft = F2(
-	function (n, string) {
-		return (n < 1) ? string : A3(
-			elm$core$String$slice,
-			n,
-			elm$core$String$length(string),
-			string);
+var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
+var elm$core$Array$foldr = F3(
+	function (func, baseCase, _n0) {
+		var tree = _n0.c;
+		var tail = _n0.d;
+		var helper = F2(
+			function (node, acc) {
+				if (node.$ === 'SubTree') {
+					var subTree = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
+				} else {
+					var values = node.a;
+					return A3(elm$core$Elm$JsArray$foldr, func, acc, values);
+				}
+			});
+		return A3(
+			elm$core$Elm$JsArray$foldr,
+			helper,
+			A3(elm$core$Elm$JsArray$foldr, func, baseCase, tail),
+			tree);
 	});
-var elm$core$String$foldr = _String_foldr;
-var elm$core$String$toList = function (string) {
-	return A3(elm$core$String$foldr, elm$core$List$cons, _List_Nil, string);
+var elm$core$Array$toList = function (array) {
+	return A3(elm$core$Array$foldr, elm$core$List$cons, _List_Nil, array);
 };
-var author$project$Main$parseLineAt = function (line) {
-	var char2 = elm$core$String$toList(
-		A2(elm$core$String$dropLeft, 36, line));
-	var char1 = elm$core$String$toList(
-		A2(elm$core$String$dropLeft, 5, line));
-	var _n0 = _Utils_Tuple2(char1, char2);
-	if (_n0.a.b && _n0.b.b) {
-		var _n1 = _n0.a;
-		var c1 = _n1.a;
-		var c1s = _n1.b;
-		var _n2 = _n0.b;
-		var c2 = _n2.a;
-		var c2s = _n2.b;
-		return _Utils_Tuple2(
-			elm$core$Char$toCode(c1),
-			elm$core$Char$toCode(c2));
-	} else {
-		return _Utils_Tuple2(-1, -1);
-	}
-};
-var elm$core$Basics$False = {$: 'False'};
-var elm$core$Basics$True = {$: 'True'};
-var elm$core$Basics$and = _Basics_and;
-var elm$core$Basics$neq = _Utils_notEqual;
+var elm$core$Basics$sub = _Basics_sub;
 var elm$core$Basics$add = _Basics_add;
 var elm$core$Basics$gt = _Utils_gt;
 var elm$core$List$foldl = F3(
@@ -4531,17 +4487,6 @@ var elm$core$List$foldr = F3(
 	function (fn, acc, ls) {
 		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
 	});
-var elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
 var elm$core$List$map = F2(
 	function (f, xs) {
 		return A3(
@@ -4555,6 +4500,92 @@ var elm$core$List$map = F2(
 				}),
 			_List_Nil,
 			xs);
+	});
+var elm$core$Basics$le = _Utils_le;
+var elm$core$List$rangeHelp = F3(
+	function (lo, hi, list) {
+		rangeHelp:
+		while (true) {
+			if (_Utils_cmp(lo, hi) < 1) {
+				var $temp$lo = lo,
+					$temp$hi = hi - 1,
+					$temp$list = A2(elm$core$List$cons, hi, list);
+				lo = $temp$lo;
+				hi = $temp$hi;
+				list = $temp$list;
+				continue rangeHelp;
+			} else {
+				return list;
+			}
+		}
+	});
+var elm$core$List$range = F2(
+	function (lo, hi) {
+		return A3(elm$core$List$rangeHelp, lo, hi, _List_Nil);
+	});
+var author$project$Main$getWorkers = function (n) {
+	return A2(
+		elm$core$List$map,
+		function (i) {
+			return {id: i, task: -1, workRemaining: -1};
+		},
+		A2(elm$core$List$range, 0, n - 1));
+};
+var author$project$Main$inputData = 'Step H must be finished before step C can begin.\r\nStep R must be finished before step S can begin.\r\nStep F must be finished before step M can begin.\r\nStep S must be finished before step Z can begin.\r\nStep X must be finished before step Z can begin.\r\nStep Q must be finished before step G can begin.\r\nStep M must be finished before step Z can begin.\r\nStep G must be finished before step V can begin.\r\nStep N must be finished before step Z can begin.\r\nStep I must be finished before step J can begin.\r\nStep Z must be finished before step T can begin.\r\nStep B must be finished before step A can begin.\r\nStep L must be finished before step T can begin.\r\nStep E must be finished before step D can begin.\r\nStep U must be finished before step Y can begin.\r\nStep W must be finished before step O can begin.\r\nStep C must be finished before step V can begin.\r\nStep O must be finished before step J can begin.\r\nStep T must be finished before step D can begin.\r\nStep A must be finished before step J can begin.\r\nStep J must be finished before step V can begin.\r\nStep D must be finished before step P can begin.\r\nStep P must be finished before step V can begin.\r\nStep K must be finished before step Y can begin.\r\nStep V must be finished before step Y can begin.\r\nStep D must be finished before step V can begin.\r\nStep W must be finished before step Y can begin.\r\nStep I must be finished before step U can begin.\r\nStep B must be finished before step V can begin.\r\nStep U must be finished before step D can begin.\r\nStep M must be finished before step C can begin.\r\nStep H must be finished before step Z can begin.\r\nStep B must be finished before step P can begin.\r\nStep X must be finished before step N can begin.\r\nStep G must be finished before step O can begin.\r\nStep I must be finished before step C can begin.\r\nStep B must be finished before step K can begin.\r\nStep J must be finished before step Y can begin.\r\nStep M must be finished before step E can begin.\r\nStep T must be finished before step J can begin.\r\nStep O must be finished before step P can begin.\r\nStep P must be finished before step Y can begin.\r\nStep R must be finished before step D can begin.\r\nStep N must be finished before step W can begin.\r\nStep H must be finished before step G can begin.\r\nStep I must be finished before step K can begin.\r\nStep L must be finished before step O can begin.\r\nStep X must be finished before step K can begin.\r\nStep B must be finished before step J can begin.\r\nStep Z must be finished before step C can begin.\r\nStep Z must be finished before step O can begin.\r\nStep F must be finished before step U can begin.\r\nStep F must be finished before step Q can begin.\r\nStep U must be finished before step K can begin.\r\nStep T must be finished before step V can begin.\r\nStep O must be finished before step D can begin.\r\nStep R must be finished before step B can begin.\r\nStep U must be finished before step J can begin.\r\nStep U must be finished before step A can begin.\r\nStep T must be finished before step K can begin.\r\nStep F must be finished before step N can begin.\r\nStep J must be finished before step P can begin.\r\nStep Z must be finished before step A can begin.\r\nStep L must be finished before step A can begin.\r\nStep R must be finished before step V can begin.\r\nStep F must be finished before step Y can begin.\r\nStep C must be finished before step A can begin.\r\nStep H must be finished before step P can begin.\r\nStep A must be finished before step K can begin.\r\nStep C must be finished before step J can begin.\r\nStep X must be finished before step T can begin.\r\nStep L must be finished before step D can begin.\r\nStep L must be finished before step J can begin.\r\nStep N must be finished before step B can begin.\r\nStep Z must be finished before step B can begin.\r\nStep G must be finished before step P can begin.\r\nStep E must be finished before step P can begin.\r\nStep L must be finished before step P can begin.\r\nStep T must be finished before step Y can begin.\r\nStep S must be finished before step U can begin.\r\nStep M must be finished before step U can begin.\r\nStep D must be finished before step K can begin.\r\nStep L must be finished before step U can begin.\r\nStep F must be finished before step S can begin.\r\nStep N must be finished before step L can begin.\r\nStep W must be finished before step P can begin.\r\nStep G must be finished before step I can begin.\r\nStep L must be finished before step Y can begin.\r\nStep D must be finished before step Y can begin.\r\nStep K must be finished before step V can begin.\r\nStep B must be finished before step O can begin.\r\nStep P must be finished before step K can begin.\r\nStep R must be finished before step C can begin.\r\nStep G must be finished before step L can begin.\r\nStep O must be finished before step A can begin.\r\nStep M must be finished before step L can begin.\r\nStep E must be finished before step K can begin.\r\nStep F must be finished before step C can begin.\r\nStep B must be finished before step L can begin.\r\nStep O must be finished before step T can begin.\r\nStep S must be finished before step O can begin.';
+var elm$core$Char$toCode = _Char_toCode;
+var elm$core$Basics$lt = _Utils_lt;
+var elm$core$Maybe$Just = function (a) {
+	return {$: 'Just', a: a};
+};
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
+var elm$core$String$length = _String_length;
+var elm$core$String$slice = _String_slice;
+var elm$core$String$dropLeft = F2(
+	function (n, string) {
+		return (n < 1) ? string : A3(
+			elm$core$String$slice,
+			n,
+			elm$core$String$length(string),
+			string);
+	});
+var elm$core$String$foldr = _String_foldr;
+var elm$core$String$toList = function (string) {
+	return A3(elm$core$String$foldr, elm$core$List$cons, _List_Nil, string);
+};
+var author$project$Main$parseLineAt = function (line) {
+	var char2 = elm$core$String$toList(
+		A2(elm$core$String$dropLeft, 36, line));
+	var char1 = elm$core$String$toList(
+		A2(elm$core$String$dropLeft, 5, line));
+	var _n0 = _Utils_Tuple2(char1, char2);
+	if (_n0.a.b && _n0.b.b) {
+		var _n1 = _n0.a;
+		var c1 = _n1.a;
+		var c1s = _n1.b;
+		var _n2 = _n0.b;
+		var c2 = _n2.a;
+		var c2s = _n2.b;
+		return _Utils_Tuple2(
+			elm$core$Char$toCode(c1),
+			elm$core$Char$toCode(c2));
+	} else {
+		return _Utils_Tuple2(-1, -1);
+	}
+};
+var elm$core$Basics$False = {$: 'False'};
+var elm$core$Basics$True = {$: 'True'};
+var elm$core$Basics$and = _Basics_and;
+var elm$core$Basics$neq = _Utils_notEqual;
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
 	});
 var elm$core$String$lines = _String_lines;
 var author$project$Main$parse = function (data) {
@@ -4740,9 +4771,9 @@ var author$project$Main$removePrereqs = F2(
 		return A2(
 			elm$core$Set$filter,
 			function (_n0) {
-				var v = _n0.a;
-				var k = _n0.b;
-				return !_Utils_eq(k, prereqToRemove);
+				var after = _n0.a;
+				var before = _n0.b;
+				return !_Utils_eq(before, prereqToRemove);
 			},
 			prereqs);
 	});
@@ -4780,23 +4811,24 @@ var elm$core$List$all = F2(
 			A2(elm$core$Basics$composeL, elm$core$Basics$not, isOkay),
 			list);
 	});
+var author$project$Main$hasPrereq = F2(
+	function (prereqs, child) {
+		return A2(
+			elm$core$List$all,
+			function (_n0) {
+				var after = _n0.a;
+				var before = _n0.b;
+				return !_Utils_eq(after, child);
+			},
+			elm$core$Set$toList(prereqs));
+	});
 var author$project$Main$without = F2(
-	function (prereqs, candidates) {
+	function (prereqs, children) {
 		return A2(
 			elm$core$List$filter,
-			function (child) {
-				return A2(
-					elm$core$List$all,
-					function (_n0) {
-						var v = _n0.a;
-						var k = _n0.b;
-						return !_Utils_eq(v, child);
-					},
-					elm$core$Set$toList(prereqs));
-			},
-			candidates);
+			author$project$Main$hasPrereq(prereqs),
+			children);
 	});
-var elm$core$Debug$log = _Debug_log;
 var elm$core$Dict$get = F2(
 	function (targetKey, dict) {
 		get:
@@ -4860,15 +4892,12 @@ var author$project$Main$traverseGraph = F4(
 				var rest = stackNodes.b;
 				var prereqsNew = A2(author$project$Main$removePrereqs, n, prereqs);
 				var children = A2(
-					elm$core$Debug$log,
-					'children: ',
+					author$project$Main$without,
+					prereqsNew,
 					A2(
-						author$project$Main$without,
-						prereqsNew,
-						A2(
-							elm$core$Maybe$withDefault,
-							_List_Nil,
-							A2(elm$core$Dict$get, n, graph))));
+						elm$core$Maybe$withDefault,
+						_List_Nil,
+						A2(elm$core$Dict$get, n, graph)));
 				var $temp$stackNodes = elm$core$List$sort(
 					A2(elm$core$List$append, rest, children)),
 					$temp$prereqs = prereqsNew,
@@ -4886,19 +4915,335 @@ var author$project$Main$traverseGraph = F4(
 			}
 		}
 	});
-var author$project$Main$updateChildren = F2(
-	function (newChild, mbChildren) {
-		if (mbChildren.$ === 'Just') {
-			var children = mbChildren.a;
-			return elm$core$Maybe$Just(
+var elm$core$Basics$eq = _Utils_equal;
+var author$project$Main$getAvailableWorkers = function (workers) {
+	return A2(
+		elm$core$List$filter,
+		function (w) {
+			return _Utils_eq(w.workRemaining, -1);
+		},
+		workers);
+};
+var author$project$Main$getWorkDuration = function (task) {
+	return task - 4;
+};
+var author$project$Main$assignNewWorker = F2(
+	function (task, _n0) {
+		var workers = _n0.a;
+		var workItems = _n0.b;
+		var workersFree = author$project$Main$getAvailableWorkers(workers);
+		if (!workersFree.b) {
+			return _Utils_Tuple2(workers, workItems);
+		} else {
+			var free = workersFree.a;
+			var rest = workersFree.b;
+			return _Utils_Tuple2(
 				A2(
 					elm$core$List$append,
-					children,
+					A2(
+						elm$core$List$filter,
+						function (w) {
+							return !_Utils_eq(free.id, w.id);
+						},
+						workers),
 					_List_fromArray(
-						[newChild])));
+						[
+							{
+							id: free.id,
+							task: task,
+							workRemaining: author$project$Main$getWorkDuration(task)
+						}
+						])),
+				A2(
+					elm$core$List$filter,
+					function (i) {
+						return !_Utils_eq(i, task);
+					},
+					workItems));
+		}
+	});
+var elm$core$Basics$max = F2(
+	function (x, y) {
+		return (_Utils_cmp(x, y) > 0) ? x : y;
+	});
+var author$project$Main$doWork = function (workers) {
+	return A2(
+		elm$core$List$map,
+		function (w) {
+			return {
+				id: w.id,
+				task: w.task,
+				workRemaining: A2(elm$core$Basics$max, w.workRemaining - 1, -1)
+			};
+		},
+		workers);
+};
+var elm$core$List$member = F2(
+	function (x, xs) {
+		return A2(
+			elm$core$List$any,
+			function (a) {
+				return _Utils_eq(a, x);
+			},
+			xs);
+	});
+var author$project$Main$finishWorkItem = F2(
+	function (finishedTasks, worker) {
+		return A2(elm$core$List$member, worker.task, finishedTasks) ? {id: worker.id, task: -1, workRemaining: -1} : worker;
+	});
+var author$project$Main$finishWork = F2(
+	function (workers, finishedTasks) {
+		return A2(
+			elm$core$List$map,
+			author$project$Main$finishWorkItem(finishedTasks),
+			workers);
+	});
+var elm$core$Basics$apL = F2(
+	function (f, x) {
+		return f(x);
+	});
+var author$project$Main$getFinishedTasks = function (workers) {
+	return A2(
+		elm$core$List$map,
+		function (w1) {
+			return w1.task;
+		},
+		A2(
+			elm$core$List$filter,
+			function (w2) {
+				return !w2.workRemaining;
+			},
+			workers));
+};
+var author$project$Main$updatePrereqs = F2(
+	function (workers, prereqs) {
+		var finishedTasks = author$project$Main$getFinishedTasks(workers);
+		var prereqsNew = A3(elm$core$List$foldl, author$project$Main$removePrereqs, prereqs, finishedTasks);
+		var workersNew = A2(author$project$Main$finishWork, workers, finishedTasks);
+		return _Utils_Tuple3(finishedTasks, workersNew, prereqsNew);
+	});
+var elm$core$Debug$log = _Debug_log;
+var elm$core$List$concat = function (lists) {
+	return A3(elm$core$List$foldr, elm$core$List$append, _List_Nil, lists);
+};
+var elm$core$List$length = function (xs) {
+	return A3(
+		elm$core$List$foldl,
+		F2(
+			function (_n0, i) {
+				return i + 1;
+			}),
+		0,
+		xs);
+};
+var elm$core$Set$empty = elm$core$Set$Set_elm_builtin(elm$core$Dict$empty);
+var elm$core$Set$insert = F2(
+	function (key, _n0) {
+		var dict = _n0.a;
+		return elm$core$Set$Set_elm_builtin(
+			A3(elm$core$Dict$insert, key, _Utils_Tuple0, dict));
+	});
+var elm$core$Set$fromList = function (list) {
+	return A3(elm$core$List$foldl, elm$core$Set$insert, elm$core$Set$empty, list);
+};
+var author$project$Main$traverseGraph2 = F5(
+	function (workItemsFree, workers, prereqs, graph, time) {
+		traverseGraph2:
+		while (true) {
+			if (!workItemsFree.b) {
+				var workersFree = author$project$Main$getAvailableWorkers(workers);
+				var timeNew = time + 1;
+				var _n1 = A2(
+					elm$core$Debug$log,
+					' -- update tick: ',
+					A2(
+						author$project$Main$updatePrereqs,
+						author$project$Main$doWork(workers),
+						prereqs));
+				var finishedTasks = _n1.a;
+				var workersNew = _n1.b;
+				var prereqsNew = _n1.c;
+				var childrenAvailableNext = A2(
+					elm$core$Debug$log,
+					' -- availableNext: ',
+					elm$core$List$concat(
+						A2(
+							elm$core$List$map,
+							function (taskFinished) {
+								return A2(
+									author$project$Main$without,
+									prereqsNew,
+									A2(
+										elm$core$Maybe$withDefault,
+										_List_Nil,
+										A2(elm$core$Dict$get, taskFinished, graph)));
+							},
+							finishedTasks)));
+				var workItemsFreeNew = A2(elm$core$Debug$log, ' -- workItemsFreeNew: ', childrenAvailableNext);
+				if (_Utils_eq(
+					elm$core$List$length(workersFree),
+					elm$core$List$length(workers))) {
+					return time;
+				} else {
+					var $temp$workItemsFree = workItemsFreeNew,
+						$temp$workers = workersNew,
+						$temp$prereqs = prereqsNew,
+						$temp$graph = graph,
+						$temp$time = timeNew;
+					workItemsFree = $temp$workItemsFree;
+					workers = $temp$workers;
+					prereqs = $temp$prereqs;
+					graph = $temp$graph;
+					time = $temp$time;
+					continue traverseGraph2;
+				}
+			} else {
+				var workersFree = A2(
+					elm$core$Debug$log,
+					'free: ',
+					author$project$Main$getAvailableWorkers(workers));
+				var w22 = A2(elm$core$Debug$log, 'START workers: ', workers);
+				var timeNew = time + 1;
+				if (!workersFree.b) {
+					var _n3 = A2(
+						elm$core$Debug$log,
+						'[] update tick: ',
+						A2(
+							author$project$Main$updatePrereqs,
+							author$project$Main$doWork(workers),
+							prereqs));
+					var finishedTasks = _n3.a;
+					var workersNew = _n3.b;
+					var prereqsNew = _n3.c;
+					var childrenAvailableNext = A2(
+						elm$core$Debug$log,
+						'[] availableNext: ',
+						elm$core$List$concat(
+							A2(
+								elm$core$List$map,
+								function (taskFinished) {
+									return A2(
+										author$project$Main$without,
+										prereqsNew,
+										A2(
+											elm$core$Maybe$withDefault,
+											_List_Nil,
+											A2(elm$core$Dict$get, taskFinished, graph)));
+								},
+								finishedTasks)));
+					var workItemsFreeNew = A2(
+						elm$core$Debug$log,
+						'[] workItemsFreeNew: ',
+						elm$core$Set$toList(
+							elm$core$Set$fromList(
+								A2(
+									elm$core$List$append,
+									A2(
+										elm$core$List$filter,
+										function (i) {
+											return !A2(elm$core$List$member, i, finishedTasks);
+										},
+										workItemsFree),
+									childrenAvailableNext))));
+					var $temp$workItemsFree = workItemsFreeNew,
+						$temp$workers = workersNew,
+						$temp$prereqs = prereqsNew,
+						$temp$graph = graph,
+						$temp$time = timeNew;
+					workItemsFree = $temp$workItemsFree;
+					workers = $temp$workers;
+					prereqs = $temp$prereqs;
+					graph = $temp$graph;
+					time = $temp$time;
+					continue traverseGraph2;
+				} else {
+					var _n4 = A2(
+						elm$core$Debug$log,
+						'assigned work: ',
+						A3(
+							elm$core$List$foldl,
+							author$project$Main$assignNewWorker,
+							_Utils_Tuple2(workers, workItemsFree),
+							workItemsFree));
+					var workersUpdated = _n4.a;
+					var workItemsFreeUpdated = _n4.b;
+					var _n5 = A2(
+						elm$core$Debug$log,
+						'update tick: ',
+						A2(
+							author$project$Main$updatePrereqs,
+							author$project$Main$doWork(workersUpdated),
+							prereqs));
+					var finishedTasks = _n5.a;
+					var workersNew = _n5.b;
+					var prereqsNew = _n5.c;
+					var childrenAvailableNext = A2(
+						elm$core$Debug$log,
+						'availableNext: ',
+						elm$core$List$concat(
+							A2(
+								elm$core$List$map,
+								function (taskFinished) {
+									return A2(
+										author$project$Main$without,
+										prereqsNew,
+										A2(
+											elm$core$Maybe$withDefault,
+											_List_Nil,
+											A2(elm$core$Dict$get, taskFinished, graph)));
+								},
+								finishedTasks)));
+					var workItemsFreeNew = A2(
+						elm$core$Debug$log,
+						'workItemsFreeNew: ',
+						elm$core$Set$toList(
+							elm$core$Set$fromList(
+								A2(
+									elm$core$List$append,
+									A2(
+										elm$core$List$filter,
+										function (i) {
+											return !A2(elm$core$List$member, i, finishedTasks);
+										},
+										workItemsFreeUpdated),
+									childrenAvailableNext))));
+					var $temp$workItemsFree = workItemsFreeNew,
+						$temp$workers = workersNew,
+						$temp$prereqs = prereqsNew,
+						$temp$graph = graph,
+						$temp$time = timeNew;
+					workItemsFree = $temp$workItemsFree;
+					workers = $temp$workers;
+					prereqs = $temp$prereqs;
+					graph = $temp$graph;
+					time = $temp$time;
+					continue traverseGraph2;
+				}
+			}
+		}
+	});
+var elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return elm$core$Maybe$Just(
+				f(value));
 		} else {
 			return elm$core$Maybe$Nothing;
 		}
+	});
+var author$project$Main$updateChildren = F2(
+	function (newChild, mbChildren) {
+		return A2(
+			elm$core$Maybe$map,
+			function (children) {
+				return A2(
+					elm$core$List$append,
+					children,
+					_List_fromArray(
+						[newChild]));
+			},
+			mbChildren);
 	});
 var elm$core$Dict$member = F2(
 	function (key, dict) {
@@ -4909,7 +5254,6 @@ var elm$core$Dict$member = F2(
 			return false;
 		}
 	});
-var elm$core$Basics$eq = _Utils_equal;
 var elm$core$Dict$getMin = function (dict) {
 	getMin:
 	while (true) {
@@ -5298,12 +5642,6 @@ var author$project$Main$updateGraphAt = F2(
 				[v]),
 			graph);
 	});
-var elm$core$Set$insert = F2(
-	function (key, _n0) {
-		var dict = _n0.a;
-		return elm$core$Set$Set_elm_builtin(
-			A3(elm$core$Dict$insert, key, _Utils_Tuple0, dict));
-	});
 var elm$core$Set$remove = F2(
 	function (key, _n0) {
 		var dict = _n0.a;
@@ -5329,86 +5667,52 @@ var author$project$Main$updateGraph = F2(
 				graph));
 	});
 var elm$core$Char$fromCode = _Char_fromCode;
-var elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return elm$core$Maybe$Just(x);
-	} else {
-		return elm$core$Maybe$Nothing;
-	}
-};
-var elm$core$Set$empty = elm$core$Set$Set_elm_builtin(elm$core$Dict$empty);
-var elm$core$Set$fromList = function (list) {
-	return A3(elm$core$List$foldl, elm$core$Set$insert, elm$core$Set$empty, list);
-};
 var elm$core$String$fromList = _String_fromList;
+var elm$core$Tuple$first = function (_n0) {
+	var x = _n0.a;
+	return x;
+};
 var author$project$Main$init = function () {
-	var data = author$project$Main$input;
-	var startNodesCandidates = A2(
-		elm$core$Debug$log,
-		'start candidates: ',
-		elm$core$Set$fromList(
-			A2(
-				elm$core$List$map,
-				function (_n1) {
-					var c1 = _n1.a;
-					var c2 = _n1.b;
-					return c1;
-				},
-				data)));
-	var _n0 = A2(
-		elm$core$Debug$log,
-		'result: ',
-		A3(
-			elm$core$List$foldl,
-			author$project$Main$updateGraph,
-			_Utils_Tuple3(startNodesCandidates, elm$core$Set$empty, elm$core$Dict$empty),
-			data));
+	var startNodesCandidates = elm$core$Set$fromList(
+		A2(elm$core$List$map, elm$core$Tuple$first, author$project$Main$input));
+	var _n0 = A3(
+		elm$core$List$foldl,
+		author$project$Main$updateGraph,
+		_Utils_Tuple3(startNodesCandidates, elm$core$Set$empty, elm$core$Dict$empty),
+		author$project$Main$input);
 	var startNodes = _n0.a;
 	var prereqs = _n0.b;
 	var graph = _n0.c;
-	var order = A2(
-		elm$core$Debug$log,
-		'ordered: ',
-		A4(
-			author$project$Main$traverseGraph,
-			_List_fromArray(
-				[
-					A2(
-					elm$core$Maybe$withDefault,
-					-1,
-					elm$core$List$head(
-						elm$core$Set$toList(startNodes)))
-				]),
-			prereqs,
-			graph,
-			_List_Nil));
+	var ordered = A4(
+		author$project$Main$traverseGraph,
+		elm$core$Set$toList(startNodes),
+		prereqs,
+		graph,
+		_List_Nil);
 	var orderAsString = elm$core$String$fromList(
 		A2(
 			elm$core$List$map,
-			function (c) {
-				return elm$core$Char$fromCode(c);
+			function (i) {
+				return elm$core$Char$fromCode(i);
 			},
-			order));
+			ordered));
+	var time = A5(
+		author$project$Main$traverseGraph2,
+		elm$core$Set$toList(startNodes),
+		author$project$Main$getWorkers(5),
+		prereqs,
+		graph,
+		0);
 	return {
-		solution: _Utils_Tuple2(orderAsString, 0)
+		solution: _Utils_Tuple2(orderAsString, time)
 	};
 }();
 var author$project$Main$update = F2(
 	function (msg, model) {
 		return model;
 	});
-var elm$core$Basics$apL = F2(
-	function (f, x) {
-		return f(x);
-	});
 var elm$core$Basics$append = _Utils_append;
 var elm$core$String$fromInt = _String_fromNumber;
-var elm$core$Tuple$first = function (_n0) {
-	var x = _n0.a;
-	return x;
-};
 var elm$core$Tuple$second = function (_n0) {
 	var y = _n0.b;
 	return y;
@@ -5482,12 +5786,7 @@ var elm$core$Array$treeFromBuilder = F2(
 		}
 	});
 var elm$core$Basics$floor = _Basics_floor;
-var elm$core$Basics$max = F2(
-	function (x, y) {
-		return (_Utils_cmp(x, y) > 0) ? x : y;
-	});
 var elm$core$Basics$mul = _Basics_mul;
-var elm$core$Basics$sub = _Basics_sub;
 var elm$core$Elm$JsArray$length = _JsArray_length;
 var elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
@@ -5540,7 +5839,6 @@ var elm$core$Array$initializeHelp = F5(
 			}
 		}
 	});
-var elm$core$Basics$le = _Utils_le;
 var elm$core$Basics$remainderBy = _Basics_remainderBy;
 var elm$core$Array$initialize = F2(
 	function (len, fn) {
@@ -5593,38 +5891,7 @@ var elm$core$Char$isDigit = function (_char) {
 var elm$core$Char$isAlphaNum = function (_char) {
 	return elm$core$Char$isLower(_char) || (elm$core$Char$isUpper(_char) || elm$core$Char$isDigit(_char));
 };
-var elm$core$List$length = function (xs) {
-	return A3(
-		elm$core$List$foldl,
-		F2(
-			function (_n0, i) {
-				return i + 1;
-			}),
-		0,
-		xs);
-};
 var elm$core$List$map2 = _List_map2;
-var elm$core$List$rangeHelp = F3(
-	function (lo, hi, list) {
-		rangeHelp:
-		while (true) {
-			if (_Utils_cmp(lo, hi) < 1) {
-				var $temp$lo = lo,
-					$temp$hi = hi - 1,
-					$temp$list = A2(elm$core$List$cons, hi, list);
-				lo = $temp$lo;
-				hi = $temp$hi;
-				list = $temp$list;
-				continue rangeHelp;
-			} else {
-				return list;
-			}
-		}
-	});
-var elm$core$List$range = F2(
-	function (lo, hi) {
-		return A3(elm$core$List$rangeHelp, lo, hi, _List_Nil);
-	});
 var elm$core$List$indexedMap = F2(
 	function (f, xs) {
 		return A3(
