@@ -3,21 +3,19 @@ package main
 import (
 	"fmt"
 )
+// tag::helpers[]
 type Cell struct {
 	x int
 	y int
 }
-
 func getRackId(c *Cell) int {
 	return c.x + 10
 }
-
 func getHundreds(n int) int {
 	var h int
 	h = n / 100
 	return h%10
 }
-
 func getPowerLevel(c *Cell, serialNumber int) int {
 	power := 0
 	power = getRackId(c)
@@ -27,7 +25,7 @@ func getPowerLevel(c *Cell, serialNumber int) int {
 	power = getHundreds(power)
 	return power - 5
 }
-
+// end::helpers[]
 func main() {
 	serialNumber := 1718
 	grid := createGrid(300, 300, serialNumber)
@@ -52,6 +50,7 @@ func main() {
 	fmt.Printf("Solution part 2: %d,%d with max Power of %d at width %d\n", maxCell.x, maxCell.y, maxPower, maxWidth)
 }
 
+// tag::grid[]
 func createGrid(width int, height int, serialNumber int) [][]int {
 	g := make([][]int, height)
 
@@ -63,7 +62,8 @@ func createGrid(width int, height int, serialNumber int) [][]int {
 	}
 	return g
 }
-
+// end::grid[]
+// tag::powersum[]
 func getPowerLevelAtSquare(grid [][]int, x int, y int, size int) int {
 	sum := 0
 	for cx := 0; cx < size; cx++ {
@@ -73,3 +73,4 @@ func getPowerLevelAtSquare(grid [][]int, x int, y int, size int) int {
 	}
 	return sum
 }
+// end::powersum[]
