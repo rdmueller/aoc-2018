@@ -1,0 +1,44 @@
+== Part 1
+
+**https://adventofcode.com/2018/day/10[rtfChallenge]**
+
+The biggest challenge for this one was to come up with a solution on how to identify the correct time to look at the pattern. You obviously do not want to visually compare hundreds of outputs.
+
+My idea was to check for the area that the point cloud covers and print the output at the minimum covered area. This means the points converge and are most likely to form letters.
+
+
+[plantuml, day10-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:init min size;
+while (i = 0..99999)
+  :get point cloud area;
+  if (area < prev min) then (Y)
+    :set new min;
+  else (area increases)
+    :move points one step back;
+    :print point cloud;
+    end
+  endif
+  :move points one step further;
+endwhile
+end
+@enduml
+....
+
+== Part 2
+
+Solution for day 2 was simply the value of the outer loop as time passed.
+
+== Go solution
+
+Solution can be run with `cat input.txt | GOPATH=$PWD go run src/solution.go`
+
+[source, go]
+....
+include::./src/solution.go[]
+....
