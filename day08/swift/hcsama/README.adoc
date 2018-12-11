@@ -2,6 +2,7 @@
 I parse the text straight into an array of integers. That's easiest.
 All the hard work happens in my Node class. When you create a Node, you pass the number array and where to start. This then recursively creates further Node objects and adds them as children. Each Node contains an array of its meta data and an Int pointer to where its entry ends in the number array. That's the trick how traversing back the recursion I know where to continue in the levels up.
 I also have a flat List of nodes to easily do the work for part 1. The tree structure is required for part 2.
+
 == Calulating Results
 Part 1 is simple once the data has been read in the Node objects. Just use reduce() on the Node list to add all the meta data entries, using reduce() also on the individual lists.
 I have to say I really like how I can apply closures to collections.
