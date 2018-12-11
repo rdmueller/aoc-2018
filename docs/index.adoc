@@ -8,7 +8,7 @@ https://github.com/rdmueller/aoc-2018/[Github Repository]
 WARNING: Spoiler Alert! If you want to solve the aoc problems on your own, do not read any further.
 This repository contains solutions for the problems in several languages.
 
-== Solutions
+== Solutions by Coder
 
 :anoff: Andreas Offenhaeuser
 :rdmueller: Ralf D. Müller
@@ -17,6 +17,13 @@ This repository contains solutions for the problems in several languages.
 :wschaef: Waldemar Schäfer
 
 include::generated/linksToCoders.adoc[]
+
+== Solutions by Day
+
+[cols="1,2,2"]
+|====
+include::generated/solutionByDay.adoc[]
+|====
 
 
 include::learned.adoc[lefeloffset=0]
