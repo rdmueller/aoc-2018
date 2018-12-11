@@ -29,21 +29,27 @@ func getPowerLevel(c *Cell, serialNumber int) int {
 }
 
 func main() {
-	boxLength := 3
 	serialNumber := 1718
 	grid := createGrid(300, 300, serialNumber)
 	maxPower := -999999999
 	var maxCell Cell
-	for x := 1; x <= 300 - boxLength; x++ {
-		for y := 1; y <= 300 - boxLength; y++ {
-			sum := getPowerLevelAtSquare(grid, x, y, 3)
-			if sum > maxPower {
-				maxPower = sum
-				maxCell = Cell{x, y}
+	maxWidth := 0
+	for w := 3; w < 50; w++ {
+		for x := 1; x <= 300 - w; x++ {
+			for y := 1; y <= 300 - w; y++ {
+				sum := getPowerLevelAtSquare(grid, x, y, w)
+				if sum > maxPower {
+					maxPower = sum
+					maxCell = Cell{x, y}
+					maxWidth = w
+				}
 			}
 		}
+		if w == 3 {
+			fmt.Printf("Solution part 1: %d,%d with max Power of %d\n", maxCell.x, maxCell.y, maxPower)
+		}
 	}
-	fmt.Printf("Solution part 1: %d,%d with max Power of %d\n", maxCell.x, maxCell.y, maxPower)
+	fmt.Printf("Solution part 2: %d,%d with max Power of %d at width %d\n", maxCell.x, maxCell.y, maxPower, maxWidth)
 }
 
 func createGrid(width int, height int, serialNumber int) [][]int {
