@@ -59,7 +59,7 @@ days.sort{it[0]}.each { day ->
         }
         byDay.append("""\
 | ${col1}
-| link:${link}[${day[1]}]
+| link:/${day[2]}/adventOfCode.html#_day_${day[0]-day}_${day[1]}[${day[1]}]
 | {${day[2]}}
 
 """)
