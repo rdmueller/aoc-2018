@@ -150,6 +150,15 @@ a| * graphs are fun but are super headache if you don't have 📝 (or experience
 
 |====
 
+=== Day 8
+[cols="1,10"]
+|====
+|{robertwalter83}
+a| * That, even after all these years, recursion can still cause a knot in my brain
+* immutable data can sometimes be a burden
+
+|====
+
 === Day 11
 
 [cols="1,10"]
