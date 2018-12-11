@@ -1,0 +1,27 @@
+== Basics
+Caclulating the grid is easy enough.
+I put the 3x3 search into an extra method because I thought I would use it for the second part. Not a good idea.
+
+== Part 1
+Doing the 3x3 search is simple enough. Loop and find.
+
+== Part 2
+Clearly challenging us to something smarter than brute force.
+
+What I do is that for each coordinate I calculate the power values for all squares that would be possible for this coordinate and collect the results in a Collection. A lot less compute that recalculating all the squares by iteration.
+
+And because that still is bloody slow, I put it all into a class which I run as threads. One thread per line.
+
+To avoid concurrency issues, each thread collects its results in a different place in the results Array allSquares (Array of Array).
+
+And then I use some clever closures to find the max power value in the results Array.
+
+Closures on Collections are so cool. They do rival sed expressions in Linux.
+[source, swift]
+let biggest = allSquares.reduce(
+SquareInfo(x: 0, y: 0, size:0, power: 0),
+{r, s in [r, s.max(by: { $0.power < $1.power })!].max(by: {$0.power < $1.power})! })
+print("11-02:", biggest.power, biggest.x+1, biggest.y+1, biggest.size)
+
+== Running
+If you want to run it, call Puzzle11() from your main or use a playground

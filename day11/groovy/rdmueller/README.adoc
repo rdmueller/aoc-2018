@@ -1,0 +1,37 @@
+This solution is written in Groovy.
+
+https://adventofcode.com/2018/day/11
+
+
+
+== First Star
+
+caclulate the power of one fullcell
+
+[source, groovy]
+....
+include::solution.groovy[tags=fuelCell]
+....
+
+caclulate the power of one square
+
+[source, groovy]
+....
+include::solution.groovy[tags=square]
+....
+
+iterate over the whole rack
+
+[source, groovy]
+....
+include::solution.groovy[tags=largest]
+....
+
+== Second Star
+
+I've extended the functions from part one with the size parameter and had to write a new iteration:
+
+[source, groovy]
+....
+include::solution.groovy[tags=dynamicLargest]
+....

@@ -1,0 +1,4 @@
+== Advent of Code 2018
+
+
+include::generatedDays.adoc[]

@@ -76,7 +76,7 @@ a| * Get the test input working first and assert that the results match the exam
 
 |{robertwalter83}
 a| * that parsing the input data is sometimes the most challenging part of these early tasks
- 
+
 
 |====
 
@@ -144,8 +144,20 @@ a| * unit tests in Go feel really verbose to write (no assertions only failure c
 a| * graphs are fun but are super headache if you don't have 📝 (or experience)
 * finally figured out that the regexp function I always need (get matches): https://golang.org/pkg/regexp/#Regexp.FindStringSubmatch[FindStringSubmatch]
 * you can implement a simple queue in `Go` using a slice and
-* * `el := q[0]; q = q[1:]` to pop an element from top
-* * `el := q[i]; q = append(q[:i], q[i+1:]...)` to remove an element in the middle
+** `el := q[0]; q = q[1:]` to pop an element from top
+** `el := q[i]; q = append(q[:i], q[i+1:]...)` to remove an element in the middle
 * Go has a `...` spread operator
 
+|====
+
+=== Day 11
+
+[cols="1,10"]
+|====
+|{anoff}
+a| * Go unit tests need to start with `func Test<Name>` whereas `Name` needs to be capitalized, otherwise *NOTHING* happens 😡 https://golang.org/pkg/testing/[rtfm]
+
+|{rdmueller}
+a| * there is no asciidoctor plugin for xcode!
+* today's solution part 2 is too slow to finish, but the solution already showed up after a few iterations 😎
 |====

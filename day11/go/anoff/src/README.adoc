@@ -1,0 +1,104 @@
+== Part 1
+
+**https://adventofcode.com/2018/day/11[rtfChallenge]**
+
+Trying not to create too many unnecessary data structures as in the past puzzles I decided not to pre-calculate the grid. This means a lot of redundant calculations as each cell is calculated 9(?) times.
+
+I implemented several helper functions and a custom type to structure the code.
+
+[source, go]
+....
+include::./src/solution.go[tags=helpers]
+....
+
+With those definitions the solution for part1 can easily be calculated.
+
+[plantuml, day11-part1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:init max finder;
+while (x = 1..298)
+  while (y = 1..298)
+    :init sum with 0;
+    while (i = 0..2)
+      while (o = 0..2)
+        :getPowerLevel
+        at x+i, y+o;
+        :inc sum by
+        powerlevel;
+      endwhile
+    endwhile
+    if (sum > prev max) then (Y)
+      :set new max
+      powerlevel;
+      :save x, y position
+      of new max;
+    endif
+  endwhile
+endwhile
+:print x, y of
+highest powerlevel;
+end
+@enduml
+....
+
+== Part 2
+
+As part 2 seems to require an awful lot more computations I decided to precalculate the grid for this one.
+
+[source, go]
+....
+include::./src/solution.go[tags=grid]
+....
+
+In addition to that I also created another function to calculate the total power level of a given square with `width=size` at position `X, Y` in the `grid`.
+
+[source, go]
+....
+include::./src/solution.go[tags=powersum]
+....
+
+Getting the solution is pretty straight forward.. Even though the width can basically go up to 300 I tested with a smaller value first to not wait too long.
+
+[plantuml, day11-part2, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:init max finder;
+while (width = 3..50)
+  while (x = 1..298)
+    while (y = 1..298)
+      :calculate powerlevel
+      sum at x,y with //width//;
+      if (sum > prev max) then (Y)
+        :set new max
+        powerlevel;
+        :save x, y, width
+        of new max;
+      endif
+    endwhile
+  endwhile
+endwhile
+:print x, y and square
+width of highest powerlevel;
+end
+@enduml
+....
+
+== Go solution
+
+Solution can be run with `go run src/solution.go`
+
+Unit tests can be run with `go test`
+
+[source, go]
+....
+include::./src/solution.go[]
+....
