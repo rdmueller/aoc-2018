@@ -10,7 +10,20 @@ public class Solution {
 				new InputStreamReader(Solution.class.getResourceAsStream("input.txt")))) {
 
 			for (String line; (line = reader.readLine()) != null;) {
-				System.out.println(line);
+
+				final int serialNumber = Integer.parseInt(line);
+				System.out.println(serialNumber);
+
+				// Part 1
+				{
+					XY max = Grid.findMax(serialNumber, 3);
+					System.out.println(max);
+				}
+				// Part 2
+				{
+					XYSize max = Grid.findMax(serialNumber);
+					System.out.println(max);
+				}
 			}
 		}
 	}
