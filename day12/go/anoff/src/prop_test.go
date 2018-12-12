@@ -2,7 +2,7 @@ package main
 import (
 	"testing"
 	"strings"
-	_ "fmt"
+	"fmt"
 )
 
 func TestPotPropagationSimple(t *testing.T) {
@@ -36,3 +36,43 @@ func TestPotPropagationComplex(t *testing.T) {
 		}
 	}
 }
+
+func TestFarmProp(t *testing.T) {
+	input := readInput("../test.txt")
+	initState := strings.Split(input[0], ": ")[1]
+	var f Farm
+	padding := 10
+	f.pots = extractPots(initState, padding)
+	f.rules = extractPropagationRules(input[2:])
+	f.propagate()
+	f.print()
+	f.propagate()
+	f.print()
+	fmt.Println("")
+
+	tables := []struct{
+		ix int
+		exp bool
+	}{
+		{0, true},
+		{1, true},
+		{4, true},
+		{5, true},
+		{6, false},
+		{7, false},
+		{8, false},
+		{9, true},
+		{10, true},
+		{11, false},
+	}
+	for _, table := range tables {
+		if f.pots[table.ix + padding].hasPlant != table.exp {
+			t.Errorf("Wrong propagation at ix:%d, expected:%t", table.ix, table.exp)
+		}
+	}
+}
+
+/*
+#...#....#.....#..#..#..#.....
+##..#.#..#.....#.##..#..##....
+*/

@@ -32,8 +32,19 @@ func (p *Pot) checkPropagation(rules *[]PropRule) *Pot {
 	current := [5]bool{p.left.left.hasPlant, p.left.hasPlant, p.hasPlant, p.right.hasPlant, p.right.right.hasPlant}
 	result := false
 	for _, r := range *rules {
+		found := 0
+		if p.id == 5 && p.hasPlant == false {
+			fmt.Println(p, p.left.left)
+			break
+			fmt.Println(current, r.pattern)
+		}
 		if r.pattern == current {
+			if found > 0 {
+				fmt.Printf("Duplicate rule match found, previous:%t, now:%t\n", result, r.result)
+			}
+			// fmt.Printf("Match found for pot:%d, rule: %t, current set:%t => %t\n", p.id, r.pattern, current, r.result)
 			result = r.result
+			found++
 		}
 	}
 	p.willHavePlant = result
@@ -41,9 +52,11 @@ func (p *Pot) checkPropagation(rules *[]PropRule) *Pot {
 }
 
 func (f *Farm) propagate() *Farm {
+	// calculate future plant state
 	for i := range f.pots {
 		f.pots[i].checkPropagation(&f.rules)
 	}
+	// update plant state
 	for i := range f.pots {
 		f.pots[i].hasPlant = f.pots[i].willHavePlant
 		f.pots[i].willHavePlant = false
@@ -52,6 +65,16 @@ func (f *Farm) propagate() *Farm {
 	return f
 }
 
+func (f *Farm) print() {
+	for _, p := range f.pots {
+		if p.hasPlant {
+			fmt.Print("#")
+		} else {
+			fmt.Print(".")
+		}
+	}
+	fmt.Println("")
+}
 func readInput(filepath string) []string {
 	b, err := ioutil.ReadFile(filepath)
 	if err != nil {
@@ -66,10 +89,21 @@ func main() {
 	input := readInput("../test.txt")
 	initState := strings.Split(input[0], ": ")[1]
 	var farm Farm
-	farm.pots = extractPots(initState, 50)
+	farm.pots = extractPots(initState, 10)
 	farm.rules = extractPropagationRules(input[2:])
-	fmt.Println(farm)
-	fmt.Println(farm.pots[len(farm.pots)-1].right.right)
+	for i := 0; i < 5; i++ {
+		fmt.Printf("%d: ", i)
+		farm.print()
+		farm.propagate()
+	}
+	sum := 0
+	for _, p := range farm.pots {
+		if p.hasPlant {
+			//fmt.Printf("%d ", p.id)
+			sum += p.id
+		}
+	}
+	//fmt.Printf("Solution part1: %d\n", sum)
 }
 
 // tag::pots[]
@@ -88,6 +122,7 @@ func extractPots(state string, padding int) []Pot {
 		}
 		if i > 0 {
 			p.left = &f[i-1]
+			// f[i-1].right = &p // TODO: Figure out why this does not work
 		} else {
 			p.left = &dummy
 		}
@@ -95,7 +130,7 @@ func extractPots(state string, padding int) []Pot {
 		f = append(f, p)
 	}
 	// generate right linkage
-	for i := 0; i < len(f) - 1; i++ {
+	for i := len(f) - 2; i >= 0 ; i-- {
 		f[i].right = &f[i+1]
 	}
 	f[len(f)-1].right = &dummy
