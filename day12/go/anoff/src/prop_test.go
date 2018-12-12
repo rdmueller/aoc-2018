@@ -1,7 +1,7 @@
 package main
 import (
 	"testing"
-	_"strings"
+	"strings"
 	"fmt"
 )
 
@@ -9,20 +9,18 @@ func TestPotPropagationSimple(t *testing.T) {
 	rules := extractPropagationRules([]string{"...## => #"})
 	pots := extractPots("#..#.#..##......###...###")
 	f := Farm{pots: pots, rules: rules}
-	fmt.Println("-----check props")
-	f.checkPropagation(&rules)
-	fmt.Println("-----get pot0")
-	f.print()
+	f.checkPropagation()
 	p0 := f.getPot(0)
 	if p0.willHavePlant != false {
 		t.Errorf("Wrong propagation, expected:%t", false)
 	}
 	p15 := f.getPot(15)
 	if p15.willHavePlant != true {
+		fmt.Println(p15)
 		t.Errorf("Wrong propagation, expected:%t", true)
 	}
 }
-/*
+
 func TestPotPropagationComplex(t *testing.T) {
 	input := readInput("../test.txt")
 	initState := strings.Split(input[0], ": ")[1]
@@ -39,9 +37,10 @@ func TestPotPropagationComplex(t *testing.T) {
 		{18, true},
 		{9, true},
 	}
+	f.checkPropagation()
 	for _, table := range tables {
 		p := f.getPot(table.ix)
-		if p.checkPropagation(&rules).willHavePlant != table.exp {
+		if p.willHavePlant != table.exp {
 			t.Errorf("Wrong propagation, expected:%t", table.exp)
 		}
 	}
@@ -54,10 +53,7 @@ func TestFarmProp(t *testing.T) {
 	f.pots = extractPots(initState)
 	f.rules = extractPropagationRules(input[2:])
 	f.propagate()
-	f.print()
 	f.propagate()
-	f.print()
-	fmt.Println("")
 
 	tables := []struct{
 		ix int

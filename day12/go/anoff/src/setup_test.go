@@ -19,7 +19,7 @@ func TestExtractPots(t *testing.T) {
 	}
 	ix := 0
 	for i := pots.Front(); i.Next() != nil; i = i.Next() {
-		p := i.Value.(Pot)
+		p := i.Value.(*Pot)
 		if p.hasPlant != exp[ix] {
 			t.Errorf("Incorrect hasPlant property for pot:%d, expected:%t but got:%t", i, exp[ix], p.hasPlant)
 		}

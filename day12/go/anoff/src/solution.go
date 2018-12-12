@@ -26,42 +26,50 @@ type Farm struct {
 }
 // end::structs[]
 
-func (f *Farm) checkPropagation(rules *[]PropRule) *Farm {
+func (f *Farm) checkPropagation() *Farm {
+	rules := f.rules
 	// check if left/right most pots have plants -> pad by at least 2
 	item := f.pots.Front()
-	for i := 0; i < 2; i++ {
-		p := item.Value.(Pot)
+	frontFill := false
+	for i := 0; i < 5; i++ {
+		p := item.Value.(*Pot)
 		if p.hasPlant {
-			front := f.pots.Front().Value.(Pot)
-			f.pots.PushFront(Pot{id: front.id-1})
-			f.pots.PushFront(Pot{id: front.id-2})
-			fmt.Println("Added 2 items in front")
+			frontFill = true
 		}
 		item = item.Next()
 	}
+	if frontFill {
+		front := f.pots.Front().Value.(*Pot)
+		f.pots.PushFront(&Pot{id: front.id-1})
+		f.pots.PushFront(&Pot{id: front.id-2})
+		f.pots.PushFront(&Pot{id: front.id-3})
+		f.pots.PushFront(&Pot{id: front.id-4})
+		// fmt.Println("Added 2 items in front")
+	}
+	backFill := false
 	item = f.pots.Back()
-	for i := 0; i < 2; i++ {
-		p := item.Value.(Pot)
+	for i := 0; i < 5; i++ {
+		p := item.Value.(*Pot)
 		if p.hasPlant {
-			back := f.pots.Back().Value.(Pot)
-			f.pots.PushBack(Pot{id: back.id+1})
-			f.pots.PushBack(Pot{id: back.id+2})
-			fmt.Println("Added 2 items in back")
+			backFill = true
 		}
 		item = item.Prev()
 	}
+	if backFill {
+		back := f.pots.Back().Value.(*Pot)
+		f.pots.PushBack(&Pot{id: back.id+1})
+		f.pots.PushBack(&Pot{id: back.id+2})
+		f.pots.PushBack(&Pot{id: back.id+3})
+		f.pots.PushBack(&Pot{id: back.id+4})
+		// fmt.Println("Added 2 items in back")
+	}
 
 	for i := f.pots.Front().Next().Next(); i.Next().Next() != nil; i = i.Next() {
-		p := i.Value.(Pot)
-		current := [5]bool{i.Prev().Prev().Value.(Pot).hasPlant, i.Prev().Value.(Pot).hasPlant, i.Value.(Pot).hasPlant, i.Next().Value.(Pot).hasPlant, i.Next().Next().Value.(Pot).hasPlant}
+		p := i.Value.(*Pot)
+		current := [5]bool{i.Prev().Prev().Value.(*Pot).hasPlant, i.Prev().Value.(*Pot).hasPlant, i.Value.(*Pot).hasPlant, i.Next().Value.(*Pot).hasPlant, i.Next().Next().Value.(*Pot).hasPlant}
 		result := false
-		for _, r := range *rules {
+		for _, r := range rules {
 			found := 0
-			if p.id == 5 && p.hasPlant == false {
-				fmt.Println(p, i.Prev().Prev().Value.(Pot))
-				break
-				fmt.Println(current, r.pattern)
-			}
 			if r.pattern == current {
 				if found > 0 {
 					fmt.Printf("Duplicate rule match found, previous:%t, now:%t\n", result, r.result)
@@ -76,12 +84,20 @@ func (f *Farm) checkPropagation(rules *[]PropRule) *Farm {
 	return f
 }
 
+func (p *Pot) setPlant(has bool) *Pot {
+	p.hasPlant = has
+	return p
+}
+func (p *Pot) setFuture(willHave bool) *Pot {
+	p.willHavePlant = willHave
+	return p
+}
 func (f *Farm) propagate() *Farm {
 	// calculate future plant state
-	f.checkPropagation(&f.rules)
+	f.checkPropagation()
 	// update plant state
 	for i := f.pots.Front(); i.Next() != nil; i = i.Next() {
-		p := i.Value.(Pot)
+		p := i.Value.(*Pot)
 		p.hasPlant = p.willHavePlant
 		p.willHavePlant = false
 	}
@@ -90,9 +106,9 @@ func (f *Farm) propagate() *Farm {
 }
 
 func (f *Farm) print() {
-	for p := f.pots.Front(); p != nil; p = p.Next() {
-		pot := p.Value.(Pot)
-		if pot.hasPlant {
+	for i := f.pots.Front(); i != nil; i = i.Next() {
+		p := i.Value.(*Pot)
+		if p.hasPlant {
 			fmt.Print("#")
 		} else {
 			fmt.Print(".")
@@ -101,14 +117,14 @@ func (f *Farm) print() {
 	fmt.Println("")
 }
 
-func (f *Farm) getPot(id int) Pot {
+func (f *Farm) getPot(id int) *Pot {
 	for e := f.pots.Front(); e != nil; e = e.Next() {
-		p := e.Value.(Pot)
+		p := e.Value.(*Pot)
 		if p.id == id {
 			return p
 		}
 	}
-	return Pot{}
+	return &Pot{}
 }
 func readInput(filepath string) []string {
 	b, err := ioutil.ReadFile(filepath)
@@ -121,25 +137,25 @@ func readInput(filepath string) []string {
 }
 
 func main() {
-	input := readInput("../test.txt")
+	input := readInput("../input.txt")
 	initState := strings.Split(input[0], ": ")[1]
 	var farm Farm
 	farm.pots = extractPots(initState)
 	farm.rules = extractPropagationRules(input[2:])
-	for i := 0; i < 5; i++ {
-		fmt.Printf("%d: ", i)
-		farm.print()
+	// farm.print()
+	for i := 0; i < 20; i++ {
 		farm.propagate()
+		// farm.print()
 	}
 	sum := 0
 	for i := farm.pots.Front(); i != nil; i = i.Next() {
-		p := i.Value.(Pot)
+		p := i.Value.(*Pot)
 		if p.hasPlant {
-			//fmt.Printf("%d ", p.id)
+			fmt.Printf("%d ", p.id)
 			sum += p.id
 		}
 	}
-	//fmt.Printf("Solution part1: %d\n", sum)
+	fmt.Printf("Solution part1: %d\n", sum)
 }
 
 // tag::pots[]
@@ -152,7 +168,7 @@ func extractPots(state string) *list.List {
 			p.hasPlant = true
 		}
 
-		l.PushBack(p)
+		l.PushBack(&p)
 	}
 	return l
 }
