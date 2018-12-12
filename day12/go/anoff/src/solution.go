@@ -29,9 +29,7 @@ type Farm struct {
 
 // calculate the willHavePlant property
 func (p *Pot) checkPropagation(rules *[]PropRule) *Pot {
-	fmt.Println("getting current pattern", p.right)
 	current := [5]bool{p.left.left.hasPlant, p.left.hasPlant, p.hasPlant, p.right.hasPlant, p.right.right.hasPlant}
-	fmt.Println(current)
 	result := false
 	for _, r := range *rules {
 		if r.pattern == current {
