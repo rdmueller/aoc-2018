@@ -1,23 +1,42 @@
 package main
 import (
 	"testing"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestReadInpupt(t *testing.T) {
-	assert.Equal(t, 16, len(readInput("../test.txt")))
+	s := readInput("../test.txt")
+	exp := 16
+	if len(s) != exp {
+		t.Errorf("Invalid length of lines parsed, expected:%d but got:%d", len(s), exp)
+	}
 }
 
 func TestExtractPots(t *testing.T) {
-	p := extractPots(".#..###..")
+	pots := extractPots(".#..###..")
 	exp := []bool{false, true, false, false, true, true, true, false, false}
-	if len(p) != len(exp) {
-		t.Errorf("Incorrect number of pots, expected:%d but got:%d", len(exp), len(p))
+	if len(pots) != len(exp) {
+		t.Errorf("Incorrect number of pots, expected:%d but got:%d", len(exp), len(pots))
 	}
-	for i, p := range p {
+	for i, p := range pots {
 		if p.hasPlant != exp[i] {
 			t.Errorf("Incorrect hasPlant property for pot:%d, expected:%t but got:%t", i, exp[i], p.hasPlant)
 		}
+	}
+}
+
+func TestExtractPotsLinks(t *testing.T) {
+	pots := extractPots(".#..###..")
+	if pots[0].left.id != -1 {
+		t.Error("No dummy link found on left border")
+	}
+	if pots[0].left.left.id != -1 {
+		t.Error("No propagation in dummy link")
+	}
+	if pots[1].right.id != pots[2].id {
+		t.Errorf("Invalid link between pot %d and %d", 1, 2)
+	}
+	if pots[1].right.right.id != pots[3].id {
+		t.Errorf("Invalid link between pot %d and %d", 1, 3)
 	}
 }
 

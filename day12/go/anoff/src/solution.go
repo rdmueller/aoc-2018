@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// tag::helpers[]
+// tag::structs[]
 type Pot struct {
 	id int
 	left *Pot
@@ -25,7 +25,22 @@ type Farm struct {
 	pots []Pot
 	rules []PropRule
 }
-// end::helpers[]
+// end::structs[]
+
+// calculate the willHavePlant property
+func (p *Pot) checkPropagation(rules *[]PropRule) *Pot {
+	fmt.Println("getting current pattern", p.right)
+	current := [5]bool{p.left.left.hasPlant, p.left.hasPlant, p.hasPlant, p.right.hasPlant, p.right.right.hasPlant}
+	fmt.Println(current)
+	result := false
+	for _, r := range *rules {
+		if r.pattern == current {
+			result = r.result
+		}
+	}
+	p.willHavePlant = result
+	return p
+}
 
 func readInput(filepath string) []string {
 	b, err := ioutil.ReadFile(filepath)
@@ -44,11 +59,15 @@ func main() {
 	farm.pots = extractPots(initState)
 	farm.rules = extractPropagationRules(input[2:])
 	fmt.Println(farm)
+	fmt.Println(farm.pots[len(farm.pots)-1].right.right)
 }
 
 // tag::pots[]
 // create a slice of Pots from a given input string (##.##...###...#...)
 func extractPots(state string) []Pot {
+	dummy := Pot{id: -1}
+	dummy.left = &dummy
+	dummy.right = &dummy
 	var f []Pot
 	for i, c := range state {
 		p := Pot{id: i}
@@ -57,11 +76,17 @@ func extractPots(state string) []Pot {
 		}
 		if i > 0 {
 			p.left = &f[i-1]
-			f[i-1].right = &p
+		} else {
+			p.left = &dummy
 		}
 
 		f = append(f, p)
 	}
+	// generate right linkage
+	for i := 0; i < len(f) - 1; i++ {
+		f[i].right = &f[i+1]
+	}
+	f[len(f)-1].right = &dummy
 	return f
 }
 // end::pots[]
