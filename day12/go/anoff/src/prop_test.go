@@ -7,7 +7,7 @@ import (
 
 func TestPotPropagationSimple(t *testing.T) {
 	rules := extractPropagationRules([]string{"...## => #"})
-	pots := extractPots("#..#.#..##......###...###")
+	pots := extractPots("#..#.#..##......###...###", 0)
 	if pots[0].checkPropagation(&rules).willHavePlant != false {
 		t.Errorf("Wrong propagation, expected:%t", false)
 	}
@@ -18,7 +18,7 @@ func TestPotPropagationSimple(t *testing.T) {
 func TestPotPropagationComplex(t *testing.T) {
 	input := readInput("../test.txt")
 	initState := strings.Split(input[0], ": ")[1]
-	pots := extractPots(initState)
+	pots := extractPots(initState, 0)
 	rules := extractPropagationRules(input[2:])
 
 	tables := []struct{

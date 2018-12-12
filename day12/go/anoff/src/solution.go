@@ -40,6 +40,18 @@ func (p *Pot) checkPropagation(rules *[]PropRule) *Pot {
 	return p
 }
 
+func (f *Farm) propagate() *Farm {
+	for i := range f.pots {
+		f.pots[i].checkPropagation(&f.rules)
+	}
+	for i := range f.pots {
+		f.pots[i].hasPlant = f.pots[i].willHavePlant
+		f.pots[i].willHavePlant = false
+	}
+	
+	return f
+}
+
 func readInput(filepath string) []string {
 	b, err := ioutil.ReadFile(filepath)
 	if err != nil {
@@ -54,7 +66,7 @@ func main() {
 	input := readInput("../test.txt")
 	initState := strings.Split(input[0], ": ")[1]
 	var farm Farm
-	farm.pots = extractPots(initState)
+	farm.pots = extractPots(initState, 50)
 	farm.rules = extractPropagationRules(input[2:])
 	fmt.Println(farm)
 	fmt.Println(farm.pots[len(farm.pots)-1].right.right)
@@ -62,13 +74,15 @@ func main() {
 
 // tag::pots[]
 // create a slice of Pots from a given input string (##.##...###...#...)
-func extractPots(state string) []Pot {
+func extractPots(state string, padding int) []Pot {
 	dummy := Pot{id: -1}
 	dummy.left = &dummy
 	dummy.right = &dummy
 	var f []Pot
+	// add padding to the right and left
+	state = strings.Repeat(".", padding) + state + strings.Repeat(".", padding)
 	for i, c := range state {
-		p := Pot{id: i}
+		p := Pot{id: i - padding}
 		if c == '#' {
 			p.hasPlant = true
 		}

@@ -12,7 +12,7 @@ func TestReadInpupt(t *testing.T) {
 }
 
 func TestExtractPots(t *testing.T) {
-	pots := extractPots(".#..###..")
+	pots := extractPots(".#..###..", 0)
 	exp := []bool{false, true, false, false, true, true, true, false, false}
 	if len(pots) != len(exp) {
 		t.Errorf("Incorrect number of pots, expected:%d but got:%d", len(exp), len(pots))
@@ -22,10 +22,18 @@ func TestExtractPots(t *testing.T) {
 			t.Errorf("Incorrect hasPlant property for pot:%d, expected:%t but got:%t", i, exp[i], p.hasPlant)
 		}
 	}
+
+	pots = extractPots(".#.", 5)
+	if len(pots) != 3+2*5 {
+		t.Errorf("Padding incorrect, got length:%d", len(pots))
+	}
+	if pots[0].id != -5 {
+		t.Errorf("Wrong Pot ID for padded elements, got:%d", pots[0].id)
+	}
 }
 
 func TestExtractPotsLinks(t *testing.T) {
-	pots := extractPots(".#..###..")
+	pots := extractPots(".#..###..", 0)
 	if pots[0].left.id != -1 {
 		t.Error("No dummy link found on left border")
 	}
