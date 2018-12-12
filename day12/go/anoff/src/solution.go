@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strings"
+	"container/list"
 )
 
 // tag::structs[]
 type Pot struct {
 	id int
-	left *Pot
-	right *Pot
 	hasPlant bool
 	willHavePlant bool
 }
@@ -22,58 +21,94 @@ type PropRule struct {
 }
 
 type Farm struct {
-	pots []Pot
+	pots *list.List
 	rules []PropRule
 }
 // end::structs[]
 
-// calculate the willHavePlant property
-func (p *Pot) checkPropagation(rules *[]PropRule) *Pot {
-	current := [5]bool{p.left.left.hasPlant, p.left.hasPlant, p.hasPlant, p.right.hasPlant, p.right.right.hasPlant}
-	result := false
-	for _, r := range *rules {
-		found := 0
-		if p.id == 5 && p.hasPlant == false {
-			fmt.Println(p, p.left.left)
-			break
-			fmt.Println(current, r.pattern)
+func (f *Farm) checkPropagation(rules *[]PropRule) *Farm {
+	// check if left/right most pots have plants -> pad by at least 2
+	item := f.pots.Front()
+	for i := 0; i < 2; i++ {
+		p := item.Value.(Pot)
+		if p.hasPlant {
+			front := f.pots.Front().Value.(Pot)
+			f.pots.PushFront(Pot{id: front.id-1})
+			f.pots.PushFront(Pot{id: front.id-2})
+			fmt.Println("Added 2 items in front")
 		}
-		if r.pattern == current {
-			if found > 0 {
-				fmt.Printf("Duplicate rule match found, previous:%t, now:%t\n", result, r.result)
-			}
-			// fmt.Printf("Match found for pot:%d, rule: %t, current set:%t => %t\n", p.id, r.pattern, current, r.result)
-			result = r.result
-			found++
-		}
+		item = item.Next()
 	}
-	p.willHavePlant = result
-	return p
+	item = f.pots.Back()
+	for i := 0; i < 2; i++ {
+		p := item.Value.(Pot)
+		if p.hasPlant {
+			back := f.pots.Back().Value.(Pot)
+			f.pots.PushBack(Pot{id: back.id+1})
+			f.pots.PushBack(Pot{id: back.id+2})
+			fmt.Println("Added 2 items in back")
+		}
+		item = item.Prev()
+	}
+
+	for i := f.pots.Front().Next().Next(); i.Next().Next() != nil; i = i.Next() {
+		p := i.Value.(Pot)
+		current := [5]bool{i.Prev().Prev().Value.(Pot).hasPlant, i.Prev().Value.(Pot).hasPlant, i.Value.(Pot).hasPlant, i.Next().Value.(Pot).hasPlant, i.Next().Next().Value.(Pot).hasPlant}
+		result := false
+		for _, r := range *rules {
+			found := 0
+			if p.id == 5 && p.hasPlant == false {
+				fmt.Println(p, i.Prev().Prev().Value.(Pot))
+				break
+				fmt.Println(current, r.pattern)
+			}
+			if r.pattern == current {
+				if found > 0 {
+					fmt.Printf("Duplicate rule match found, previous:%t, now:%t\n", result, r.result)
+				}
+				// fmt.Printf("Match found for pot:%d, rule: %t, current set:%t => %t\n", p.id, r.pattern, current, r.result)
+				result = r.result
+				found++
+			}
+		}
+		p.willHavePlant = result
+	}
+	return f
 }
 
 func (f *Farm) propagate() *Farm {
 	// calculate future plant state
-	for i := range f.pots {
-		f.pots[i].checkPropagation(&f.rules)
-	}
+	f.checkPropagation(&f.rules)
 	// update plant state
-	for i := range f.pots {
-		f.pots[i].hasPlant = f.pots[i].willHavePlant
-		f.pots[i].willHavePlant = false
+	for i := f.pots.Front(); i.Next() != nil; i = i.Next() {
+		p := i.Value.(Pot)
+		p.hasPlant = p.willHavePlant
+		p.willHavePlant = false
 	}
-	
+
 	return f
 }
 
 func (f *Farm) print() {
-	for _, p := range f.pots {
-		if p.hasPlant {
+	for p := f.pots.Front(); p != nil; p = p.Next() {
+		pot := p.Value.(Pot)
+		if pot.hasPlant {
 			fmt.Print("#")
 		} else {
 			fmt.Print(".")
 		}
 	}
 	fmt.Println("")
+}
+
+func (f *Farm) getPot(id int) Pot {
+	for e := f.pots.Front(); e != nil; e = e.Next() {
+		p := e.Value.(Pot)
+		if p.id == id {
+			return p
+		}
+	}
+	return Pot{}
 }
 func readInput(filepath string) []string {
 	b, err := ioutil.ReadFile(filepath)
@@ -89,7 +124,7 @@ func main() {
 	input := readInput("../test.txt")
 	initState := strings.Split(input[0], ": ")[1]
 	var farm Farm
-	farm.pots = extractPots(initState, 10)
+	farm.pots = extractPots(initState)
 	farm.rules = extractPropagationRules(input[2:])
 	for i := 0; i < 5; i++ {
 		fmt.Printf("%d: ", i)
@@ -97,7 +132,8 @@ func main() {
 		farm.propagate()
 	}
 	sum := 0
-	for _, p := range farm.pots {
+	for i := farm.pots.Front(); i != nil; i = i.Next() {
+		p := i.Value.(Pot)
 		if p.hasPlant {
 			//fmt.Printf("%d ", p.id)
 			sum += p.id
@@ -108,33 +144,17 @@ func main() {
 
 // tag::pots[]
 // create a slice of Pots from a given input string (##.##...###...#...)
-func extractPots(state string, padding int) []Pot {
-	dummy := Pot{id: -1}
-	dummy.left = &dummy
-	dummy.right = &dummy
-	var f []Pot
-	// add padding to the right and left
-	state = strings.Repeat(".", padding) + state + strings.Repeat(".", padding)
+func extractPots(state string) *list.List {
+	l := list.New()
 	for i, c := range state {
-		p := Pot{id: i - padding}
+		p := Pot{id: i}
 		if c == '#' {
 			p.hasPlant = true
 		}
-		if i > 0 {
-			p.left = &f[i-1]
-			// f[i-1].right = &p // TODO: Figure out why this does not work
-		} else {
-			p.left = &dummy
-		}
 
-		f = append(f, p)
+		l.PushBack(p)
 	}
-	// generate right linkage
-	for i := len(f) - 2; i >= 0 ; i-- {
-		f[i].right = &f[i+1]
-	}
-	f[len(f)-1].right = &dummy
-	return f
+	return l
 }
 // end::pots[]
 

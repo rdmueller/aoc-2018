@@ -1,25 +1,34 @@
 package main
 import (
 	"testing"
-	"strings"
+	_"strings"
 	"fmt"
 )
 
 func TestPotPropagationSimple(t *testing.T) {
 	rules := extractPropagationRules([]string{"...## => #"})
-	pots := extractPots("#..#.#..##......###...###", 0)
-	if pots[0].checkPropagation(&rules).willHavePlant != false {
+	pots := extractPots("#..#.#..##......###...###")
+	f := Farm{pots: pots, rules: rules}
+	fmt.Println("-----check props")
+	f.checkPropagation(&rules)
+	fmt.Println("-----get pot0")
+	f.print()
+	p0 := f.getPot(0)
+	if p0.willHavePlant != false {
 		t.Errorf("Wrong propagation, expected:%t", false)
 	}
-	if pots[15].checkPropagation(&rules).willHavePlant != true {
+	p15 := f.getPot(15)
+	if p15.willHavePlant != true {
 		t.Errorf("Wrong propagation, expected:%t", true)
 	}
 }
+/*
 func TestPotPropagationComplex(t *testing.T) {
 	input := readInput("../test.txt")
 	initState := strings.Split(input[0], ": ")[1]
-	pots := extractPots(initState, 0)
+	pots := extractPots(initState)
 	rules := extractPropagationRules(input[2:])
+	f := Farm{pots: pots, rules: rules}
 
 	tables := []struct{
 		ix int
@@ -31,7 +40,8 @@ func TestPotPropagationComplex(t *testing.T) {
 		{9, true},
 	}
 	for _, table := range tables {
-		if pots[table.ix].checkPropagation(&rules).willHavePlant != table.exp {
+		p := f.getPot(table.ix)
+		if p.checkPropagation(&rules).willHavePlant != table.exp {
 			t.Errorf("Wrong propagation, expected:%t", table.exp)
 		}
 	}
@@ -41,8 +51,7 @@ func TestFarmProp(t *testing.T) {
 	input := readInput("../test.txt")
 	initState := strings.Split(input[0], ": ")[1]
 	var f Farm
-	padding := 10
-	f.pots = extractPots(initState, padding)
+	f.pots = extractPots(initState)
 	f.rules = extractPropagationRules(input[2:])
 	f.propagate()
 	f.print()
@@ -66,7 +75,8 @@ func TestFarmProp(t *testing.T) {
 		{11, false},
 	}
 	for _, table := range tables {
-		if f.pots[table.ix + padding].hasPlant != table.exp {
+		p := f.getPot(table.ix)
+		if p.hasPlant != table.exp {
 			t.Errorf("Wrong propagation at ix:%d, expected:%t", table.ix, table.exp)
 		}
 	}

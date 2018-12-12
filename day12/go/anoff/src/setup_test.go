@@ -12,39 +12,18 @@ func TestReadInpupt(t *testing.T) {
 }
 
 func TestExtractPots(t *testing.T) {
-	pots := extractPots(".#..###..", 0)
+	pots := extractPots(".#..###..")
 	exp := []bool{false, true, false, false, true, true, true, false, false}
-	if len(pots) != len(exp) {
-		t.Errorf("Incorrect number of pots, expected:%d but got:%d", len(exp), len(pots))
+	if pots.Len() != len(exp) {
+		t.Errorf("Incorrect number of pots, expected:%d but got:%d", len(exp), pots.Len())
 	}
-	for i, p := range pots {
-		if p.hasPlant != exp[i] {
-			t.Errorf("Incorrect hasPlant property for pot:%d, expected:%t but got:%t", i, exp[i], p.hasPlant)
+	ix := 0
+	for i := pots.Front(); i.Next() != nil; i = i.Next() {
+		p := i.Value.(Pot)
+		if p.hasPlant != exp[ix] {
+			t.Errorf("Incorrect hasPlant property for pot:%d, expected:%t but got:%t", i, exp[ix], p.hasPlant)
 		}
-	}
-
-	pots = extractPots(".#.", 5)
-	if len(pots) != 3+2*5 {
-		t.Errorf("Padding incorrect, got length:%d", len(pots))
-	}
-	if pots[0].id != -5 {
-		t.Errorf("Wrong Pot ID for padded elements, got:%d", pots[0].id)
-	}
-}
-
-func TestExtractPotsLinks(t *testing.T) {
-	pots := extractPots(".#..###..", 0)
-	if pots[0].left.id != -1 {
-		t.Error("No dummy link found on left border")
-	}
-	if pots[0].left.left.id != -1 {
-		t.Error("No propagation in dummy link")
-	}
-	if pots[1].right.id != pots[2].id {
-		t.Errorf("Invalid link between pot %d and %d", 1, 2)
-	}
-	if pots[1].right.right.id != pots[3].id {
-		t.Errorf("Invalid link between pot %d and %d", 1, 3)
+		ix++
 	}
 }
 
