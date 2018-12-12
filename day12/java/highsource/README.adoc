@@ -1,0 +1,15 @@
+== Solution written in Java
+
+To build:
+
+    mvn clean install
+
+To run:
+
+   java -jar target/aoc-2018-day12.jar
+
+
+== Solution part 1
+
+
+== Solution part 2
