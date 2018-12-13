@@ -165,23 +165,31 @@ func main() {
 	// part 2
 	farm.pots = extractPots(initState)
 	scores := list.New()
+	d_scores := list.New()
 	iteration := 0
 	for {
 		s := farm.getScore()
+		d_s := 0
+		if iteration == 0 {
+			d_s = s
+		} else {
+			d_s = s - scores.Back().Value.(int)
+		}
 		// fmt.Printf(" %d, ", s)
 		ix := 0
-		for e := scores.Front(); e != nil; e = e.Next() {
-			if iteration == 2000 {
-				fmt.Printf("Score:%d, history:%d\n", s, e.Value)
+		for e := d_scores.Front(); e != nil; e = e.Next() {
+			if iteration == 1000 {
+				//fmt.Printf("d_score:%d, history:%d\n", d_s, e.Value)
 			}
-			if e.Value == s {
-				fmt.Printf("Found recurring score %d for iteration:%d at index:%d\n", s, iteration, ix)
+			if e.Value == d_s {
+				fmt.Printf("Found recurring d_score %d for iteration:%d at index:%d\n", d_s, iteration, ix)
 			}
 			ix++
 		}
-		if iteration > 3000 {
+		if iteration > 1000 {
 			break
 		}
+		d_scores.PushBack(d_s)
 		scores.PushBack(s)
 		iteration++
 		farm.propagate()
