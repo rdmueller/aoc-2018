@@ -126,6 +126,18 @@ func (f *Farm) getPot(id int) *Pot {
 	}
 	return &Pot{}
 }
+
+func (f *Farm) getScore() int {
+	sum := 0
+	for i := f.pots.Front(); i != nil; i = i.Next() {
+		p := i.Value.(*Pot)
+		if p.hasPlant {
+			sum += p.id
+		}
+	}
+	return sum
+}
+
 func readInput(filepath string) []string {
 	b, err := ioutil.ReadFile(filepath)
 	if err != nil {
@@ -147,15 +159,33 @@ func main() {
 		farm.propagate()
 		// farm.print()
 	}
-	sum := 0
-	for i := farm.pots.Front(); i != nil; i = i.Next() {
-		p := i.Value.(*Pot)
-		if p.hasPlant {
-			fmt.Printf("%d ", p.id)
-			sum += p.id
-		}
-	}
+	sum := farm.getScore()
 	fmt.Printf("Solution part1: %d\n", sum)
+
+	// part 2
+	farm.pots = extractPots(initState)
+	scores := list.New()
+	iteration := 0
+	for {
+		s := farm.getScore()
+		// fmt.Printf(" %d, ", s)
+		ix := 0
+		for e := scores.Front(); e != nil; e = e.Next() {
+			if iteration == 2000 {
+				fmt.Printf("Score:%d, history:%d\n", s, e.Value)
+			}
+			if e.Value == s {
+				fmt.Printf("Found recurring score %d for iteration:%d at index:%d\n", s, iteration, ix)
+			}
+			ix++
+		}
+		if iteration > 3000 {
+			break
+		}
+		scores.PushBack(s)
+		iteration++
+		farm.propagate()
+	}
 }
 
 // tag::pots[]
