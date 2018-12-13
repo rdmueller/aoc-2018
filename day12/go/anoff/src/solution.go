@@ -163,37 +163,15 @@ func main() {
 	fmt.Printf("Solution part1: %d\n", sum)
 
 	// part 2
+	// see commit e863791 for how I identified that after iteration 100 the change is always +38 per step
 	farm.pots = extractPots(initState)
-	scores := list.New()
-	d_scores := list.New()
-	iteration := 0
-	for {
-		s := farm.getScore()
-		d_s := 0
-		if iteration == 0 {
-			d_s = s
-		} else {
-			d_s = s - scores.Back().Value.(int)
-		}
-		// fmt.Printf(" %d, ", s)
-		ix := 0
-		for e := d_scores.Front(); e != nil; e = e.Next() {
-			if iteration == 1000 {
-				//fmt.Printf("d_score:%d, history:%d\n", d_s, e.Value)
-			}
-			if e.Value == d_s {
-				fmt.Printf("Found recurring d_score %d for iteration:%d at index:%d\n", d_s, iteration, ix)
-			}
-			ix++
-		}
-		if iteration > 1000 {
-			break
-		}
-		d_scores.PushBack(d_s)
-		scores.PushBack(s)
-		iteration++
+	score := 0
+	for i := 0; i < 100; i++ {
 		farm.propagate()
+		score = farm.getScore()
 	}
+	score += (50000000000 - 100) * 38
+	fmt.Printf("Solution part2: %d\n", score)
 }
 
 // tag::pots[]
