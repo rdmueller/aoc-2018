@@ -187,18 +187,18 @@ Map calcNextState(tracks) {
 // end::nextState[]
 
 // tag::starOne[]
-def tracks = readInput("test.txt")
+def tracks = readInput("testInput.txt")
 1700000.times {
     def numCarts
     def res = calcNextState(tracks)
     tracks = res.track
     if (it%1==0) {
-        //println "\u001b[2J"
+        println "\u001b[2J"
         print "\u001b[H"
         println it+": "+res.carts
         //
         printTracks(tracks)
-//        sleep(1000)
+        sleep(1000)
     }
 }
 println ""
