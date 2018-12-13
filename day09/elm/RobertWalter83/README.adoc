@@ -1,0 +1,22 @@
+== Solution written in elm 0.19
+
+goto https://guide.elm-lang.org/install.html to find your elm installation guide
+
+to build:
+
+    elm make src/Main.elm
+
+This should produce index.html in the root directory, which you can open locally (also checked in for convenience).
+
+== Input
+
+The input is a string, which we convert to an integer array.
+
+=== Part 1
+
+pending
+
+=== Part 2
+
+pending
+

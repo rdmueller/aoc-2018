@@ -19,15 +19,13 @@ type alias Stack =
 init : Model
 init =
   let
-    -- COMMON 
-
     -- PART 1
     sum = sumMetadata input 0 [] 0
   
     -- PART 2
     (idx, values) = nodeValue input 0
   in
-    { solution = (sum, 0) }
+    { solution = (sum, List.head values |> withDefault -1) }
 
 -- Solution part2
 nodeValue : Array Int -> Int -> (Int, List Int)
