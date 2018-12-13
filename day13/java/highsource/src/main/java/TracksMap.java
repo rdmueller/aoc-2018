@@ -46,8 +46,51 @@ public class TracksMap {
 	}
 
 	public void tick() {
-		List<CartState> nextCartStates = cartStates().map(cartState -> cartState.nextState(this))
-				.collect(Collectors.toList());
+//		List<CartState> nextCartStates = cartStates().map(cartState -> cartState.nextState(this))
+//				.collect(Collectors.toList());
+
+		Map<XY, List<CartState>> nextStatesByPosition = new HashMap<>();
+		List<CartState> nextCartStates = new ArrayList<>();
+
+		cartStates().forEach(cartState -> {
+
+			if (!nextStatesByPosition.getOrDefault(cartState.getCurrentPosition(), Collections.emptyList()).isEmpty()) {
+				// Collision, don't move
+				nextStatesByPosition.get(cartState.getCurrentPosition()).add(cartState);
+				nextCartStates.add(cartState);
+			} else {
+				CartState nextCartState = cartState.nextState(this);
+				nextCartStates.add(nextCartState);
+				nextStatesByPosition.computeIfAbsent(nextCartState.getCurrentPosition(), xy -> new ArrayList<>())
+						.add(nextCartState);
+			}
+		});
+
+		this.cartStates = nextCartStates;
+
+	}
+
+	public void tickAndRemove() {
+
+		Map<XY, List<CartState>> nextStatesByPosition = new HashMap<>();
+		List<CartState> nextCartStates = new ArrayList<>();
+
+		cartStates().forEach(cartState -> {
+
+			if (!nextStatesByPosition.getOrDefault(cartState.getCurrentPosition(), Collections.emptyList()).isEmpty()) {
+				// Collision, don't move
+				nextStatesByPosition.get(cartState.getCurrentPosition()).add(cartState);
+				nextCartStates.add(cartState);
+			} else {
+				CartState nextCartState = cartState.nextState(this);
+				nextCartStates.add(nextCartState);
+				nextStatesByPosition.computeIfAbsent(nextCartState.getCurrentPosition(), xy -> new ArrayList<>())
+						.add(nextCartState);
+			}
+		});
+
+		nextStatesByPosition.values().stream().filter(cartStates -> cartStates.size() > 1).flatMap(Collection::stream)
+				.forEach(nextCartStates::remove);
 		this.cartStates = nextCartStates;
 	}
 
@@ -95,7 +138,7 @@ public class TracksMap {
 						//
 						.<CartState>comparingInt(cs -> cs.getCurrentPosition().getY())
 						//
-						.thenComparingInt(cs -> cs.getCurrentPosition().getY()));
+						.thenComparingInt(cs -> cs.getCurrentPosition().getX()));
 	}
 
 	@Override

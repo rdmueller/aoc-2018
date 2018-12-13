@@ -26,10 +26,28 @@ public class Solution {
 
 				while (collisions.isEmpty()) {
 					tracksMap.tick();
+//					System.out.println("=====================");
+//					System.out.println(tracksMap);
 					collisions = tracksMap.getCollisions();
 				}
-				collisions.forEach(xy -> System.out.println("First collision at [" + xy + "]."));
+				collisions.forEach(xy -> System.out.println("Collision at [" + xy + "]."));
 			}
+			
+			// Part 2
+			{
+				TracksMap tracksMap = TracksMap.parse(rawMap);
+
+				while (tracksMap.getCartStates().size() > 1) {
+					tracksMap.tickAndRemove();
+//					System.out.println("=====================");
+//					System.out.println(tracksMap);
+//					collisions = tracksMap.getCollisions();
+				}
+				CartState finalCartState = tracksMap.getCartStates().get(0);
+				System.out.println(finalCartState);
+//				collisions.forEach(xy -> System.out.println("Collision at [" + xy + "]."));
+			}
+			
 		}
 	}
 }
