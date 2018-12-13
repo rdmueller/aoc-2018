@@ -1,0 +1,110 @@
+== Part 1
+
+**https://adventofcode.com/2018/day/12[rtfChallenge]**
+
+As this looked like a problem where one might end up with an evergrowing array I decided to try out linked lists. At first I implemented https://github.com/anoff/aoc-2018/blob/a189a773046f9220cbd03e11417588c567a52713/day12/go/anoff/src/solution.go#L10[my own linked list] but failed miserably, so I had to rewrite a lot of tets/code due to type changes after switching to https://golang.org/pkg/container/list[builtin container/list].
+
+The final code that gave me the solution has 3 custom types for `Pot`, `Propagation Rule` and a `Farm` that is a collection of `Pot` s (linked list) and `PropRule` s
+
+[source, go]
+....
+include::./src/solution.go[tags=structs]
+....
+
+The main problem is here to implement the game of life type propagation from one cycle to the next. For this I implemented a `checkPropagation` method on the `Farm` type that will check and store the next cycles state in the `Pot.willHavePlant` property. The `Farm.propagate()` method will then set the future state to the current state and reset all future states.
+
+[plantuml, day12-propagation, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+:checkPropagation()
+for a given List<Pot>;
+start
+if (first 5 elements contain a plant) then (Y)
+  :add 4 new elements
+  in front;
+endif
+if (last 5 elements contain a plant) then (Y)
+  :add 4 new elements
+  in back;
+endif
+while (for each pot)
+  :get 2 neighbors to each side
+  as current plant pattern;
+  while (for each\npropagation rule)
+    if (current pattern
+    matches propagation pattern) then (Y)
+      :set future plant state
+      to propagation rule result;
+    endif
+  endwhile
+endwhile
+end
+@enduml
+....
+
+The final solution for part 1 given the above propagation method is simple:
+
+[plantuml, day12-p1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:read inputs;
+:create farm with given
+propagation rules and
+starting pot layout;
+while (i < 20)
+  :propagate plants;
+  :i++;
+endwhile
+:calculate score of
+current farm;
+:print score;
+end
+@enduml
+....
+
+== Part 2
+
+Part 2 of the challenge really gave me some headaches and I did not manage to solve it without _tinkering around_. After realizing I would not be able to reach 50 billion iterations before the end of AoC2018 I knew there should be some kind of pattern in the score. Initially I thought it would be recurring scores (lifecycles in the plants) so I tracked the history of the score for the first 5000 iterations and https://github.com/anoff/aoc-2018/blob/400a3b0de5b275fcfadb2e14adc96a57ac907acf/day12/go/anoff/src/solution.go#L185[looked for recurring values]. There was only one recurring value though - that could not be it.
+
+I saw however that the score kept increasing after a certain point; so I looked at the delta scores from one iteration to the next. And there was a clear pattern visible. After iteration 100 the score increased by `38` from one cycle to the next - at least up to iteration 3000. So my bet was that I could simply add 38 for each cycle up to 50 billion to reach the final answer.
+
+[plantuml, day12-p2, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:read inputs;
+:create farm with given
+propagation rules and
+starting pot layout;
+while (i < 100)
+  :propagate plants;
+  :i++;
+endwhile
+:calculate score of
+current farm;
+:inc score by (50 billion - 100) * 38;
+:print score;
+end
+@enduml
+....
+
+== Go solution
+
+Solution can be run with `go run src/solution.go`
+
+Unit tests can be run with `go test`
+
+[source, go]
+....
+include::./src/solution.go[]
+....

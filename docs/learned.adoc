@@ -170,3 +170,12 @@ a| * Go unit tests need to start with `func Test<Name>` whereas `Name` needs to 
 a| * there is no asciidoctor plugin for xcode!
 * today's solution part 2 is too slow to finish, but the solution already showed up after a few iterations 😎
 |====
+
+=== Day 12
+
+[cols="1,10"]
+|====
+|{anoff}
+a| * I still seem to lack knowledge of how pointers and linked lists work; spent 3 hours implementing my own type with a bi-linked list but in practice it threw a lot of weird pointer exceptions
+
+|====
