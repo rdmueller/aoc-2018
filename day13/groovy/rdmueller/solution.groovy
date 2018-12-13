@@ -23,9 +23,9 @@ Map readInput(fileName) {
 void printTracks(tracks) {
     //def f = new File("test.txt")
     //f.write("")
-    for (int x=0; x<tracks.max.x+1; x++)  {
+    for (int y=0; y<tracks.max.y+1; y++)  {
         def line = ""
-        for (int y=0; y<tracks.max.y+1; y++)  {
+        for (int x=0; x<tracks.max.x+1; x++)  {
             def c = tracks["$x|$y"]?:" "
             line += c
             //print (tracks["$x|$y"]?:" ")
@@ -187,7 +187,7 @@ Map calcNextState(tracks) {
 // end::nextState[]
 
 // tag::starOne[]
-def tracks = readInput("input.txt")
+def tracks = readInput("test.txt")
 1700000.times {
     def numCarts
     def res = calcNextState(tracks)
