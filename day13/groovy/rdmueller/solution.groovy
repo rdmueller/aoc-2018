@@ -54,7 +54,7 @@ Map calcNextState(tracks) {
                         def next = tracks["${x+1}|$y"]?:" "
                         def next2 = newTracks["${x+1}|${y}"]?:" "
                         if (next2 in ['<', '>', '^', 'v']) {
-                            throw new Exception("crash! ${x+1},${y}")
+                            println("crash! ${x+1},${y}")
                         }
                         newTracks["${x}|$y"]=tracks.carts["${x}|$y"].underlying
                         newTracks.carts["${x+1}|${y}"]=[underlying:next,memory:tracks.carts["${x}|$y"].memory]
@@ -84,7 +84,7 @@ Map calcNextState(tracks) {
                         def next = tracks["${x}|${y+1}"]?:" "
                         def next2 = newTracks["${x}|${y+1}"]?:" "
                         if (next2 in ['<', '>', '^', 'v']) {
-                            throw new Exception("crash! ${x},${y+1}")
+                            println("crash! ${x},${y+1}")
                         }
                         newTracks["${x}|$y"]=tracks.carts["${x}|$y"].underlying
                         newTracks.carts["${x}|${y+1}"]=[underlying:next,memory:tracks.carts["${x}|$y"].memory]
@@ -114,7 +114,7 @@ Map calcNextState(tracks) {
                         def next = tracks["${x}|${y-1}"]?:" "
                         def next2 = newTracks["${x}|${y-1}"]?:" "
                         if (next2 in ['<', '>', '^', 'v']) {
-                            throw new Exception("crash! ${x},${y-1}")
+                            println("crash! ${x},${y-1}")
                         }
                         newTracks["${x}|$y"]=tracks.carts["${x}|$y"].underlying
                         newTracks.carts["${x}|${y-1}"]=[underlying:next,memory:tracks.carts["${x}|$y"].memory]
@@ -144,7 +144,7 @@ Map calcNextState(tracks) {
                         def next = tracks["${x-1}|${y}"]?:" "
                         def next2 = newTracks["${x-1}|${y}"]?:" "
                         if (next2 in ['<', '>', '^', 'v']) {
-                            throw new Exception("crash! ${x-1},${y}")
+                            println("crash! ${x-1},${y}")
                         }
                         newTracks["${x}|$y"]=tracks.carts["${x}|$y"].underlying
                         newTracks.carts["${x-1}|${y}"]=[underlying:next,memory:tracks.carts["${x}|$y"].memory]
@@ -160,7 +160,7 @@ Map calcNextState(tracks) {
                                 break;
                             case '+':
                                 memory = tracks.carts["${x}|$y"].memory
-                                nextDirection = ['v','^','>'][memory%3]
+                                nextDirection = ['v','<','^'][memory%3]
                                 newTracks.carts["${x-1}|${y}"].memory = memory+1
                                 newTracks["${x-1}|${y}"] = nextDirection
                                 // println "4: "+nextDirection+ " - "+memory
@@ -195,10 +195,14 @@ def tracks = readInput("testInput.txt")
     if (it%1==0) {
         println "\u001b[2J"
         print "\u001b[H"
-        println it+": "+res.carts
-        //
         printTracks(tracks)
-        sleep(1000)
+        println it+": "+res.carts
+        if (res.carts==1) {
+            println tracks.carts
+            end
+        }
+        //
+        sleep(2000)
     }
 }
 println ""
