@@ -70,6 +70,18 @@ func (n *Network) addCart(c Cart) *Network {
 func (n *Network) getCarts() *[]Cart {
 	return &n.carts
 }
+func (n *Network) hasCollision(x int, y int) bool {
+	cartsFound := 0
+	for _, c := range n.carts {
+		if c.x == x && c.y == y {
+			cartsFound++
+		}
+	}
+	if cartsFound > 1 {
+		return true
+	}
+	return false
+}
 func (n *Network) moveCarts() *Network {
 	for y, line := range n.lines {
 		for x, _ := range line {
@@ -79,7 +91,11 @@ func (n *Network) moveCarts() *Network {
 					continue
 				}
 				cart.move()
-					rail := n.lines[cart.y][cart.x]
+				// check collision
+				if n.hasCollision(cart.x, cart.y) {
+					fmt.Println("Collision detected", cart.x, cart.y)
+				}
+				rail := n.lines[cart.y][cart.x]
 				switch rail {
 				case '+':
 					switch cart.lastTurn {
@@ -89,18 +105,18 @@ func (n *Network) moveCarts() *Network {
 					case "straight":
 						cart.turnRight()
 						cart.lastTurn = "right"
-					default: // start and last="right"
+						default: // start and last="right"
 						cart.turnLeft()
 						cart.lastTurn = "left"
 					}
 				case '/':
-					if cart.dy == -1 {
+					if cart.dy != 0 {
 						cart.turnRight()
 					} else {
 						cart.turnLeft()
 					}
 				case '\\':
-					if cart.dy == -1 {
+					if cart.dy != 0 {
 						cart.turnLeft()
 					} else {
 						cart.turnRight()
@@ -182,7 +198,7 @@ func main() {
 	input := readInput("../test.txt")
 	net := parseInput(input)
 	net.print()
-	for i := 0; i < 3; i++ {
+	for i := 0; i < 16; i++ {
 		fmt.Printf("\n\nStep %d\n", i)
 		net.moveCarts()
 		net.print()
