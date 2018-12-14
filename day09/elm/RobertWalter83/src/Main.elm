@@ -10,7 +10,7 @@ type alias Model =
   { solution : Int }
 
 type alias Board = 
-  { left : Array Int, current : Int, right : Array Int }
+  { left : Dict Int Int, current : Int, right : Dict Int Int }
 
 type alias Game =
   { board : Board, luckyNumber : Int, players : Array Int }
@@ -24,10 +24,8 @@ init =
 
     gameEnd =  List.range 0 nMarbles |> List.foldl play (initGame 23 nPlayers) 
 
-    -- PART 1
+    -- PART 1 & 2
     highscore = Array.toList gameEnd.players |> List.maximum |> withDefault 0
-  
-    -- PART 2
     
   in
     { solution = highscore }
@@ -38,7 +36,7 @@ initGame luckyNumber nPlayers =
 
 initBoard : Board
 initBoard =
-  { left = Array.empty, current = 0, right = Array.empty }
+  { left = Dict.empty, current = 0, right = Dict.empty }
 
 initPlayers : Int -> Array Int
 initPlayers nPlayers =
@@ -49,12 +47,11 @@ play round game =
   let
     idxPlayer = getPlayerIndex game round
     isLuckyNumber = isLucky game round
-    r = if (modBy 1000 round) == 0 then Debug.log "round: " round   else round
   in
     if isLuckyNumber then
-      handleLuckyMarble game round idxPlayer --  |> Debug.log "lucky:  " 
+      handleLuckyMarble game round idxPlayer --|> Debug.log "lucky:  " 
     else
-      placeMarbleNormal game round -- |> Debug.log "normal: "
+      placeMarbleNormal game round --|> Debug.log "normal: "
 
 getPlayerIndex : Game -> Int -> Int
 getPlayerIndex game round =
@@ -66,57 +63,27 @@ getPlayerIndex game round =
     else  
       modBy nPlayers round  
 
+getNextR : Board -> Int
+getNextR board =
+  Dict.get board.current board.right |> withDefault 0
+
+getNextL : Board -> Int
+getNextL board =
+  Dict.get board.current board.left |> withDefault 0
+
 shiftRight : Int -> Board -> Board
 shiftRight offset board =
   if offset == 0 then
     board
   else 
-    let
-      boardNew = 
-        if Array.isEmpty board.right then
-          if Array.isEmpty board.left then
-            board
-          else
-            { left = Array.empty
-            , current = Array.get 0 board.left |> withDefault 0
-            , right = Array.initialize 1 (\i -> board.current)
-              |> Array.append (Array.slice 1 ((Array.length board.left) + 1) board.left)
-            }
-        else
-          { left = Array.append board.left (Array.fromList [board.current])
-          , current = Array.get 0 board.right |> withDefault 0
-          , right = Array.slice 1 ((Array.length board.right) + 1) board.right
-          }
-        
-
-    in
-      shiftRight (offset-1) boardNew
+    shiftRight (offset-1) { board | current = getNextR board }
 
 shiftLeft : Int -> Board -> Board
 shiftLeft offset board =
   if offset == 0 then
     board
   else 
-    let
-      boardNew = 
-        if Array.isEmpty board.left then
-          if Array.isEmpty board.right then
-            board
-          else
-            { left = Array.slice 0 ((Array.length board.right) - 1) board.right
-              |> Array.append (Array.initialize 1 (\i -> board.current))
-            , current = Array.get ((Array.length board.right) - 1) board.right |> withDefault 0
-            , right = Array.empty
-            } --|> Debug.log "leftShift: ____< "
-        else
-          { left = Array.slice 0 ((Array.length board.left) - 1) board.left 
-          , current = Array.get ((Array.length board.left) - 1) board.left |> withDefault 0 
-          , right = Array.append (Array.fromList [board.current]) board.right 
-          }
-        
-    in
-      shiftLeft (offset-1) boardNew
-       
+    shiftLeft (offset-1) { board | current = getNextL board }        
 
 placeMarbleNormal : Game -> Int -> Game
 placeMarbleNormal game round = 
@@ -136,9 +103,9 @@ placeMarbleNormal game round =
 handleLuckyMarble : Game -> Int -> Int -> Game
 handleLuckyMarble game round idxPlayer =
   let
-    boardNew = shiftLeft 7 game.board 
+    boardNew = shiftLeft 7 game.board --|> Debug.log "lucky shift: "
     
-    (points, boardNew2) = cutOutValueAt boardNew 
+    (points, boardNew2) = cutOutValueAt boardNew --|> Debug.log "lucky cut: "
     --a = Debug.log ("Player " ++ (String.fromInt idxPlayer) ++ " gets " ++ (String.fromInt (round+points)) ++ " points in round ") round
     
     playersNew = Array.indexedMap (\i val -> if i == idxPlayer then val+round+points else val) game.players
@@ -149,24 +116,24 @@ handleLuckyMarble game round idxPlayer =
 cutOutValueAt : Board -> (Int, Board)
 cutOutValueAt board =
   let
+    lMarble = getNextL board
+    rMarble = getNextR board
+
+    rightNew = 
+      Dict.update 
+        lMarble 
+        (\mbMarble -> Just rMarble)
+        board.right
+
+    leftNew = 
+      Dict.update 
+        rMarble 
+        (\mbMarble -> Just lMarble)
+        board.left
+
     value = board.current
-    boardNew =
-      if Array.isEmpty board.right then
-        if Array.isEmpty board.left then
-          board -- should never happen
-        else
-          { left = Array.empty
-          , current = Array.get 0 board.left |> withDefault 0
-          , right = Array.slice 1 ((Array.length board.left) + 1) board.left
-          }
-      else
-        { left = board.left
-        , current = Array.get 0 board.right |> withDefault 0
-        , right = Array.slice 1 ((Array.length board.right) + 1) board.right
-        }
-    
   in
-    (value, boardNew)
+    (value, {left = leftNew, current = rMarble, right = rightNew})
   
 isLucky : Game -> Int -> Bool
 isLucky game round =
@@ -177,10 +144,26 @@ isLucky game round =
 
 insertAt : Board -> Int -> Board
 insertAt board val =
-  { left = Array.append board.left (Array.fromList [board.current]) 
-  , current = val
-  , right = board.right
-  }
+  let
+    lMarble = getNextL board
+    rMarble = getNextR board
+
+    rightNew = 
+      Dict.update 
+        board.current
+        (\mbMarble -> Just val)
+        board.right 
+        |> Dict.insert val rMarble 
+    
+    leftNew = 
+      Dict.update 
+        rMarble 
+        (\mbMarble -> Just val)
+        board.left
+        |> Dict.insert val board.current
+
+  in 
+    { left = leftNew, current = val, right = rightNew}
   
 
 
@@ -216,7 +199,7 @@ testData1 =
   (9, 25)
 
 testData2 = 
-  (10, 107)
+  (10, 1618)
 
 testData3 = 
   (13, 7999)
