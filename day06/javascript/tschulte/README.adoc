@@ -1,0 +1,27 @@
+This solution is written in JavaScript.
+
+https://adventofcode.com/2018/day/6
+
+== First Star
+
+[source, js]
+....
+include::part1.js[]
+....
+
+[source, js]
+....
+include::solution.js[tags=part1]
+....
+
+== Second Star
+
+[source, js]
+....
+include::part2.js[]
+....
+
+[source, js]
+....
+include::solution.js[tags=part2]
+....

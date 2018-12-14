@@ -1,0 +1,18 @@
+This solution is written in Groovy.
+
+https://adventofcode.com/2018/day/13
+
+So, today will be fun.
+Looking at the https://adventofcode.com/2015/leaderboard/day/13[leaderboard], the problem seems to be the hardest yet.
+
+== First Star
+
+
+[source, groovy]
+....
+include::solution.groovy[tags=fuelCell]
+....
+
+
+== Second Star
+
