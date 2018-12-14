@@ -41,16 +41,7 @@ func Puzzle14()
     {
         if recipes.count >= targetRecipe.count
         {
-            var found = true
-            for i in 0..<targetRecipe.count
-            {
-                found = found && targetRecipe[i] == recipes[recipes.count-targetRecipe.count+i]
-                if !found
-                {
-                    break
-                }
-            }
-            return found
+            return targetRecipe == recipes[recipes.count-targetRecipe.count..<recipes.count].filter({_ in true})
         }
         return false
     }
