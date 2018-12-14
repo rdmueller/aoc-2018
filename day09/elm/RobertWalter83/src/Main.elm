@@ -10,7 +10,7 @@ type alias Model =
   { solution : Int }
 
 type alias Board = 
-  { circle : List Int, idxCurrent : Int }
+  { left : Array Int, current : Int, right : Array Int }
 
 type alias Game =
   { board : Board, luckyNumber : Int, players : Array Int }
@@ -20,7 +20,7 @@ init : Model
 init =
   let
     -- COMMON
-    (nPlayers, nMarbles) = testData2
+    (nPlayers, nMarbles) = inputPart2
 
     gameEnd =  List.range 0 nMarbles |> List.foldl play (initGame 23 nPlayers) 
 
@@ -38,37 +38,21 @@ initGame luckyNumber nPlayers =
 
 initBoard : Board
 initBoard =
-  { circle = [], idxCurrent = 0 }
+  { left = Array.empty, current = 0, right = Array.empty }
 
 initPlayers : Int -> Array Int
 initPlayers nPlayers =
   Array.initialize nPlayers (\i -> 0)
-
-getNewBoardIndex : Board -> Int -> Bool -> Int
-getNewBoardIndex board idxRel forInsertion =
-  let
-    length = List.length board.circle
-    idxShifted = board.idxCurrent + idxRel
-  in
-    if length == 0 then 
-      0 
-    else 
-      if length == 1 then
-        if (modBy 2 idxRel == 0) then 1 else 0 
-      else
-        if forInsertion && idxShifted == length then
-          length
-        else
-          modBy length idxShifted
 
 play : Int -> Game -> Game
 play round game =
   let
     idxPlayer = getPlayerIndex game round
     isLuckyNumber = isLucky game round
+    r = if (modBy 1000 round) == 0 then Debug.log "round: " round   else round
   in
     if isLuckyNumber then
-      handleLuckyMarble game round idxPlayer -- |> Debug.log "lucky:  " 
+      handleLuckyMarble game round idxPlayer --  |> Debug.log "lucky:  " 
     else
       placeMarbleNormal game round -- |> Debug.log "normal: "
 
@@ -80,47 +64,109 @@ getPlayerIndex game round =
     if nPlayers == 0 then
       0
     else  
-      modBy nPlayers round    
+      modBy nPlayers round  
+
+shiftRight : Int -> Board -> Board
+shiftRight offset board =
+  if offset == 0 then
+    board
+  else 
+    let
+      boardNew = 
+        if Array.isEmpty board.right then
+          if Array.isEmpty board.left then
+            board
+          else
+            { left = Array.empty
+            , current = Array.get 0 board.left |> withDefault 0
+            , right = Array.initialize 1 (\i -> board.current)
+              |> Array.append (Array.slice 1 ((Array.length board.left) + 1) board.left)
+            }
+        else
+          { left = Array.append board.left (Array.fromList [board.current])
+          , current = Array.get 0 board.right |> withDefault 0
+          , right = Array.slice 1 ((Array.length board.right) + 1) board.right
+          }
+        
+
+    in
+      shiftRight (offset-1) boardNew
+
+shiftLeft : Int -> Board -> Board
+shiftLeft offset board =
+  if offset == 0 then
+    board
+  else 
+    let
+      boardNew = 
+        if Array.isEmpty board.left then
+          if Array.isEmpty board.right then
+            board
+          else
+            { left = Array.slice 0 ((Array.length board.right) - 1) board.right
+              |> Array.append (Array.initialize 1 (\i -> board.current))
+            , current = Array.get ((Array.length board.right) - 1) board.right |> withDefault 0
+            , right = Array.empty
+            } --|> Debug.log "leftShift: ____< "
+        else
+          { left = Array.slice 0 ((Array.length board.left) - 1) board.left 
+          , current = Array.get ((Array.length board.left) - 1) board.left |> withDefault 0 
+          , right = Array.append (Array.fromList [board.current]) board.right 
+          }
+        
+    in
+      shiftLeft (offset-1) boardNew
+       
 
 placeMarbleNormal : Game -> Int -> Game
 placeMarbleNormal game round = 
   if round == 0 then
     let
       boardOld = game.board
-      boardNew = { boardOld | circle = [0] }
+      boardNew = { boardOld | current = 0 }
     in
       { game | board = boardNew }
   else 
     let
-      idxNew = getNewBoardIndex game.board 2 True
-      circleNew = insertAt game.board.circle idxNew round 
+      boardNew = shiftRight 1 game.board --|> Debug.log "shifted: "
+      boardNew2 = insertAt boardNew round --|> Debug.log "normal:  "
     in
-      { game | board = { circle = circleNew, idxCurrent = idxNew } }
+      { game | board = boardNew2 }
 
 handleLuckyMarble : Game -> Int -> Int -> Game
 handleLuckyMarble game round idxPlayer =
   let
-    idxToRemove = getNewBoardIndex game.board -7 False
+    boardNew = shiftLeft 7 game.board 
     
-    (points, circleNew) = cutOutValueAt game.board.circle idxToRemove
-    a = Debug.log ("Player " ++ (String.fromInt idxPlayer) ++ " gets " ++ (String.fromInt (round+points)) ++ " points in round ") round
+    (points, boardNew2) = cutOutValueAt boardNew 
+    --a = Debug.log ("Player " ++ (String.fromInt idxPlayer) ++ " gets " ++ (String.fromInt (round+points)) ++ " points in round ") round
     
     playersNew = Array.indexedMap (\i val -> if i == idxPlayer then val+round+points else val) game.players
-
-    boardNew = { circle = circleNew, idxCurrent = idxToRemove }
   in
-    { game | board = boardNew, players = playersNew }
+    { game | board = boardNew2, players = playersNew }
 
   
-cutOutValueAt : List Int -> Int -> (Int, List Int)
-cutOutValueAt circle idx =
+cutOutValueAt : Board -> (Int, Board)
+cutOutValueAt board =
   let
-    front = List.take idx circle
-    back = List.drop idx circle
-    toRemove = List.head back |> withDefault 0
-    backToKeep = List.tail back |> withDefault []
+    value = board.current
+    boardNew =
+      if Array.isEmpty board.right then
+        if Array.isEmpty board.left then
+          board -- should never happen
+        else
+          { left = Array.empty
+          , current = Array.get 0 board.left |> withDefault 0
+          , right = Array.slice 1 ((Array.length board.left) + 1) board.left
+          }
+      else
+        { left = board.left
+        , current = Array.get 0 board.right |> withDefault 0
+        , right = Array.slice 1 ((Array.length board.right) + 1) board.right
+        }
+    
   in
-    (toRemove, List.append front backToKeep)
+    (value, boardNew)
   
 isLucky : Game -> Int -> Bool
 isLucky game round =
@@ -129,14 +175,14 @@ isLucky game round =
   else
     (remainderBy game.luckyNumber round) == 0
 
-insertAt : List Int -> Int -> Int -> List Int
-insertAt circle idx val =
-  let
-    front = List.take idx circle  
-    back = List.drop idx circle 
-  in
-    List.append (List.append front [val]) back
+insertAt : Board -> Int -> Board
+insertAt board val =
+  { left = Array.append board.left (Array.fromList [board.current]) 
+  , current = val
+  , right = board.right
+  }
   
+
 
 -- UPDATE (no op)
 
@@ -170,7 +216,7 @@ testData1 =
   (9, 25)
 
 testData2 = 
-  (10, 1618)
+  (10, 107)
 
 testData3 = 
   (13, 7999)
@@ -184,5 +230,8 @@ testData5 =
 testData6 = 
   (30, 5807)
 
-inputData =
+inputPart1 =
   (439, 71307)
+
+inputPart2 =
+  (439, 7130700)

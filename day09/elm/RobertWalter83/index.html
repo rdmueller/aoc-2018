@@ -4357,11 +4357,11 @@ function _Browser_load(url)
 		}
 	}));
 }
-var elm$core$Array$branchFactor = 32;
 var elm$core$Array$Array_elm_builtin = F4(
 	function (a, b, c, d) {
 		return {$: 'Array_elm_builtin', a: a, b: b, c: c, d: d};
 	});
+var elm$core$Array$branchFactor = 32;
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$GT = {$: 'GT'};
 var elm$core$Basics$LT = {$: 'LT'};
@@ -4453,6 +4453,7 @@ var elm$core$Array$shiftStep = elm$core$Basics$ceiling(
 	A2(elm$core$Basics$logBase, 2, elm$core$Array$branchFactor));
 var elm$core$Elm$JsArray$empty = _JsArray_empty;
 var elm$core$Array$empty = A4(elm$core$Array$Array_elm_builtin, 0, elm$core$Array$shiftStep, elm$core$Elm$JsArray$empty, elm$core$Elm$JsArray$empty);
+var author$project$Main$initBoard = {current: 0, left: elm$core$Array$empty, right: elm$core$Array$empty};
 var elm$core$Array$Leaf = function (a) {
 	return {$: 'Leaf', a: a};
 };
@@ -4609,25 +4610,6 @@ var elm$core$Array$initialize = F2(
 			return A5(elm$core$Array$initializeHelp, fn, initialFromIndex, len, _List_Nil, tail);
 		}
 	});
-var elm$core$Array$repeat = F2(
-	function (n, e) {
-		return A2(
-			elm$core$Array$initialize,
-			n,
-			function (_n0) {
-				return e;
-			});
-	});
-var elm$core$Basics$negate = function (n) {
-	return -n;
-};
-var author$project$Main$initBoard = function (nMarbles) {
-	return {
-		circle: A2(elm$core$Array$repeat, nMarbles, -1),
-		idxCurrent: 0,
-		size: 0
-	};
-};
 var author$project$Main$initPlayers = function (nPlayers) {
 	return A2(
 		elm$core$Array$initialize,
@@ -4636,14 +4618,15 @@ var author$project$Main$initPlayers = function (nPlayers) {
 			return 0;
 		});
 };
-var author$project$Main$initGame = F3(
-	function (luckyNumber, nPlayers, nMarbles) {
+var author$project$Main$initGame = F2(
+	function (luckyNumber, nPlayers) {
 		return {
-			board: author$project$Main$initBoard(nMarbles),
+			board: author$project$Main$initBoard,
 			luckyNumber: luckyNumber,
 			players: author$project$Main$initPlayers(nPlayers)
 		};
 	});
+var author$project$Main$inputPart2 = _Utils_Tuple2(439, 7130700);
 var elm$core$Array$length = function (_n0) {
 	var len = _n0.a;
 	return len;
@@ -4701,93 +4684,514 @@ var elm$core$Array$get = F2(
 			A2(elm$core$Elm$JsArray$unsafeGet, elm$core$Array$bitMask & index, tail)) : elm$core$Maybe$Just(
 			A3(elm$core$Array$getHelp, startShift, index, tree)));
 	});
-var elm$core$Basics$and = _Basics_and;
-var author$project$Main$moveLeft = F4(
-	function (board, idx, steps, forInsertion) {
-		moveLeft:
-		while (true) {
-			if (!steps) {
-				return idx;
-			} else {
-				var length = board.size;
-				var idxNew = (forInsertion && _Utils_eq(idx - 1, length)) ? length : A2(elm$core$Basics$modBy, length, idx - 1);
-				var mbNextVal = A2(elm$core$Array$get, idxNew, board.circle);
-				if (mbNextVal.$ === 'Just') {
-					var nextVal = mbNextVal.a;
-					if (_Utils_eq(nextVal, -1)) {
-						var $temp$board = board,
-							$temp$idx = idxNew,
-							$temp$steps = steps,
-							$temp$forInsertion = forInsertion;
-						board = $temp$board;
-						idx = $temp$idx;
-						steps = $temp$steps;
-						forInsertion = $temp$forInsertion;
-						continue moveLeft;
-					} else {
-						var $temp$board = board,
-							$temp$idx = idxNew,
-							$temp$steps = steps + 1,
-							$temp$forInsertion = forInsertion;
-						board = $temp$board;
-						idx = $temp$idx;
-						steps = $temp$steps;
-						forInsertion = $temp$forInsertion;
-						continue moveLeft;
-					}
-				} else {
-					return idxNew;
-				}
-			}
-		}
-	});
-var author$project$Main$moveRight = F4(
-	function (board, idx, steps, forInsertion) {
-		moveRight:
-		while (true) {
-			if (!steps) {
-				return idx;
-			} else {
-				var length = board.size;
-				var idxNew = (forInsertion && _Utils_eq(idx + 1, length)) ? length : A2(elm$core$Basics$modBy, length, idx + 1);
-				var mbNextVal = A2(elm$core$Array$get, idxNew, board.circle);
-				if (mbNextVal.$ === 'Just') {
-					var nextVal = mbNextVal.a;
-					if (_Utils_eq(nextVal, -1)) {
-						var $temp$board = board,
-							$temp$idx = idxNew,
-							$temp$steps = steps,
-							$temp$forInsertion = forInsertion;
-						board = $temp$board;
-						idx = $temp$idx;
-						steps = $temp$steps;
-						forInsertion = $temp$forInsertion;
-						continue moveRight;
-					} else {
-						var $temp$board = board,
-							$temp$idx = idxNew,
-							$temp$steps = steps - 1,
-							$temp$forInsertion = forInsertion;
-						board = $temp$board;
-						idx = $temp$idx;
-						steps = $temp$steps;
-						forInsertion = $temp$forInsertion;
-						continue moveRight;
-					}
-				} else {
-					return idxNew;
-				}
-			}
-		}
-	});
-var author$project$Main$moveIndex = F3(
-	function (board, delta, forInsertion) {
-		var right = delta > 0;
-		var length = board.size;
-		return (!length) ? 0 : ((length === 1) ? ((!A2(elm$core$Basics$modBy, 2, delta)) ? 1 : 0) : ((!delta) ? board.idxCurrent : (right ? A4(author$project$Main$moveRight, board, board.idxCurrent, delta, forInsertion) : A4(author$project$Main$moveLeft, board, board.idxCurrent, delta, forInsertion))));
+var elm$core$Array$isEmpty = function (_n0) {
+	var len = _n0.a;
+	return !len;
+};
+var elm$core$Elm$JsArray$appendN = _JsArray_appendN;
+var elm$core$Elm$JsArray$slice = _JsArray_slice;
+var elm$core$Array$appendHelpBuilder = F2(
+	function (tail, builder) {
+		var tailLen = elm$core$Elm$JsArray$length(tail);
+		var notAppended = (elm$core$Array$branchFactor - elm$core$Elm$JsArray$length(builder.tail)) - tailLen;
+		var appended = A3(elm$core$Elm$JsArray$appendN, elm$core$Array$branchFactor, builder.tail, tail);
+		return (notAppended < 0) ? {
+			nodeList: A2(
+				elm$core$List$cons,
+				elm$core$Array$Leaf(appended),
+				builder.nodeList),
+			nodeListSize: builder.nodeListSize + 1,
+			tail: A3(elm$core$Elm$JsArray$slice, notAppended, tailLen, tail)
+		} : ((!notAppended) ? {
+			nodeList: A2(
+				elm$core$List$cons,
+				elm$core$Array$Leaf(appended),
+				builder.nodeList),
+			nodeListSize: builder.nodeListSize + 1,
+			tail: elm$core$Elm$JsArray$empty
+		} : {nodeList: builder.nodeList, nodeListSize: builder.nodeListSize, tail: appended});
 	});
 var elm$core$Basics$True = {$: 'True'};
+var elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
+		while (true) {
+			if (n <= 0) {
+				return list;
+			} else {
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
+			}
+		}
+	});
+var elm$core$Array$sliceLeft = F2(
+	function (from, array) {
+		var len = array.a;
+		var tree = array.c;
+		var tail = array.d;
+		if (!from) {
+			return array;
+		} else {
+			if (_Utils_cmp(
+				from,
+				elm$core$Array$tailIndex(len)) > -1) {
+				return A4(
+					elm$core$Array$Array_elm_builtin,
+					len - from,
+					elm$core$Array$shiftStep,
+					elm$core$Elm$JsArray$empty,
+					A3(
+						elm$core$Elm$JsArray$slice,
+						from - elm$core$Array$tailIndex(len),
+						elm$core$Elm$JsArray$length(tail),
+						tail));
+			} else {
+				var skipNodes = (from / elm$core$Array$branchFactor) | 0;
+				var helper = F2(
+					function (node, acc) {
+						if (node.$ === 'SubTree') {
+							var subTree = node.a;
+							return A3(elm$core$Elm$JsArray$foldr, helper, acc, subTree);
+						} else {
+							var leaf = node.a;
+							return A2(elm$core$List$cons, leaf, acc);
+						}
+					});
+				var leafNodes = A3(
+					elm$core$Elm$JsArray$foldr,
+					helper,
+					_List_fromArray(
+						[tail]),
+					tree);
+				var nodesToInsert = A2(elm$core$List$drop, skipNodes, leafNodes);
+				if (!nodesToInsert.b) {
+					return elm$core$Array$empty;
+				} else {
+					var head = nodesToInsert.a;
+					var rest = nodesToInsert.b;
+					var firstSlice = from - (skipNodes * elm$core$Array$branchFactor);
+					var initialBuilder = {
+						nodeList: _List_Nil,
+						nodeListSize: 0,
+						tail: A3(
+							elm$core$Elm$JsArray$slice,
+							firstSlice,
+							elm$core$Elm$JsArray$length(head),
+							head)
+					};
+					return A2(
+						elm$core$Array$builderToArray,
+						true,
+						A3(elm$core$List$foldl, elm$core$Array$appendHelpBuilder, initialBuilder, rest));
+				}
+			}
+		}
+	});
+var elm$core$Array$fetchNewTail = F4(
+	function (shift, end, treeEnd, tree) {
+		fetchNewTail:
+		while (true) {
+			var pos = elm$core$Array$bitMask & (treeEnd >>> shift);
+			var _n0 = A2(elm$core$Elm$JsArray$unsafeGet, pos, tree);
+			if (_n0.$ === 'SubTree') {
+				var sub = _n0.a;
+				var $temp$shift = shift - elm$core$Array$shiftStep,
+					$temp$end = end,
+					$temp$treeEnd = treeEnd,
+					$temp$tree = sub;
+				shift = $temp$shift;
+				end = $temp$end;
+				treeEnd = $temp$treeEnd;
+				tree = $temp$tree;
+				continue fetchNewTail;
+			} else {
+				var values = _n0.a;
+				return A3(elm$core$Elm$JsArray$slice, 0, elm$core$Array$bitMask & end, values);
+			}
+		}
+	});
+var elm$core$Array$hoistTree = F3(
+	function (oldShift, newShift, tree) {
+		hoistTree:
+		while (true) {
+			if ((_Utils_cmp(oldShift, newShift) < 1) || (!elm$core$Elm$JsArray$length(tree))) {
+				return tree;
+			} else {
+				var _n0 = A2(elm$core$Elm$JsArray$unsafeGet, 0, tree);
+				if (_n0.$ === 'SubTree') {
+					var sub = _n0.a;
+					var $temp$oldShift = oldShift - elm$core$Array$shiftStep,
+						$temp$newShift = newShift,
+						$temp$tree = sub;
+					oldShift = $temp$oldShift;
+					newShift = $temp$newShift;
+					tree = $temp$tree;
+					continue hoistTree;
+				} else {
+					return tree;
+				}
+			}
+		}
+	});
+var elm$core$Elm$JsArray$unsafeSet = _JsArray_unsafeSet;
+var elm$core$Array$sliceTree = F3(
+	function (shift, endIdx, tree) {
+		var lastPos = elm$core$Array$bitMask & (endIdx >>> shift);
+		var _n0 = A2(elm$core$Elm$JsArray$unsafeGet, lastPos, tree);
+		if (_n0.$ === 'SubTree') {
+			var sub = _n0.a;
+			var newSub = A3(elm$core$Array$sliceTree, shift - elm$core$Array$shiftStep, endIdx, sub);
+			return (!elm$core$Elm$JsArray$length(newSub)) ? A3(elm$core$Elm$JsArray$slice, 0, lastPos, tree) : A3(
+				elm$core$Elm$JsArray$unsafeSet,
+				lastPos,
+				elm$core$Array$SubTree(newSub),
+				A3(elm$core$Elm$JsArray$slice, 0, lastPos + 1, tree));
+		} else {
+			return A3(elm$core$Elm$JsArray$slice, 0, lastPos, tree);
+		}
+	});
+var elm$core$Array$sliceRight = F2(
+	function (end, array) {
+		var len = array.a;
+		var startShift = array.b;
+		var tree = array.c;
+		var tail = array.d;
+		if (_Utils_eq(end, len)) {
+			return array;
+		} else {
+			if (_Utils_cmp(
+				end,
+				elm$core$Array$tailIndex(len)) > -1) {
+				return A4(
+					elm$core$Array$Array_elm_builtin,
+					end,
+					startShift,
+					tree,
+					A3(elm$core$Elm$JsArray$slice, 0, elm$core$Array$bitMask & end, tail));
+			} else {
+				var endIdx = elm$core$Array$tailIndex(end);
+				var depth = elm$core$Basics$floor(
+					A2(
+						elm$core$Basics$logBase,
+						elm$core$Array$branchFactor,
+						A2(elm$core$Basics$max, 1, endIdx - 1)));
+				var newShift = A2(elm$core$Basics$max, 5, depth * elm$core$Array$shiftStep);
+				return A4(
+					elm$core$Array$Array_elm_builtin,
+					end,
+					newShift,
+					A3(
+						elm$core$Array$hoistTree,
+						startShift,
+						newShift,
+						A3(elm$core$Array$sliceTree, startShift, endIdx, tree)),
+					A4(elm$core$Array$fetchNewTail, startShift, end, endIdx, tree));
+			}
+		}
+	});
+var elm$core$Array$translateIndex = F2(
+	function (index, _n0) {
+		var len = _n0.a;
+		var posIndex = (index < 0) ? (len + index) : index;
+		return (posIndex < 0) ? 0 : ((_Utils_cmp(posIndex, len) > 0) ? len : posIndex);
+	});
+var elm$core$Array$slice = F3(
+	function (from, to, array) {
+		var correctTo = A2(elm$core$Array$translateIndex, to, array);
+		var correctFrom = A2(elm$core$Array$translateIndex, from, array);
+		return (_Utils_cmp(correctFrom, correctTo) > 0) ? elm$core$Array$empty : A2(
+			elm$core$Array$sliceLeft,
+			correctFrom,
+			A2(elm$core$Array$sliceRight, correctTo, array));
+	});
+var elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var author$project$Main$cutOutValueAt = function (board) {
+	var value = board.current;
+	var boardNew = elm$core$Array$isEmpty(board.right) ? (elm$core$Array$isEmpty(board.left) ? board : {
+		current: A2(
+			elm$core$Maybe$withDefault,
+			0,
+			A2(elm$core$Array$get, 0, board.left)),
+		left: elm$core$Array$empty,
+		right: A3(
+			elm$core$Array$slice,
+			1,
+			elm$core$Array$length(board.left) + 1,
+			board.left)
+	}) : {
+		current: A2(
+			elm$core$Maybe$withDefault,
+			0,
+			A2(elm$core$Array$get, 0, board.right)),
+		left: board.left,
+		right: A3(
+			elm$core$Array$slice,
+			1,
+			elm$core$Array$length(board.right) + 1,
+			board.right)
+	};
+	return _Utils_Tuple2(value, boardNew);
+};
+var elm$core$Elm$JsArray$push = _JsArray_push;
+var elm$core$Elm$JsArray$singleton = _JsArray_singleton;
+var elm$core$Array$insertTailInTree = F4(
+	function (shift, index, tail, tree) {
+		var pos = elm$core$Array$bitMask & (index >>> shift);
+		if (_Utils_cmp(
+			pos,
+			elm$core$Elm$JsArray$length(tree)) > -1) {
+			if (shift === 5) {
+				return A2(
+					elm$core$Elm$JsArray$push,
+					elm$core$Array$Leaf(tail),
+					tree);
+			} else {
+				var newSub = elm$core$Array$SubTree(
+					A4(elm$core$Array$insertTailInTree, shift - elm$core$Array$shiftStep, index, tail, elm$core$Elm$JsArray$empty));
+				return A2(elm$core$Elm$JsArray$push, newSub, tree);
+			}
+		} else {
+			var value = A2(elm$core$Elm$JsArray$unsafeGet, pos, tree);
+			if (value.$ === 'SubTree') {
+				var subTree = value.a;
+				var newSub = elm$core$Array$SubTree(
+					A4(elm$core$Array$insertTailInTree, shift - elm$core$Array$shiftStep, index, tail, subTree));
+				return A3(elm$core$Elm$JsArray$unsafeSet, pos, newSub, tree);
+			} else {
+				var newSub = elm$core$Array$SubTree(
+					A4(
+						elm$core$Array$insertTailInTree,
+						shift - elm$core$Array$shiftStep,
+						index,
+						tail,
+						elm$core$Elm$JsArray$singleton(value)));
+				return A3(elm$core$Elm$JsArray$unsafeSet, pos, newSub, tree);
+			}
+		}
+	});
+var elm$core$Array$unsafeReplaceTail = F2(
+	function (newTail, _n0) {
+		var len = _n0.a;
+		var startShift = _n0.b;
+		var tree = _n0.c;
+		var tail = _n0.d;
+		var originalTailLen = elm$core$Elm$JsArray$length(tail);
+		var newTailLen = elm$core$Elm$JsArray$length(newTail);
+		var newArrayLen = len + (newTailLen - originalTailLen);
+		if (_Utils_eq(newTailLen, elm$core$Array$branchFactor)) {
+			var overflow = _Utils_cmp(newArrayLen >>> elm$core$Array$shiftStep, 1 << startShift) > 0;
+			if (overflow) {
+				var newShift = startShift + elm$core$Array$shiftStep;
+				var newTree = A4(
+					elm$core$Array$insertTailInTree,
+					newShift,
+					len,
+					newTail,
+					elm$core$Elm$JsArray$singleton(
+						elm$core$Array$SubTree(tree)));
+				return A4(elm$core$Array$Array_elm_builtin, newArrayLen, newShift, newTree, elm$core$Elm$JsArray$empty);
+			} else {
+				return A4(
+					elm$core$Array$Array_elm_builtin,
+					newArrayLen,
+					startShift,
+					A4(elm$core$Array$insertTailInTree, startShift, len, newTail, tree),
+					elm$core$Elm$JsArray$empty);
+			}
+		} else {
+			return A4(elm$core$Array$Array_elm_builtin, newArrayLen, startShift, tree, newTail);
+		}
+	});
+var elm$core$Array$appendHelpTree = F2(
+	function (toAppend, array) {
+		var len = array.a;
+		var tree = array.c;
+		var tail = array.d;
+		var itemsToAppend = elm$core$Elm$JsArray$length(toAppend);
+		var notAppended = (elm$core$Array$branchFactor - elm$core$Elm$JsArray$length(tail)) - itemsToAppend;
+		var appended = A3(elm$core$Elm$JsArray$appendN, elm$core$Array$branchFactor, tail, toAppend);
+		var newArray = A2(elm$core$Array$unsafeReplaceTail, appended, array);
+		if (notAppended < 0) {
+			var nextTail = A3(elm$core$Elm$JsArray$slice, notAppended, itemsToAppend, toAppend);
+			return A2(elm$core$Array$unsafeReplaceTail, nextTail, newArray);
+		} else {
+			return newArray;
+		}
+	});
 var elm$core$Elm$JsArray$foldl = _JsArray_foldl;
+var elm$core$Array$builderFromArray = function (_n0) {
+	var len = _n0.a;
+	var tree = _n0.c;
+	var tail = _n0.d;
+	var helper = F2(
+		function (node, acc) {
+			if (node.$ === 'SubTree') {
+				var subTree = node.a;
+				return A3(elm$core$Elm$JsArray$foldl, helper, acc, subTree);
+			} else {
+				return A2(elm$core$List$cons, node, acc);
+			}
+		});
+	return {
+		nodeList: A3(elm$core$Elm$JsArray$foldl, helper, _List_Nil, tree),
+		nodeListSize: (len / elm$core$Array$branchFactor) | 0,
+		tail: tail
+	};
+};
+var elm$core$Array$append = F2(
+	function (a, _n0) {
+		var aTail = a.d;
+		var bLen = _n0.a;
+		var bTree = _n0.c;
+		var bTail = _n0.d;
+		if (_Utils_cmp(bLen, elm$core$Array$branchFactor * 4) < 1) {
+			var foldHelper = F2(
+				function (node, array) {
+					if (node.$ === 'SubTree') {
+						var tree = node.a;
+						return A3(elm$core$Elm$JsArray$foldl, foldHelper, array, tree);
+					} else {
+						var leaf = node.a;
+						return A2(elm$core$Array$appendHelpTree, leaf, array);
+					}
+				});
+			return A2(
+				elm$core$Array$appendHelpTree,
+				bTail,
+				A3(elm$core$Elm$JsArray$foldl, foldHelper, a, bTree));
+		} else {
+			var foldHelper = F2(
+				function (node, builder) {
+					if (node.$ === 'SubTree') {
+						var tree = node.a;
+						return A3(elm$core$Elm$JsArray$foldl, foldHelper, builder, tree);
+					} else {
+						var leaf = node.a;
+						return A2(elm$core$Array$appendHelpBuilder, leaf, builder);
+					}
+				});
+			return A2(
+				elm$core$Array$builderToArray,
+				true,
+				A2(
+					elm$core$Array$appendHelpBuilder,
+					bTail,
+					A3(
+						elm$core$Elm$JsArray$foldl,
+						foldHelper,
+						elm$core$Array$builderFromArray(a),
+						bTree)));
+		}
+	});
+var elm$core$Array$fromListHelp = F3(
+	function (list, nodeList, nodeListSize) {
+		fromListHelp:
+		while (true) {
+			var _n0 = A2(elm$core$Elm$JsArray$initializeFromList, elm$core$Array$branchFactor, list);
+			var jsArray = _n0.a;
+			var remainingItems = _n0.b;
+			if (_Utils_cmp(
+				elm$core$Elm$JsArray$length(jsArray),
+				elm$core$Array$branchFactor) < 0) {
+				return A2(
+					elm$core$Array$builderToArray,
+					true,
+					{nodeList: nodeList, nodeListSize: nodeListSize, tail: jsArray});
+			} else {
+				var $temp$list = remainingItems,
+					$temp$nodeList = A2(
+					elm$core$List$cons,
+					elm$core$Array$Leaf(jsArray),
+					nodeList),
+					$temp$nodeListSize = nodeListSize + 1;
+				list = $temp$list;
+				nodeList = $temp$nodeList;
+				nodeListSize = $temp$nodeListSize;
+				continue fromListHelp;
+			}
+		}
+	});
+var elm$core$Array$fromList = function (list) {
+	if (!list.b) {
+		return elm$core$Array$empty;
+	} else {
+		return A3(elm$core$Array$fromListHelp, list, _List_Nil, 0);
+	}
+};
+var author$project$Main$shiftLeft = F2(
+	function (offset, board) {
+		shiftLeft:
+		while (true) {
+			if (!offset) {
+				return board;
+			} else {
+				var boardNew = elm$core$Array$isEmpty(board.left) ? (elm$core$Array$isEmpty(board.right) ? board : {
+					current: A2(
+						elm$core$Maybe$withDefault,
+						0,
+						A2(
+							elm$core$Array$get,
+							elm$core$Array$length(board.right) - 1,
+							board.right)),
+					left: A2(
+						elm$core$Array$append,
+						A2(
+							elm$core$Array$initialize,
+							1,
+							function (i) {
+								return board.current;
+							}),
+						A3(
+							elm$core$Array$slice,
+							0,
+							elm$core$Array$length(board.right) - 1,
+							board.right)),
+					right: elm$core$Array$empty
+				}) : {
+					current: A2(
+						elm$core$Maybe$withDefault,
+						0,
+						A2(
+							elm$core$Array$get,
+							elm$core$Array$length(board.left) - 1,
+							board.left)),
+					left: A3(
+						elm$core$Array$slice,
+						0,
+						elm$core$Array$length(board.left) - 1,
+						board.left),
+					right: A2(
+						elm$core$Array$append,
+						elm$core$Array$fromList(
+							_List_fromArray(
+								[board.current])),
+						board.right)
+				};
+				var $temp$offset = offset - 1,
+					$temp$board = boardNew;
+				offset = $temp$offset;
+				board = $temp$board;
+				continue shiftLeft;
+			}
+		}
+	});
 var elm$core$Elm$JsArray$indexedMap = _JsArray_indexedMap;
 var elm$core$Array$indexedMap = F2(
 	function (func, _n0) {
@@ -4825,68 +5229,12 @@ var elm$core$Array$indexedMap = F2(
 			true,
 			A3(elm$core$Elm$JsArray$foldl, helper, initialBuilder, tree));
 	});
-var elm$core$Elm$JsArray$unsafeSet = _JsArray_unsafeSet;
-var elm$core$Array$setHelp = F4(
-	function (shift, index, value, tree) {
-		var pos = elm$core$Array$bitMask & (index >>> shift);
-		var _n0 = A2(elm$core$Elm$JsArray$unsafeGet, pos, tree);
-		if (_n0.$ === 'SubTree') {
-			var subTree = _n0.a;
-			var newSub = A4(elm$core$Array$setHelp, shift - elm$core$Array$shiftStep, index, value, subTree);
-			return A3(
-				elm$core$Elm$JsArray$unsafeSet,
-				pos,
-				elm$core$Array$SubTree(newSub),
-				tree);
-		} else {
-			var values = _n0.a;
-			var newLeaf = A3(elm$core$Elm$JsArray$unsafeSet, elm$core$Array$bitMask & index, value, values);
-			return A3(
-				elm$core$Elm$JsArray$unsafeSet,
-				pos,
-				elm$core$Array$Leaf(newLeaf),
-				tree);
-		}
-	});
-var elm$core$Array$set = F3(
-	function (index, value, array) {
-		var len = array.a;
-		var startShift = array.b;
-		var tree = array.c;
-		var tail = array.d;
-		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? array : ((_Utils_cmp(
-			index,
-			elm$core$Array$tailIndex(len)) > -1) ? A4(
-			elm$core$Array$Array_elm_builtin,
-			len,
-			startShift,
-			tree,
-			A3(elm$core$Elm$JsArray$unsafeSet, elm$core$Array$bitMask & index, value, tail)) : A4(
-			elm$core$Array$Array_elm_builtin,
-			len,
-			startShift,
-			A4(elm$core$Array$setHelp, startShift, index, value, tree),
-			tail));
-	});
-var elm$core$Basics$append = _Utils_append;
-var elm$core$Debug$log = _Debug_log;
-var elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
-var elm$core$String$fromInt = _String_fromNumber;
 var author$project$Main$handleLuckyMarble = F3(
 	function (game, round, idxPlayer) {
-		var idxToRemove = A3(author$project$Main$moveIndex, game.board, -7, false);
-		var points = A2(
-			elm$core$Maybe$withDefault,
-			0,
-			A2(elm$core$Array$get, idxToRemove, game.board.circle));
+		var boardNew = A2(author$project$Main$shiftLeft, 7, game.board);
+		var _n0 = author$project$Main$cutOutValueAt(boardNew);
+		var points = _n0.a;
+		var boardNew2 = _n0.b;
 		var playersNew = A2(
 			elm$core$Array$indexedMap,
 			F2(
@@ -4894,19 +5242,77 @@ var author$project$Main$handleLuckyMarble = F3(
 					return _Utils_eq(i, idxPlayer) ? ((val + round) + points) : val;
 				}),
 			game.players);
-		var circleNew = A3(elm$core$Array$set, idxToRemove, -1, game.board.circle);
-		var boardNew = {circle: circleNew, idxCurrent: idxToRemove + 1, size: game.board.size - 1};
-		var a = A2(
-			elm$core$Debug$log,
-			'Player ' + (elm$core$String$fromInt(idxPlayer) + (' gets ' + (elm$core$String$fromInt(round + points) + ' points in round '))),
-			round);
 		return _Utils_update(
 			game,
-			{board: boardNew, players: playersNew});
+			{board: boardNew2, players: playersNew});
 	});
 var author$project$Main$isLucky = F2(
 	function (game, round) {
 		return (!round) ? false : (!(round % game.luckyNumber));
+	});
+var author$project$Main$insertAt = F2(
+	function (board, val) {
+		return {
+			current: val,
+			left: A2(
+				elm$core$Array$append,
+				board.left,
+				elm$core$Array$fromList(
+					_List_fromArray(
+						[board.current]))),
+			right: board.right
+		};
+	});
+var author$project$Main$shiftRight = F2(
+	function (offset, board) {
+		shiftRight:
+		while (true) {
+			if (!offset) {
+				return board;
+			} else {
+				var boardNew = elm$core$Array$isEmpty(board.right) ? (elm$core$Array$isEmpty(board.left) ? board : {
+					current: A2(
+						elm$core$Maybe$withDefault,
+						0,
+						A2(elm$core$Array$get, 0, board.left)),
+					left: elm$core$Array$empty,
+					right: A2(
+						elm$core$Array$append,
+						A3(
+							elm$core$Array$slice,
+							1,
+							elm$core$Array$length(board.left) + 1,
+							board.left),
+						A2(
+							elm$core$Array$initialize,
+							1,
+							function (i) {
+								return board.current;
+							}))
+				}) : {
+					current: A2(
+						elm$core$Maybe$withDefault,
+						0,
+						A2(elm$core$Array$get, 0, board.right)),
+					left: A2(
+						elm$core$Array$append,
+						board.left,
+						elm$core$Array$fromList(
+							_List_fromArray(
+								[board.current]))),
+					right: A3(
+						elm$core$Array$slice,
+						1,
+						elm$core$Array$length(board.right) + 1,
+						board.right)
+				};
+				var $temp$offset = offset - 1,
+					$temp$board = boardNew;
+				offset = $temp$offset;
+				board = $temp$board;
+				continue shiftRight;
+			}
+		}
 	});
 var author$project$Main$placeMarbleNormal = F2(
 	function (game, round) {
@@ -4914,36 +5320,26 @@ var author$project$Main$placeMarbleNormal = F2(
 			var boardOld = game.board;
 			var boardNew = _Utils_update(
 				boardOld,
-				{
-					circle: A3(elm$core$Array$set, 0, 0, boardOld.circle),
-					size: 1
-				});
+				{current: 0});
 			return _Utils_update(
 				game,
 				{board: boardNew});
 		} else {
-			var idxNew = A3(author$project$Main$moveIndex, game.board, 2, true);
-			var circleNew = A3(elm$core$Array$set, idxNew, round, game.board.circle);
+			var boardNew = A2(author$project$Main$shiftRight, 1, game.board);
+			var boardNew2 = A2(author$project$Main$insertAt, boardNew, round);
 			return _Utils_update(
 				game,
-				{
-					board: {circle: circleNew, idxCurrent: idxNew, size: game.board.size + 1}
-				});
+				{board: boardNew2});
 		}
 	});
+var elm$core$Debug$log = _Debug_log;
 var author$project$Main$play = F2(
 	function (round, game) {
+		var r = (!A2(elm$core$Basics$modBy, 1000, round)) ? A2(elm$core$Debug$log, 'round: ', round) : round;
 		var isLuckyNumber = A2(author$project$Main$isLucky, game, round);
 		var idxPlayer = A2(author$project$Main$getPlayerIndex, game, round);
-		return isLuckyNumber ? A2(
-			elm$core$Debug$log,
-			'lucky:  ',
-			A3(author$project$Main$handleLuckyMarble, game, round, idxPlayer)) : A2(
-			elm$core$Debug$log,
-			'normal: ',
-			A2(author$project$Main$placeMarbleNormal, game, round));
+		return isLuckyNumber ? A3(author$project$Main$handleLuckyMarble, game, round, idxPlayer) : A2(author$project$Main$placeMarbleNormal, game, round);
 	});
-var author$project$Main$testData2 = _Utils_Tuple2(10, 1618);
 var elm$core$List$maximum = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -4976,13 +5372,13 @@ var elm$core$List$range = F2(
 		return A3(elm$core$List$rangeHelp, lo, hi, _List_Nil);
 	});
 var author$project$Main$init = function () {
-	var _n0 = author$project$Main$testData2;
+	var _n0 = author$project$Main$inputPart2;
 	var nPlayers = _n0.a;
 	var nMarbles = _n0.b;
 	var gameEnd = A3(
 		elm$core$List$foldl,
 		author$project$Main$play,
-		A3(author$project$Main$initGame, 23, nPlayers, nMarbles),
+		A2(author$project$Main$initGame, 23, nPlayers),
 		A2(elm$core$List$range, 0, nMarbles));
 	var highscore = A2(
 		elm$core$Maybe$withDefault,
@@ -4995,6 +5391,8 @@ var author$project$Main$update = F2(
 	function (msg, model) {
 		return model;
 	});
+var elm$core$Basics$append = _Utils_append;
+var elm$core$String$fromInt = _String_fromNumber;
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
@@ -5026,6 +5424,7 @@ var elm$json$Json$Decode$Index = F2(
 var elm$json$Json$Decode$OneOf = function (a) {
 	return {$: 'OneOf', a: a};
 };
+var elm$core$Basics$and = _Basics_and;
 var elm$core$Char$toCode = _Char_toCode;
 var elm$core$Char$isLower = function (_char) {
 	var code = elm$core$Char$toCode(_char);
