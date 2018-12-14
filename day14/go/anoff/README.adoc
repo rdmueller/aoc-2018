@@ -1,0 +1,74 @@
+
+**https://adventofcode.com/2018/day/14[rtfChallenge]**
+
+== Cooking
+
+I took a while to understand how the _cooking process_ works and how new recipes are selected. But after that the implementation was pretty straight forward. Initially I started out with a string containing the scoreboard and always appending new characters to that string. However that meant for each cooking process I needed to do 2 `String to Int` conversions to get the score of the input recipes and 1 `Int to String` to append the new result to the board string. This was way too slow for the thousands of iterations required for the challenge, so I rewrote it to use a slice of `Integer` s instead.
+
+I implemented the cooking function `cook(board []int, recipe1 int, recipe2 int) ([]int, int, int)` that takes a board and two integers indiciating the index on the board to cook next. It returns an updated board and the recipes to cook next.
+
+[source, go]
+....
+include::./src/solution.go[cook]
+....
+
+== Part 1
+
+To get the result for part 1 I just kept cooking until the board reached the required length.
+
+[plantuml, day14-p1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:init board with 3,7;
+while (board length not reached)
+  :cook;
+endwhile
+:print the last 10
+elements in the board;
+end
+@enduml
+....
+
+== Part 2
+
+For this challenge part 2 was pretty easy too 🤗
+I just kept cooking until the last N elements of the board are identical to the input. The answer for part2 is then the number of items on the board minus those of the length of the input.
+
+[plantuml, day14-p2, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:init board with 3,7;
+while ()
+  if (more items
+  in board than
+  input recipes) then (Y)
+    if (last N board
+    elements match) then (Y)
+      :stop the loop;
+    endif
+  endif
+endwhile
+:print length of board
+minus the length of input recipes;
+end
+@enduml
+....
+
+== Go solution
+
+Solution can be run with `go run src/solution.go`
+
+Unit tests can be run with `go test`
+
+[source, go]
+....
+include::./src/solution.go[]
+....
