@@ -230,6 +230,20 @@ func main() {
 	}
 
 	// Part 2
+	net = parseInput(input)
+	for i := 0; i < 100000; i++ {
+		if i % 500 == 0 {
+			fmt.Printf(".. cycle %d, working carts: %d\n", i, len(net.getWorkingCarts()))
+		}
+		//fmt.Printf("\n\nStep %d\n", i)
+		net.tick()
+		workingCarts := net.getWorkingCarts()
+		if len(workingCarts) == 1 {
+			c := workingCarts[0]
+			fmt.Printf("Solution part2: %d,%d (Last remaining cart)\n", c.x, c.y)
+			break
+		}
+	}
 }
 
 func readInput(filepath string) []string {
