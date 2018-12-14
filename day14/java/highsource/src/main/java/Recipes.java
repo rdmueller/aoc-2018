@@ -12,15 +12,27 @@ public class Recipes {
 	private final Elf elf1;
 
 	public Recipes() {
-		this(0, 1, (byte) 3, (byte) 7);
+		this(0, 1, 3, 7);
 	}
 
-	public Recipes(int elf0CurrentRecipeIndex, int elf1CurrentRecipeIndex, byte... scores) {
+	public Recipes(int elf0CurrentRecipeIndex, int elf1CurrentRecipeIndex, int... scores) {
 		this.elf0 = new Elf(elf0CurrentRecipeIndex);
 		this.elf1 = new Elf(elf1CurrentRecipeIndex);
 		for (int scoreIndex = 0; scoreIndex < scores.length; scoreIndex++) {
-			this.scores.add(scores[scoreIndex]);
+			this.scores.add((byte)scores[scoreIndex]);
 		}
+	}
+	
+	public Recipes addNewRecipes() {
+		byte sumOfCurrentRecipesScores = (byte) (scores.get(elf0.getCurrentRecipeIndex()) + scores.get(elf1.getCurrentRecipeIndex()));
+		
+		if (sumOfCurrentRecipesScores < 10) {
+			scores.add(sumOfCurrentRecipesScores);
+		} else {
+			scores.add((byte) (sumOfCurrentRecipesScores/10));
+			scores.add((byte) (sumOfCurrentRecipesScores%10));
+		}
+		return this;
 	}
 
 	@Override
