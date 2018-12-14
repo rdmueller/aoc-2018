@@ -3,6 +3,7 @@
 "use strict";
 
 const { parseLine, findLargestArea } = require("./part1");
+const { findAreaWithin } = require("./part2");
 
 const fs = require("fs");
 const input = fs.readFileSync("input.txt", "utf-8");
@@ -15,5 +16,6 @@ console.log("Day 05, part 1: " + largestArea);
 //end::part1[]
 
 // tag::part2[]
-console.log("Day 05, part 2: ");
+const areaWithin = findAreaWithin(coords, 10000);
+console.log("Day 05, part 2: " + areaWithin);
 // end::part2[]
