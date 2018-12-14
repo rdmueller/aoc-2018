@@ -12,11 +12,16 @@ This should produce index.html in the root directory, which you can open locally
 
 The input is a string, which we convert to an integer array.
 
-=== Part 1
+=== Part 1 & 2
 
-pending
-
-=== Part 2
-
-pending
+  - We use an array to keep track of the players' scores.
+  - We iterate over each round of play (marble placement) and distinguish between 
+    -- a normal placement
+    -- a '23' placement
+  - to be performant, we use two dictionaries:
+    -- left: given an index (key) allows the lookup of the current left marble (value)
+    -- right: given an index (key) allows the lookup of the current right marble (value)
+    -- together with keeping track of the current marble, this simulates a double linked list
+  - this makes inserting and cutting out marbles very cheap
+    -- you basically have to reset the dictionary entries for the left and right neighbors for both dictionaries
 
