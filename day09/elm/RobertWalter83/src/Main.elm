@@ -20,15 +20,16 @@ init : Model
 init =
   let
     -- COMMON
-    (nPlayers, nMarbles) = inputPart2
-
-    gameEnd =  List.range 0 nMarbles |> List.foldl play (initGame 23 nPlayers) 
+    (nPlayers, nMarbles) = inputPart1
 
     -- PART 1 & 2
+    gameEnd = List.range 0 nMarbles |> List.foldl play (initGame 23 nPlayers) 
     highscore = Array.toList gameEnd.players |> List.maximum |> withDefault 0
     
   in
     { solution = highscore }
+
+-- INIT GAME
 
 initGame : Int -> Int ->  Game
 initGame luckyNumber nPlayers = 
@@ -42,6 +43,8 @@ initPlayers : Int -> Array Int
 initPlayers nPlayers =
   Array.initialize nPlayers (\i -> 0)
 
+-- PLAY
+
 play : Int -> Game -> Game
 play round game =
   let
@@ -49,9 +52,9 @@ play round game =
     isLuckyNumber = isLucky game round
   in
     if isLuckyNumber then
-      handleLuckyMarble game round idxPlayer --|> Debug.log "lucky:  " 
+      handleLuckyMarble game round idxPlayer 
     else
-      placeMarbleNormal game round --|> Debug.log "normal: "
+      placeMarbleNormal game round
 
 getPlayerIndex : Game -> Int -> Int
 getPlayerIndex game round =
@@ -94,24 +97,19 @@ placeMarbleNormal game round =
     in
       { game | board = boardNew }
   else 
-    let
-      boardNew = shiftRight 1 game.board --|> Debug.log "shifted: "
-      boardNew2 = insertAt boardNew round --|> Debug.log "normal:  "
-    in
-      { game | board = boardNew2 }
+    { game | board = shiftRight 1 game.board |> insertAt round }
 
 handleLuckyMarble : Game -> Int -> Int -> Game
 handleLuckyMarble game round idxPlayer =
   let
-    boardNew = shiftLeft 7 game.board --|> Debug.log "lucky shift: "
-    
-    (points, boardNew2) = cutOutValueAt boardNew --|> Debug.log "lucky cut: "
-    --a = Debug.log ("Player " ++ (String.fromInt idxPlayer) ++ " gets " ++ (String.fromInt (round+points)) ++ " points in round ") round
-    
-    playersNew = Array.indexedMap (\i val -> if i == idxPlayer then val+round+points else val) game.players
+    (points, boardNew) = shiftLeft 7 game.board |> cutOutValueAt 
+    playersNew = Array.set idxPlayer (updatedScore idxPlayer round points game) game.players
   in
-    { game | board = boardNew2, players = playersNew }
+    { game | board = boardNew, players = playersNew }
 
+updatedScore : Int -> Int -> Int -> Game -> Int
+updatedScore idx round points game =
+  (Array.get idx game.players |> withDefault 0) + round + points
   
 cutOutValueAt : Board -> (Int, Board)
 cutOutValueAt board =
@@ -119,21 +117,15 @@ cutOutValueAt board =
     lMarble = getNextL board
     rMarble = getNextR board
 
-    rightNew = 
-      Dict.update 
-        lMarble 
-        (\mbMarble -> Just rMarble)
-        board.right
-
-    leftNew = 
-      Dict.update 
-        rMarble 
-        (\mbMarble -> Just lMarble)
-        board.left
-
+    rightNew = updateDict lMarble rMarble board.right
+    leftNew = updateDict rMarble lMarble board.left
     value = board.current
   in
     (value, {left = leftNew, current = rMarble, right = rightNew})
+
+updateDict : Int -> Int -> Dict Int Int -> Dict Int Int
+updateDict key value dict =
+  Dict.update key (\mb -> Just value) dict
   
 isLucky : Game -> Int -> Bool
 isLucky game round =
@@ -142,30 +134,17 @@ isLucky game round =
   else
     (remainderBy game.luckyNumber round) == 0
 
-insertAt : Board -> Int -> Board
-insertAt board val =
+insertAt : Int -> Board -> Board
+insertAt val board =
   let
     lMarble = getNextL board
     rMarble = getNextR board
 
-    rightNew = 
-      Dict.update 
-        board.current
-        (\mbMarble -> Just val)
-        board.right 
-        |> Dict.insert val rMarble 
-    
-    leftNew = 
-      Dict.update 
-        rMarble 
-        (\mbMarble -> Just val)
-        board.left
-        |> Dict.insert val board.current
-
+    rightNew = updateDict board.current val board.right |> Dict.insert val rMarble 
+    leftNew = updateDict rMarble val board.left |> Dict.insert val board.current
   in 
     { left = leftNew, current = val, right = rightNew}
   
-
 
 -- UPDATE (no op)
 
