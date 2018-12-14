@@ -159,6 +159,15 @@ a| * That, even after all these years, recursion can still cause a knot in my br
 
 |====
 
+=== Day 9
+[cols="1,10"]
+|====
+|{robertwalter83}
+a| * That it is vital to have an intuitive understanding of how the core data structures behave within a language to use them successfully
+* you can basically do anything with lists and dictionaries
+
+|====
+
 === Day 11
 
 [cols="1,10"]
