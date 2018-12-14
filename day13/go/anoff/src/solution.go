@@ -14,6 +14,7 @@ type Cart struct {
 	dy int
 	lastTurn string
 	hasMoved bool
+	isDestroyed bool
 }
 type Network struct {
 	lines []string
@@ -67,22 +68,33 @@ func (n *Network) addCart(c Cart) *Network {
 	n.carts = append(n.carts, c)
 	return n
 }
-func (n *Network) getCarts() *[]Cart {
-	return &n.carts
-}
-func (n *Network) hasCollision(x int, y int) bool {
-	cartsFound := 0
+func (n *Network) getWorkingCarts() []Cart {
+	var carts []Cart
 	for _, c := range n.carts {
-		if c.x == x && c.y == y {
+		if !c.isDestroyed {
+			carts = append(carts, c)
+		}
+	}
+	return carts
+}
+func (n *Network) checkCollision(x int, y int) bool {
+	cartsFound := 0
+	var collidedCarts []int
+	for i, c := range n.carts {
+		if c.x == x && c.y == y && !c.isDestroyed {
 			cartsFound++
+			collidedCarts = append(collidedCarts, i)
 		}
 	}
 	if cartsFound > 1 {
+		for _, ix := range collidedCarts {
+			n.carts[ix].isDestroyed = true
+		}
 		return true
 	}
 	return false
 }
-func (n *Network) moveCarts() *Network {
+func (n *Network) tick() *Network {
 	for y, line := range n.lines {
 		for x, _ := range line {
 			if hasCart, cart := n.hasCart(x, y); hasCart {
@@ -91,10 +103,7 @@ func (n *Network) moveCarts() *Network {
 					continue
 				}
 				cart.move()
-				// check collision
-				if n.hasCollision(cart.x, cart.y) {
-					fmt.Println("Collision detected", cart.x, cart.y)
-				}
+				n.checkCollision(cart.x, cart.y)
 				rail := n.lines[cart.y][cart.x]
 				switch rail {
 				case '+':
@@ -139,7 +148,7 @@ func (n *Network) moveCarts() *Network {
 
 func (n *Network) hasCart(x int, y int) (bool, *Cart) {
 	for i := range n.carts {
-		if n.carts[i].x == x && n.carts[i].y == y {
+		if n.carts[i].x == x && n.carts[i].y == y && !n.carts[i].isDestroyed {
 			return true, &n.carts[i]
 		}
 	}
@@ -195,14 +204,32 @@ func parseInput(input []string) Network {
 	return net
 }
 func main() {
-	input := readInput("../test.txt")
+	input := readInput("../input.txt")
+
+	// Part 1
 	net := parseInput(input)
-	net.print()
-	for i := 0; i < 16; i++ {
-		fmt.Printf("\n\nStep %d\n", i)
-		net.moveCarts()
-		net.print()
+	//net.print()
+	collisionDetected := false
+	for i := 0; i < 10000; i++ {
+		//fmt.Printf("\n\nStep %d\n", i)
+		net.tick()
+		workingCarts := net.getWorkingCarts()
+		if len(net.carts) - len(workingCarts) > 0 {
+			collisionDetected = true
+			for _, c := range net.carts {
+				if c.isDestroyed {
+					fmt.Printf("Solution part1: %d,%d (Collision detected)\n", c.x, c.y)
+					break
+				}
+			}
+		}
+		//net.print()
+		if collisionDetected {
+			break
+		}
 	}
+
+	// Part 2
 }
 
 func readInput(filepath string) []string {
