@@ -11,9 +11,59 @@ import Foundation
 
 func Puzzle14()
 {
-    let file = try! String(contentsOfFile: "/Users/hch/Documents/XCode/AdventOfCode2018/AdventOfCode2018/day14.txt")
-    var lines = file.components(separatedBy: "\n").dropLast()
-    
-    print("14-01:", "TODO")
-    print("14-02:", "TODO")
+    let recipeIterations = 440231
+    let targetRecipe: [Int] = [4, 4, 0, 2, 3, 1]
+    let lastTen = 10
+    var recipes: [Int] = [3, 7]
+    var elves: [Int] = [0 ,1]
+
+    func RecipeIteration()
+    {
+        let newRecipe = elves.reduce(0, { r, e in r+recipes[e] })
+        let tens:Int = newRecipe / 10
+        let ones:Int = newRecipe % 10
+        if tens > 0
+        {
+            recipes.append(tens)
+            if ContainsRecipe()
+            {
+                return
+            }
+        }
+        recipes.append(ones)
+        for i in 0..<elves.count
+        {
+            elves[i] = (elves[i] + recipes[elves[i]] + 1) % recipes.count
+        }
+    }
+
+    func ContainsRecipe() -> Bool
+    {
+        if recipes.count >= targetRecipe.count
+        {
+            var found = true
+            for i in 0..<targetRecipe.count
+            {
+                found = found && targetRecipe[i] == recipes[recipes.count-targetRecipe.count+i]
+                if !found
+                {
+                    break
+                }
+            }
+            return found
+        }
+        return false
+    }
+    while recipes.count < recipeIterations + lastTen
+    {
+        RecipeIteration()
+    }
+    print("14-01:", recipes[recipeIterations..<recipeIterations+lastTen])
+    recipes = [3, 7]
+    elves = [0 ,1]
+    while !ContainsRecipe()
+    {
+        RecipeIteration()
+    }
+    print("14-02:", recipes.count-targetRecipe.count)
 }
