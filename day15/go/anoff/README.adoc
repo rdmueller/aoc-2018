@@ -15,32 +15,37 @@ skinparam monochrome true
 skinparam shadowing false
 class Arena {
   lines []string
-  isOccupied(pos Position) \t=> bool
   fighters []*Fighter
+  isOccupied(pos Position) \t\t\t\t=> bool
+  distance(fighter *Fighter, dest Position) \t=> int
+  path(fighter *Fighter, dest Position) \t\t=> []Position
 }
+
 class Fighter {
 	id string
 	pos Position
 	hp int
 	power int
+  alliance string // elf, goblin
   takeDamage(power int) \t=> *self
   move(pos Position) \t\t=> *self
   attack(target *Fighter) \t=> *self
 }
+
 class Position {
   x int
   y int
   isOccupied(arena *Arena) \t=> bool
 }
+
 class Game {
   arena Arena
-  goblins []Fighter
-  elves []Fighter
-  distance(fighter *Fighter, dest Position) \t=> int
-  path(fighter *Fighter, dest Position) \t\t=> []Position
+  roundsPlayed int
+  round() \t=> *self
 }
+
 Game o-- Arena
-Game o-- Fighter
+Arena o-- Fighter
 Fighter -- Position
 Arena -- Position
 @enduml
@@ -56,6 +61,9 @@ oh god..
 
 == Run solution
 
+1. Get into directory of this README
 1. Set gopath to current dir `export GOPATH=$PWD`
-2. Install dependency `go get github.com/satori/go.uuid`
-3. Profit
+1. Install dependency `go get github.com/satori/go.uuid`
+1. `cd src`
+1. `go build -o game && ./game`
+1. Profit

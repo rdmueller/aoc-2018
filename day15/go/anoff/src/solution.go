@@ -1,18 +1,11 @@
 package main
 
 import (
-	"github.com/satori/go.uuid"
+	"fmt"
 )
 
-type Fighter struct {
-	id string
-	x int
-	y int
-	hp int
-	power int
-}
-
-func NewFighter() Fighter {
-	e := Fighter{id: uuid.Must(uuid.NewV4()).String(), hp: 300, power: 3}
-	return e
+func main() {
+	input := readInput("../test.txt")
+	fmt.Println(input)
+	fmt.Println("Solution for part1: not yet :(")
 }
