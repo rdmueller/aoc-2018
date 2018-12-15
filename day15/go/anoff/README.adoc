@@ -1,0 +1,61 @@
+
+**https://adventofcode.com/2018/day/15[rtfChallenge]**
+
+LOL
+
+== Architecture
+
+Braindump of classes I might need..
+
+[plantuml, day15-class, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+class Arena {
+  lines []string
+  isOccupied(pos Position) \t=> bool
+  fighters []*Fighter
+}
+class Fighter {
+	id string
+	pos Position
+	hp int
+	power int
+  takeDamage(power int) \t=> *self
+  move(pos Position) \t\t=> *self
+  attack(target *Fighter) \t=> *self
+}
+class Position {
+  x int
+  y int
+  isOccupied(arena *Arena) \t=> bool
+}
+class Game {
+  arena Arena
+  goblins []Fighter
+  elves []Fighter
+  distance(fighter *Fighter, dest Position) \t=> int
+  path(fighter *Fighter, dest Position) \t\t=> []Position
+}
+Game o-- Arena
+Game o-- Fighter
+Fighter -- Position
+Arena -- Position
+@enduml
+....
+
+== Part 1
+
+
+
+== Part 2
+
+oh god..
+
+== Run solution
+
+1. Set gopath to current dir `export GOPATH=$PWD`
+2. Install dependency `go get github.com/satori/go.uuid`
+3. Profit
