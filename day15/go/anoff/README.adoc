@@ -16,9 +16,13 @@ skinparam shadowing false
 class Arena {
   lines []string
   fighters []*Fighter
-  isOccupied(pos Position) \t\t\t\t=> bool
-  distance(fighter *Fighter, dest Position) \t=> int
-  path(fighter *Fighter, dest Position) \t\t=> []Position
+  +//bool// isOccupied(pos Position)
+  +//int// distance(fighter *Fighter, dest Position)
+  +//[]Position// path(fighter *Fighter, dest Position)
+  //*self// print()
+  //*self// addFighter(f *Fighter)
+  //[]*Fighter// getGoblins()
+  //[]*Fighter// getElves()
 }
 
 class Fighter {
@@ -27,21 +31,21 @@ class Fighter {
 	hp int
 	power int
   alliance string // elf, goblin
-  takeDamage(power int) \t=> *self
-  move(pos Position) \t\t=> *self
-  attack(target *Fighter) \t=> *self
+  //*self// takeDamage(power int)
+  //*self// move(pos Position)
+  +//*self// attack(target *Fighter)
 }
 
 class Position {
   x int
   y int
-  isOccupied(arena *Arena) \t=> bool
+  +//bool// isOccupied(arena *Arena)
 }
 
 class Game {
   arena Arena
   roundsPlayed int
-  round() \t=> *self
+  +//*self// round()
 }
 
 Game o-- Arena

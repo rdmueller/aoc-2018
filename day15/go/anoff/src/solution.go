@@ -6,6 +6,7 @@ import (
 
 func main() {
 	input := readInput("../test.txt")
-	fmt.Println(input)
+	arena := newArenaFromInput(input)
+	arena.print()
 	fmt.Println("Solution for part1: not yet :(")
 }
