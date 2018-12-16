@@ -1,0 +1,64 @@
+
+**https://adventofcode.com/2018/day/16[rtfChallenge]**
+
+== Part 1
+
+The hardest part for this one was to figure out how to _dynamically_ call functions in Go. I ended up creating a special type for a function signature that expresses a register operation: `type operation func(regs [4]int, args [3]int) [4]int`
+With this type I created a `map[string]operation` where the key is the register operation e.g. `mulr`, `seti` and the value is the function that implements the logic as defined in the challenge.
+
+TIP: As you need to iterate over all operations and _try out_ if they produce the correct result be sure to check the inputs for boundaries as there are only 4 registers, but immediate values might be much higher.
+
+Given the map of operations and input data already parsed part 1 can be solved.
+
+[source, go]
+....
+include::./src/opcodes.go[def]
+....
+
+[plantuml, day16-p1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:init sampleWithMultiMatchCounter = 0;
+while (for each sample)
+  :init opsCounter = 0;
+  while (for each operation)
+    :calculate output
+    for sample & operation;
+    if (output is expected
+    sample output) then (Y)
+      :inc opsCounter;
+    endif
+  endwhile
+  if (opsCounter >= 3) then (Y)
+    :inc sampleWithMultiMatchCounter;
+  endif
+endwhile
+:print sampleWithMultiMatchCounter;
+end
+@enduml
+....
+
+== Part 2
+
+For the second part I first iterated over all samples again and stored the result in a `map[string][]int` with the operation name as key and the list of operation codes that proofed to worked. After this list is complete you can iterate over it as one operation has exactly one possible code number it can be removed from the others as a possible match..and so on until each operation name has exactly one possible code. The results are stored in an inverse map of `map[int]string` that returns the operation name for any given operation code.
+
+With this mapping table the sequence of commands available in the input can be parsed using the same lookup table for the operation function as in part1.
+
+== Go solution
+
+1. Get into directory of this README
+1. Set gopath to current dir `export GOPATH=$PWD`
+1. Install dependency `go get github.com/satori/go.uuid`
+1. `cd src`
+1. tests: `go test`
+1. run: `go build -o game && ./game`
+1. Profit
+
+[source, go]
+....
+include::./src/solution.go[]
+....

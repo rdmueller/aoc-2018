@@ -195,5 +195,13 @@ a| * I still seem to lack knowledge of how pointers and linked lists work; spent
 |====
 |{rdmueller}
 a| * if you want to animate your output on the console `print "\u001b[2J"` clears the screen and `print "\u001b[H"` moves the curser to the upper left corner
+|====
+
+=== Day 16
+
+[cols="1,10"]
+|====
+|{anoff}
+a| * The correct syntax to assign functions to a variable is `var := func (input string) bool {}` (anonymous function)
 
 |====
