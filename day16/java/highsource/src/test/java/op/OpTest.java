@@ -77,4 +77,25 @@ public class OpTest {
 		Op op = new SetI(13, 3, 2);
 		assertThat(op.apply(registers)).isEqualTo(new Registers(13, 3, 0, 7));
 	}
+
+	@Test
+	public void gtri() {
+		Op op = new GtRI(1, 14, 0);
+		assertThat(op.apply(new Registers(3, 13, 0, 125))).isEqualTo(new Registers(3, 13, 0, 0));
+		assertThat(op.apply(new Registers(3, 14, 0, 125))).isEqualTo(new Registers(3, 14, 0, 1));
+	}
+
+	@Test
+	public void gtir() {
+		Op op = new GtIR(13, 1, 0);
+		assertThat(op.apply(new Registers(3, 13, 0, 125))).isEqualTo(new Registers(3, 13, 0, 1));
+		assertThat(op.apply(new Registers(3, 14, 0, 125))).isEqualTo(new Registers(3, 14, 0, 0));
+	}
+
+	@Test
+	public void gtrr() {
+		Op op = new GtRR(0, 1, 2);
+		assertThat(op.apply(new Registers(13, 14, 3, 125))).isEqualTo(new Registers(13, 14, 3, 0));
+		assertThat(op.apply(new Registers(14, 14, 3, 125))).isEqualTo(new Registers(14, 14, 3, 1));
+	}
 }
