@@ -65,7 +65,7 @@ func TestGridRemove(t *testing.T) {
 	}
 }
 
-func TestDijkstra2D(t *testing.T) {
+func TestDijkstra2DUnobstructed(t *testing.T) {
 	var walkable []Position
 	for x := 0; x < 10; x++ {
 		for y := 0; y < 10; y++ {
@@ -75,6 +75,25 @@ func TestDijkstra2D(t *testing.T) {
 	path := Dijkstra2D(walkable, Position{0, 0}, Position{1, 3})
 	if len(path) != 4 {
 		t.Error("Wrong path length for unobstructed path")
+	}
+}
+
+func TestDijkstra2DObstructed(t *testing.T) {
+	var walkable []Position
+	for x := 0; x < 10; x++ {
+		for y := 0; y < 10; y++ {
+			if y != 0 || x < 2 || x > 5 {
+				walkable = append(walkable, Position{x, y})
+			}
+		}
+	}
+	/*
+	..XXXX....
+	..........
+	*/
+	path := Dijkstra2D(walkable, Position{0, 0}, Position{8, 0})
+	if len(path) != 10 {
+		t.Error("Wrong path length for obstructed path", path)
 	}
 }
 
