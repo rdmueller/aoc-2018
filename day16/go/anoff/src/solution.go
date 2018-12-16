@@ -12,9 +12,23 @@ type sample struct {
 	regOut [4]int
 }
 func main() {
-	input := readInput("../test.txt")
+	input := readInput("../input.txt")
 	samples := extractSamples(input)
-	fmt.Println(samples)
+	ops := getOperations()
+	moreThan2WorkingOps := 0
+	for _, s := range samples {
+		workingOps := 0
+		for _, opFunc := range ops {
+			res := opFunc(s.regIn, s.args)
+			if res[0] == s.regOut[0] && res[1] == s.regOut[1] && res[2] == s.regOut[2] && res[3] == s.regOut[3] {
+				workingOps++
+			}
+		}
+		if workingOps > 2 {
+			moreThan2WorkingOps++
+		}
+	}
+	fmt.Println("Solution for part1:", moreThan2WorkingOps)
 }
 
 func extractSamples(input []string) []sample {

@@ -4,7 +4,7 @@ import (
 	_"fmt"
 )
 
-func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
+func getOperations() map[string]func(regs [4]int, ops [3]int) [4]int {
 	parseArgs := func (in [3]int) (int, int, int) {
 		A := in[0]
 		B := in[1]
@@ -14,50 +14,82 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 		}
 		return A, B, C
 	}
-
+	exceedsRegLimit := func (ix int) bool {
+		if ix > 3 {
+			return true
+		}
+		return false
+	}
 	return map[string]func(regs [4]int, ops [3]int) [4]int {
 		"addr": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(A) || exceedsRegLimit(B) {
+				return regs
+			}
 			regs[C] = regs[A] + regs[B]
 			return regs
 		},
 		"addi": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(A) {
+				return regs
+			}
 			regs[C] = regs[A] + B
 			return regs
 		},
 		"mulr": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(A) || exceedsRegLimit(B) {
+				return regs
+			}
 			regs[C] = regs[A] * regs[B]
 			return regs
 		},
 		"muli": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(A) {
+				return regs
+			}
 			regs[C] = regs[A] * B
 			return regs
 		},
 		"banr": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(A) || exceedsRegLimit(B) {
+				return regs
+			}
 			regs[C] = regs[A] & regs[B]
 			return regs
 		},
 		"bani": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(A) {
+				return regs
+			}
 			regs[C] = regs[A] & B
 			return regs
 		},
 		"borr": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(A) || exceedsRegLimit(B) {
+				return regs
+			}
 			regs[C] = regs[A] | regs[B]
 			return regs
 		},
 		"bori": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(A) {
+				return regs
+			}
 			regs[C] = regs[A] | B
 			return regs
 		},
 		"setr": func (regs [4]int, ops [3]int) [4]int {
 			A, _, C := parseArgs(ops)
+			if exceedsRegLimit(A) {
+				return regs
+			}
 			regs[C] = regs[A]
 			return regs
 		},
@@ -68,6 +100,9 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 		},
 		"gtir": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(B) {
+				return regs
+			}
 			if A > regs[B] {
 				regs[C] = 1
 			} else {
@@ -77,6 +112,9 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 		},
 		"gtri": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(A) {
+				return regs
+			}
 			if regs[A] > B {
 				regs[C] = 1
 			} else {
@@ -86,6 +124,9 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 		},
 		"gtrr": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(A) || exceedsRegLimit(B) {
+				return regs
+			}
 			if regs[A] > regs[B] {
 				regs[C] = 1
 			} else {
@@ -95,6 +136,9 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 		},
 		"eqir": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(B) {
+				return regs
+			}
 			if A == regs[B] {
 				regs[C] = 1
 			} else {
@@ -104,6 +148,9 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 		},
 		"eqri": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(A) {
+				return regs
+			}
 			if regs[A] == B {
 				regs[C] = 1
 			} else {
@@ -113,6 +160,9 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 		},
 		"eqrr": func (regs [4]int, ops [3]int) [4]int {
 			A, B, C := parseArgs(ops)
+			if exceedsRegLimit(A) || exceedsRegLimit(B) {
+				return regs
+			}
 			if regs[A] == regs[B] {
 				regs[C] = 1
 			} else {
