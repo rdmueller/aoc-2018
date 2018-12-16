@@ -36,7 +36,7 @@ func part1(filepath string) (int, int) {
 	i := 0
 	for {
 		game.round()
-		if len(game.arena.getElves()) == 0 {
+		if len(game.arena.getElves()) == 0 || len(game.arena.getGoblins()) == 0 {
 			return i, game.arena.getHitPoints()
 		}
 		i++
