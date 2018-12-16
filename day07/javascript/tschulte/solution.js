@@ -2,15 +2,15 @@
 
 "use strict";
 
-const { parseLine } = require("./part1");
+const { parseLine, executionOrder } = require("./part1");
 
 const fs = require("fs");
 const input = fs.readFileSync("input.txt", "utf-8");
 const lines = input.split("\n").filter(line => line);
 
 // tag::part1[]
-
-console.log("Day 05, part 1: ");
+const steps = lines.reduce(parseLine, []);
+console.log("Day 05, part 1: " + executionOrder(steps));
 //end::part1[]
 
 // tag::part2[]
