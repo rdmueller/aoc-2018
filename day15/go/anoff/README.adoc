@@ -18,7 +18,8 @@ class Arena {
   fighters []*Fighter
   //bool// isOccupied(pos Position)
   +//int// distance(fighter *Fighter, dest Position)
-  +//[]Position// path(fighter *Fighter, dest Position)
+  //[]Position// path(fighter *Fighter, dest Position)
+  //[]Position// getAttackPositions(fighter *Fighter)
   //*self// print()
   //*self// addFighter(f *Fighter)
   //[]*Fighter// getGoblins()
@@ -43,7 +44,7 @@ class Position {
 }
 
 class Game {
-  arena Arena
+  arena *Arena
   roundsPlayed int
   +//*self// round()
 }

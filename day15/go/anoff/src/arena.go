@@ -67,6 +67,21 @@ func (a *Arena) print() *Arena {
 	}
 	return a
 }
+func (a *Arena) path(start Position, dest Position) []Position {
+	var walkable []Position
+	for x, line := range a.lines {
+		for y, _ := range line {
+			if isOccupied, _ := a.isOccupied(Position{x, y}); !isOccupied {
+				walkable = append(walkable, Position{x, y})
+			}
+		}
+	}
+	walkable = append(walkable, start)
+	walkable = append(walkable, dest)
+	return Dijkstra2D(walkable, start, dest)
+}
+
+
 func newArenaFromInput(input []string) Arena {
 	var a Arena
 	for y, line := range input {

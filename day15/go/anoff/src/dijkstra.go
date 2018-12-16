@@ -60,15 +60,17 @@ func Dijkstra2D(walkable []Position, start Position, dest Position) []Position {
 		n := newNode(p)
 		if p.IsEqual(start) {
 			n.distance = 0
+			fmt.Println("start node detected", n.pos)
 		}
 		Q.addNode(&n)
 	}
+	fmt.Println("checking path", start, dest)
 	
 	for {
 		u := Q.getShortest()
+		fmt.Println("reached", u.pos)
 		Q.remove(u)
 		if u.pos.IsEqual(dest) {
-			fmt.Print("")
 			steps := []Position{u.pos}
 			for p := u.prev; p.prev != nil; p = p.prev {
 				steps = append([]Position{p.pos}, steps...)
@@ -81,6 +83,9 @@ func Dijkstra2D(walkable []Position, start Position, dest Position) []Position {
 				n.distance = newDist
 				n.prev = u
 			}
+		}
+		if len(Q.nodes) == 0 {
+			return []Position{Position{-1, -1}}
 		}
 	}
 }
@@ -100,4 +105,8 @@ func manhattanDistance(x1 int, y1 int, x2 int, y2 int) int {
 	}
 
 	return diff
+}
+
+func asdf() {
+	fmt.Println("")
 }
