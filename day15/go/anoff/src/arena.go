@@ -67,7 +67,7 @@ func (a *Arena) print() *Arena {
 	}
 	return a
 }
-func (a *Arena) path(start Position, dest Position) []Position {
+func (a *Arena) path(start Position, dest Position) (bool, []Position) {
 	var walkable []Position
 	for x, line := range a.lines {
 		for y, _ := range line {
