@@ -79,7 +79,13 @@ func Dijkstra2D(walkable []Position, start Position, dest Position) []Position {
 			return steps
 		}
 		for _, n := range Q.getNeighbors(u) {
-			newDist := u.distance + 1
+			var newDist int
+			// prioritise horizontal movements (penalty verticals by 2 distance)
+			if n.pos.y != u.pos.y {
+				newDist = u.distance + 2
+			} else {
+				newDist = u.distance + 1
+			}
 			if newDist < n.distance {
 				n.distance = newDist
 				n.prev = u
