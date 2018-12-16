@@ -5,7 +5,7 @@ import (
 )
 
 func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
-	parseOps := func (in [3]int) (int, int, int) {
+	parseArgs := func (in [3]int) (int, int, int) {
 		A := in[0]
 		B := in[1]
 		C := in[2]
@@ -17,57 +17,57 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 
 	return map[string]func(regs [4]int, ops [3]int) [4]int {
 		"addr": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			regs[C] = regs[A] + regs[B]
 			return regs
 		},
 		"addi": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			regs[C] = regs[A] + B
 			return regs
 		},
 		"mulr": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			regs[C] = regs[A] * regs[B]
 			return regs
 		},
 		"muli": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			regs[C] = regs[A] * B
 			return regs
 		},
 		"banr": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			regs[C] = regs[A] & regs[B]
 			return regs
 		},
 		"bani": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			regs[C] = regs[A] & B
 			return regs
 		},
 		"borr": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			regs[C] = regs[A] | regs[B]
 			return regs
 		},
 		"bori": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			regs[C] = regs[A] | B
 			return regs
 		},
 		"setr": func (regs [4]int, ops [3]int) [4]int {
-			A, _, C := parseOps(ops)
+			A, _, C := parseArgs(ops)
 			regs[C] = regs[A]
 			return regs
 		},
 		"seti": func (regs [4]int, ops [3]int) [4]int {
-			A, _, C := parseOps(ops)
+			A, _, C := parseArgs(ops)
 			regs[C] = A
 			return regs
 		},
 		"gtir": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			if A > regs[B] {
 				regs[C] = 1
 			} else {
@@ -76,7 +76,7 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 			return regs
 		},
 		"gtri": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			if regs[A] > B {
 				regs[C] = 1
 			} else {
@@ -85,7 +85,7 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 			return regs
 		},
 		"gtrr": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			if regs[A] > regs[B] {
 				regs[C] = 1
 			} else {
@@ -94,7 +94,7 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 			return regs
 		},
 		"eqir": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			if A == regs[B] {
 				regs[C] = 1
 			} else {
@@ -103,7 +103,7 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 			return regs
 		},
 		"eqri": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			if regs[A] == B {
 				regs[C] = 1
 			} else {
@@ -112,7 +112,7 @@ func getOpCodes() map[string]func(regs [4]int, ops [3]int) [4]int {
 			return regs
 		},
 		"eqrr": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseOps(ops)
+			A, B, C := parseArgs(ops)
 			if regs[A] == regs[B] {
 				regs[C] = 1
 			} else {
