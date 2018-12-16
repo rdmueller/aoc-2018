@@ -98,4 +98,26 @@ public class OpTest {
 		assertThat(op.apply(new Registers(13, 14, 3, 125))).isEqualTo(new Registers(13, 14, 3, 0));
 		assertThat(op.apply(new Registers(14, 14, 3, 125))).isEqualTo(new Registers(14, 14, 3, 1));
 	}
+	
+	@Test
+	public void eqri() {
+		Op op = new EqRI(1, 14, 0);
+		assertThat(op.apply(new Registers(3, 13, 0, 125))).isEqualTo(new Registers(3, 13, 0, 0));
+		assertThat(op.apply(new Registers(3, 14, 0, 125))).isEqualTo(new Registers(3, 14, 0, 1));
+	}
+
+	@Test
+	public void eqir() {
+		Op op = new EqIR(13, 1, 0);
+		assertThat(op.apply(new Registers(3, 13, 0, 125))).isEqualTo(new Registers(3, 13, 0, 1));
+		assertThat(op.apply(new Registers(3, 14, 0, 125))).isEqualTo(new Registers(3, 14, 0, 0));
+	}
+
+	@Test
+	public void Eqrr() {
+		Op op = new EqRR(0, 1, 2);
+		assertThat(op.apply(new Registers(13, 14, 3, 125))).isEqualTo(new Registers(13, 14, 3, 0));
+		assertThat(op.apply(new Registers(14, 14, 3, 125))).isEqualTo(new Registers(14, 14, 3, 1));
+	}
+	
 }
