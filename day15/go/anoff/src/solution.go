@@ -2,25 +2,25 @@ package main
 
 import (
 	"fmt"
-	_"time"
+	"time"
 )
 
 func main() {
-	input := readInput("../test4.txt")
+	input := readInput("../input.txt")
 	arena := newArenaFromInput(input)
 	game := newGame(&arena)
 	fmt.Println("Step 0")
-	arena.print()
-	i := 0
+	game.arena.print()
+	i := 1
 	for {
 		game.round()
-		fmt.Print("\u001b[2J\u001b[H")
+		fmt.Print("\u001b[2J\u001b[H") // clear screen
 		fmt.Println("\n\nStep", i)
 		game.arena.print()
 		//fmt.Scanln()
-		// time.Sleep(100 * time.Millisecond)
+		time.Sleep(300 * time.Millisecond)
 		// fmt.Println(game.arena.getElves()[0].hp)
-		if len(game.arena.getElves()) == 0 {
+		if len(game.arena.getElves()) == 0 || len(game.arena.getGoblins()) == 0 {
 			fmt.Println(i, game.arena.getHitPoints())
 			break
 		}
@@ -33,7 +33,7 @@ func part1(filepath string) (int, int) {
 	input := readInput(filepath)
 	arena := newArenaFromInput(input)
 	game := newGame(&arena)
-	i := 0
+	i := 1
 	for {
 		game.round()
 		if len(game.arena.getElves()) == 0 || len(game.arena.getGoblins()) == 0 {
@@ -44,5 +44,4 @@ func part1(filepath string) (int, int) {
 			panic("This takes too long..")
 		}
 	}
-	return -1, -1
 }
