@@ -8,7 +8,7 @@ public class GtRI extends OpRI {
 
 	@Override
 	protected int calculate(int a, int b) {
-		return a >= b ? 1 : 0;
+		return a > b ? 1 : 0;
 	}
 
 }

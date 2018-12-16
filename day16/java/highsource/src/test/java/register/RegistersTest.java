@@ -15,9 +15,8 @@ public class RegistersTest {
 	}
 	
 	@Test
-	public void getsAndSets() {
+	public void gets() {
 		final Registers registers = new Registers(2, 3, 5, 8);
 		assertThat(registers.get(2)).isEqualTo(5);
-		assertThat(registers.set(2,9).get(2)).isEqualTo(9);
 	}
 }

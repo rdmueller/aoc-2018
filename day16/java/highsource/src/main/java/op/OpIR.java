@@ -21,10 +21,10 @@ public abstract class OpIR extends Op{
 	}
 	
 	@Override
-	public Registers apply(Registers registers) {
-		int a = valueA;
-		int b = registers.get(registerB);
-		int c = registers.get(registerC);
+	public final Registers apply(Registers registers) {
+		int a = this.valueA;
+		int b = registers.get(this.registerB);
+		int c = this.registerC;
 		int result = calculate(a, b);
 		return registers.set(c, result);
 	}

@@ -1,6 +1,6 @@
 package op;
 
-public class MulR extends OpRR{
+public class MulR extends OpRR {
 
 	public MulR(int registerA, int registerB, int registerC) {
 		super(registerA, registerB, registerC);

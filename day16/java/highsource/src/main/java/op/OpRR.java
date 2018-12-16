@@ -24,10 +24,10 @@ public abstract class OpRR extends Op{
 	}
 	
 	@Override
-	public Registers apply(Registers registers) {
-		int a = registers.get(registerA);
-		int b = registers.get(registerB);
-		int c = registers.get(registerC);
+	public final Registers apply(Registers registers) {
+		int a = registers.get(this.registerA);
+		int b = registers.get(this.registerB);
+		int c = this.registerC;
 		int result = calculate(a, b);
 		return registers.set(c, result);
 	}

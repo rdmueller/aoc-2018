@@ -8,7 +8,7 @@ public class GtRR extends OpRR {
 
 	@Override
 	protected int calculate(int a, int b) {
-		return a >= b ? 1 : 0;
+		return a > b ? 1 : 0;
 	}
 
 }

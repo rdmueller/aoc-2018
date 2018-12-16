@@ -1,6 +1,6 @@
 package op;
 
-public class BanI extends OpRI{
+public class BanI extends OpRI {
 
 	public BanI(int registerA, int valueB, int registerC) {
 		super(registerA, valueB, registerC);
