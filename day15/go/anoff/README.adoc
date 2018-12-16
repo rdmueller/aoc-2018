@@ -35,6 +35,7 @@ class Fighter {
   //*self// takeDamage(power int)
   //*self// move(pos Position)
   +//*self// attack(target *Fighter)
+  //bool, *Fighter// inAttackPosition(opponents *[]Fighter)
 }
 
 class Position {

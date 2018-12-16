@@ -55,7 +55,7 @@ func (a *Arena) print() *Arena {
 				if f.alliance == "goblins" {
 					fmt.Print("G")
 				} else if f.alliance == "elves" {
-					fmt.Print("F")
+					fmt.Print("E")
 				} else {
 					fmt.Print(string(c))
 				}
@@ -81,6 +81,21 @@ func (a *Arena) path(start Position, dest Position) []Position {
 	return Dijkstra2D(walkable, start, dest)
 }
 
+func (a *Arena) getAttackPositions(f *Fighter) []Position {
+	var positions []Position
+	possiblePositions := []Position{
+		Position{f.pos.x-1, f.pos.y},
+		Position{f.pos.x+1, f.pos.y},
+		Position{f.pos.x, f.pos.y-1},
+		Position{f.pos.x, f.pos.y+1},
+	}
+	for _, p := range possiblePositions {
+		if isOccupied, _ := a.isOccupied(p); !isOccupied {
+			positions = append(positions, p)
+		}
+	}
+	return positions
+}
 
 func newArenaFromInput(input []string) Arena {
 	var a Arena
@@ -89,10 +104,12 @@ func newArenaFromInput(input []string) Arena {
 			if char == 'G' {
 				f := NewFighter("goblins")
 				f.move(Position{x, y})
+				f.id = fmt.Sprintf("%d", len(a.fighters)) // TODO: remove hacky ID
 				a.addFighter(&f)
 			} else if char == 'E' {
 				f := NewFighter("elves")
 				f.move(Position{x, y})
+				f.id = fmt.Sprintf("%d", len(a.fighters)) // TODO: remove hacky ID
 				a.addFighter(&f)
 			}
 		}

@@ -10,6 +10,7 @@ type Fighter struct {
 	hp int
 	power int
 	alliance string
+	tookTurn bool
 }
 
 func NewFighter(alliance string) Fighter {
@@ -26,4 +27,14 @@ func (f *Fighter) move(dest Position) *Fighter {
 func (f *Fighter) takeDamage(power int) *Fighter {
 	f.hp -= power
 	return f
+}
+
+func (f *Fighter) inAttackDistance(opponents []*Fighter) (bool, *Fighter) {
+	for _, o := range opponents {
+		// TODO: handle multiple matches, top-down prio
+		if manhattanDistance(f.pos.x, f.pos.y, o.pos.x, o.pos.y) == 1 {
+			return true, o
+		}
+	}
+	return false, &Fighter{}
 }

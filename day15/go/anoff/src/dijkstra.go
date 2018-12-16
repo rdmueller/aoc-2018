@@ -36,7 +36,11 @@ func (g *grid) getShortest() *node {
 func (g *grid) remove(d *node) *grid {
 	for i, n := range g.nodes {
 		if n.pos.IsEqual(d.pos) {
-			g.nodes = append(g.nodes[:i], g.nodes[i+1:]...)
+			if i >= len(g.nodes) - 1{
+				g.nodes = g.nodes[:i]
+			} else {
+				g.nodes = append(g.nodes[:i], g.nodes[i+1:]...)
+			}
 		}
 	}
 	return g
@@ -60,15 +64,12 @@ func Dijkstra2D(walkable []Position, start Position, dest Position) []Position {
 		n := newNode(p)
 		if p.IsEqual(start) {
 			n.distance = 0
-			fmt.Println("start node detected", n.pos)
 		}
 		Q.addNode(&n)
 	}
-	fmt.Println("checking path", start, dest)
 	
 	for {
 		u := Q.getShortest()
-		fmt.Println("reached", u.pos)
 		Q.remove(u)
 		if u.pos.IsEqual(dest) {
 			steps := []Position{u.pos}
