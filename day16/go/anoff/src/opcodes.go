@@ -3,7 +3,7 @@ package main
 import (
 	_"fmt"
 )
-
+// tag::def[]
 type operation func(regs [4]int, args [3]int) [4]int
 
 
@@ -32,6 +32,7 @@ func getOperations() map[string]operation {
 			regs[C] = regs[A] + regs[B]
 			return regs
 		},
+// end::def[]
 		"addi": func (regs [4]int, args [3]int) [4]int {
 			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) {
