@@ -36,7 +36,7 @@ func (g *grid) getShortest() *node {
 func (g *grid) remove(d *node) *grid {
 	for i, n := range g.nodes {
 		if n.pos.IsEqual(d.pos) {
-			if i >= len(g.nodes) - 1{
+			if i >= len(g.nodes) - 1 { // TODO: Check how > can occur in this condition...
 				g.nodes = g.nodes[:i]
 			} else {
 				g.nodes = append(g.nodes[:i], g.nodes[i+1:]...)

@@ -24,6 +24,7 @@ class Arena {
   //*self// addFighter(f *Fighter)
   //[]*Fighter// getGoblins()
   //[]*Fighter// getElves()
+  //int// getHitPoints()
 }
 
 class Fighter {

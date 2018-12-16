@@ -97,6 +97,16 @@ func (a *Arena) getAttackPositions(f *Fighter) []Position {
 	return positions
 }
 
+func (a *Arena) getHitPoints() int {
+	sum := 0
+	for _, f := range a.fighters {
+		if f.hp > 0 {
+			sum += f.hp
+		}
+	}
+	return sum
+}
+
 func newArenaFromInput(input []string) Arena {
 	var a Arena
 	for y, line := range input {

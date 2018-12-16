@@ -14,7 +14,7 @@ type Fighter struct {
 }
 
 func NewFighter(alliance string) Fighter {
-	e := Fighter{id: uuid.Must(uuid.NewV4()).String(), hp: 300, power: 3, alliance: alliance}
+	e := Fighter{id: uuid.Must(uuid.NewV4()).String(), hp: 200, power: 3, alliance: alliance}
 	return e
 }
 

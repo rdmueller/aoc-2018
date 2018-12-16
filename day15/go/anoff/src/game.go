@@ -10,20 +10,21 @@ type Game struct {
 }
 
 func (g *Game) round() *Game {
-	for x, line := range g.arena.lines {
-		for y, _ := range line {
+	for y, line := range g.arena.lines {
+		for x, _ := range line {
 			if isOccupied, f := g.arena.isOccupied(Position{x, y}); isOccupied && !f.tookTurn {
 				var opponents []*Fighter
 				if f.alliance == "elves" {
-					opponents = g.arena.getGoblins()[1:2]
+					opponents = g.arena.getGoblins()
 				} else if f.alliance == "goblins" {
 					opponents = g.arena.getElves()
 				} else {
 					// in case the tile is occupied by a non-fighter (e.g. wall)
 					continue
 				}
-				if canAttack, _ := f.inAttackDistance(opponents); canAttack {
+				if canAttack, opponent := f.inAttackDistance(opponents); canAttack {
 					//fmt.Println("Striking opponent..", f, opponent)
+					opponent.takeDamage(f.power)
 					// TODO: striking..
 				} else { // move
 					var shortestPath []Position
@@ -57,13 +58,28 @@ func (g *Game) round() *Game {
 					}
 					// fmt.Println("Acceptable shortest path", shortestPath)
 					f.move(shortestPath[0])
+					// check if striking is possible AFTER moving
+					if canAttack, opponent := f.inAttackDistance(opponents); canAttack {
+						//fmt.Println("Striking opponent..", f, opponent)
+						opponent.takeDamage(f.power)
+						// TODO: striking..
+					}
 				}
 				f.tookTurn = true
 			}
 		}
 	}
-	for _, f := range g.arena.fighters {
+	for ix, f := range g.arena.fighters {
 		f.tookTurn = false
+
+		// remove corpses from the field
+		if f.hp <= 0 {
+			if ix < len(g.arena.fighters) -1 {
+				g.arena.fighters = append(g.arena.fighters[:ix], g.arena.fighters[ix+1:]...)
+			} else {
+				g.arena.fighters = g.arena.fighters[:ix]
+			}
+		}
 	}
 	return g
 }
