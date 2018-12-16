@@ -24,7 +24,7 @@ func TestArenaPointers(t *testing.T) {
 	a.getElves()[0].takeDamage(30)
 	for _, f := range a.fighters {
 		if f.alliance == "elves" {
-			if f.hp != 260 {
+			if f.hp != 160 {
 				t.Error("Elf#0 did not take damage correctly", f.hp)
 				break
 			}

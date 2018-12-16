@@ -72,11 +72,11 @@ func TestDijkstra2DUnobstructed(t *testing.T) {
 			walkable = append(walkable, Position{x, y})
 		}
 	}
-	path := Dijkstra2D(walkable, Position{0, 0}, Position{1, 3})
+	_, path := Dijkstra2D(walkable, Position{0, 0}, Position{1, 3})
 	if len(path) != 4 {
 		t.Error("Wrong path length for unobstructed path")
 	}
-	path = Dijkstra2D(walkable, Position{0, 0}, Position{3, 3})
+	_, path = Dijkstra2D(walkable, Position{0, 0}, Position{3, 3})
 	if path[0].y != 0 || path[1].y != 0 || path[2].y != 0 {
 		t.Error("Does not prefer horizontal movements", path)
 	}
@@ -95,7 +95,7 @@ func TestDijkstra2DObstructed(t *testing.T) {
 	..XXXX....
 	..........
 	*/
-	path := Dijkstra2D(walkable, Position{0, 0}, Position{8, 0})
+	_, path := Dijkstra2D(walkable, Position{0, 0}, Position{8, 0})
 	if len(path) != 10 {
 		t.Error("Wrong path length for obstructed path", path)
 	}
