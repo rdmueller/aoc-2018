@@ -4,7 +4,10 @@ import (
 	_"fmt"
 )
 
-func getOperations() map[string]func(regs [4]int, ops [3]int) [4]int {
+type operation func(regs [4]int, args [3]int) [4]int
+
+
+func getOperations() map[string]operation {
 	parseArgs := func (in [3]int) (int, int, int) {
 		A := in[0]
 		B := in[1]
@@ -20,86 +23,86 @@ func getOperations() map[string]func(regs [4]int, ops [3]int) [4]int {
 		}
 		return false
 	}
-	return map[string]func(regs [4]int, ops [3]int) [4]int {
-		"addr": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+	return map[string]operation {
+		"addr": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) || exceedsRegLimit(B) {
 				return regs
 			}
 			regs[C] = regs[A] + regs[B]
 			return regs
 		},
-		"addi": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"addi": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) {
 				return regs
 			}
 			regs[C] = regs[A] + B
 			return regs
 		},
-		"mulr": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"mulr": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) || exceedsRegLimit(B) {
 				return regs
 			}
 			regs[C] = regs[A] * regs[B]
 			return regs
 		},
-		"muli": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"muli": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) {
 				return regs
 			}
 			regs[C] = regs[A] * B
 			return regs
 		},
-		"banr": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"banr": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) || exceedsRegLimit(B) {
 				return regs
 			}
 			regs[C] = regs[A] & regs[B]
 			return regs
 		},
-		"bani": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"bani": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) {
 				return regs
 			}
 			regs[C] = regs[A] & B
 			return regs
 		},
-		"borr": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"borr": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) || exceedsRegLimit(B) {
 				return regs
 			}
 			regs[C] = regs[A] | regs[B]
 			return regs
 		},
-		"bori": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"bori": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) {
 				return regs
 			}
 			regs[C] = regs[A] | B
 			return regs
 		},
-		"setr": func (regs [4]int, ops [3]int) [4]int {
-			A, _, C := parseArgs(ops)
+		"setr": func (regs [4]int, args [3]int) [4]int {
+			A, _, C := parseArgs(args)
 			if exceedsRegLimit(A) {
 				return regs
 			}
 			regs[C] = regs[A]
 			return regs
 		},
-		"seti": func (regs [4]int, ops [3]int) [4]int {
-			A, _, C := parseArgs(ops)
+		"seti": func (regs [4]int, args [3]int) [4]int {
+			A, _, C := parseArgs(args)
 			regs[C] = A
 			return regs
 		},
-		"gtir": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"gtir": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(B) {
 				return regs
 			}
@@ -110,8 +113,8 @@ func getOperations() map[string]func(regs [4]int, ops [3]int) [4]int {
 			}
 			return regs
 		},
-		"gtri": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"gtri": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) {
 				return regs
 			}
@@ -122,8 +125,8 @@ func getOperations() map[string]func(regs [4]int, ops [3]int) [4]int {
 			}
 			return regs
 		},
-		"gtrr": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"gtrr": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) || exceedsRegLimit(B) {
 				return regs
 			}
@@ -134,8 +137,8 @@ func getOperations() map[string]func(regs [4]int, ops [3]int) [4]int {
 			}
 			return regs
 		},
-		"eqir": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"eqir": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(B) {
 				return regs
 			}
@@ -146,8 +149,8 @@ func getOperations() map[string]func(regs [4]int, ops [3]int) [4]int {
 			}
 			return regs
 		},
-		"eqri": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"eqri": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) {
 				return regs
 			}
@@ -158,8 +161,8 @@ func getOperations() map[string]func(regs [4]int, ops [3]int) [4]int {
 			}
 			return regs
 		},
-		"eqrr": func (regs [4]int, ops [3]int) [4]int {
-			A, B, C := parseArgs(ops)
+		"eqrr": func (regs [4]int, args [3]int) [4]int {
+			A, B, C := parseArgs(args)
 			if exceedsRegLimit(A) || exceedsRegLimit(B) {
 				return regs
 			}
