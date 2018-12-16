@@ -16,7 +16,7 @@ skinparam shadowing false
 class Arena {
   lines []string
   fighters []*Fighter
-  +//bool// isOccupied(pos Position)
+  //bool// isOccupied(pos Position)
   +//int// distance(fighter *Fighter, dest Position)
   +//[]Position// path(fighter *Fighter, dest Position)
   //*self// print()
