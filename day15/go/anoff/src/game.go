@@ -40,7 +40,7 @@ func (g *Game) round() *Game {
 									// handle the top->down, left-> right priority for ties
 									// TODO :D
 									if p[len(p)-1].y < shortestPath[len(shortestPath) - 1].y {
-										fmt.Println("Changing shortest path of equal length from:", shortestPath[len(shortestPath) - 1], "to:", p[len(p)-1], "fighter:", f)
+										// fmt.Println("Changing shortest path of equal length from:", shortestPath[len(shortestPath) - 1], "to:", p[len(p)-1], "fighter:", f)
 										shortestPath = p
 									}
 								}
