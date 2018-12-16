@@ -1,0 +1,10 @@
+== Part 1
+
+I chose to put the input data in a separate file and load it using with-open-file (which takes care of closing the file). I then read and sum the lines of input data before finally printing the frequency.
+
+I don't like the names change and frequency but those are terms used in the puzzle so I stuck with them.
+
+== Usage
+I use the SBCL Common Lisp Compiler - http://www.sbcl.org/
+
+sbcl --script solution.lisp
