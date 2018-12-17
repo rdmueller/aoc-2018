@@ -62,101 +62,90 @@ public class Board {
 				char right = data[y][x + 1];
 				char below = data[y + 1][x];
 
-				if (false) {
-
-				}
-				// Flow down from well
-				else if (current == '.' && above == '+') {
-					data[y][x] = '|';
-					changed = true;
-				}
 				// Flow down
-				else if (current == '.' && above == '|') {
+				if (current == '.' && isWater(above)) {
 					data[y][x] = '|';
 					changed = true;
 				}
-				// Reached clay
-				else if (current == '|' && stopsWater(below)) {
+				// Flow down stopped
+				else if (current == '|' && isBarrier(below)) {
 					data[y][x] = '-';
 					changed = true;
 				}
-				// Distribute to right
-				else if (current == '.' && stopsWater(below) && isStoppingWater(left)) {
+				// Flow to right
+				else if (current == '.' && isBarrier(below) && isStoppedWater(left)) {
 					data[y][x] = '-';
 					changed = true;
 				}
-				// Distribute to right waterfall
-				else if (current == '.' && below == '.' &&  isStoppingWater(left)) {
+				// Waterfall to right
+				else if (current == '.' && below == '.' &&  isStoppedWater(left)) {
 					data[y][x] = '|';
 					changed = true;
 				}
-				// Distribute to left
-				else if (current == '.' && stopsWater(below) && isStoppingWater(right)) {
+				// Flow to left
+				else if (current == '.' && isBarrier(below) && isStoppedWater(right)) {
 					data[y][x] = '-';
 					changed = true;
 				}
-				// Distribute to left waterfall
-				else if (current == '.' && below == '.' && isStoppingWater(right)) {
+				// Waterfall to left
+				else if (current == '.' && below == '.' && isStoppedWater(right)) {
 					data[y][x] = '|';
 					changed = true;
 				}
-				// Reached wall on right
-				else if (current == '-' && stopsWater(below) && right == '#') {
-					data[y][x] = ']';
-					changed = true;
-				} else if (current == '-' && stopsWater(below) && right == ']') {
+				// Wall on right starts wave
+				else if (current == '-' && isBarrier(below) && right == '#') {
 					data[y][x] = ']';
 					changed = true;
 				}
-				// Reached wall on left
-				else if (current == '-' && stopsWater(below) && left == '#') {
-					data[y][x] = '[';
+				// Wave from right continues wave
+				else if (current == '-' && isBarrier(below) && right == ']') {
+					data[y][x] = ']';
 					changed = true;
-				} else if (current == '-' && stopsWater(below) && left == '[') {
+				}
+				// Wall on left starts wave
+				else if (current == '-' && isBarrier(below) && left == '#') {
 					data[y][x] = '[';
 					changed = true;
 				}
-				// Reached wall on left and now on right
-				else if (current == '[' && right == '#') {
+				// Wave from left continues wave
+				else if (current == '-' && isBarrier(below) && left == '[') {
+					data[y][x] = '[';
+					changed = true;
+				}
+				// Wave reaches barrier on right
+				else if (current == '[' && isBarrier(right)) {
 					data[y][x] = '~';
 					changed = true;
-				} else if (current == '[' && right == ']') {
+				}
+				// Two waves meet
+				else if (current == '[' && right == ']') {
 					data[y][x] = '~';
 					changed = true;
-				} else if (current == '[' && right == '~') {
+				}
+				// Wave reaches barrier on left
+				else if (current == ']' && isBarrier(left)) {
 					data[y][x] = '~';
 					changed = true;
-				// Reached wall on right and now on left
-				} else if (current == ']' && left == '#') {
+				}
+				// Two waves meet
+				else if (current == ']' && left == '[') {
 					data[y][x] = '~';
 					changed = true;
-				} else if (current == ']' && left == '[') {
-					data[y][x] = '~';
-					changed = true;
-				} else if (current == ']' && left == '~') {
-					data[y][x] = '~';
-					changed = true;
-
-//				} else if (current == '.' && below != '.' && right == ']') {
-//					data[y][x] = ']';
-//					changed = true;
-//				} else if (current == '|' && below == '#' && right == '#') {
-//					data[y][x] = ']';
-//					changed = true;
-//				} else if (current == '|' && below == '#' && left == '#') {
-//					data[y][x] = '[';
-//					changed = true;
 				}
 			}
 		}
 		return changed;
 	}
 	
-	private boolean isStoppingWater(char c) {
+	private boolean isWater(char c) {
+		return c == '+' || c == '|' || c == '[' || c == ']' || c == '-' || c == '~';
+	}
+	
+	private boolean isStoppedWater(char c) {
 		return c == '-' || c == ']' || c == '[';
 	}
 	
-	private boolean stopsWater(char c) {
+	private boolean isBarrier(char c) {
 		return c == '#' || c == '~';
 	}
 
@@ -210,7 +199,7 @@ public class Board {
 				}
 			}
 
-			data[0][499 - minX + 2] = '+';
+			data[0][499 - minX + 3] = '+';
 
 			clay.forEach(xy -> data[xy.getY() - minY + 1][xy.getX() - minX + 2] = '#');
 

@@ -22,8 +22,8 @@ public class Solution {
 				// System.out.println(board);
 			}
 			// System.out.println(board);
-			System.out.println(board.countWaterTiles());
-			System.out.println(board.countWaterAtRestTiles());
+			System.out.println("Water tiles: " + board.countWaterTiles());
+			System.out.println("Water at rest tiles: " + board.countWaterAtRestTiles());
 		}
 	}
 }
