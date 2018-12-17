@@ -9,8 +9,8 @@ const input = fs.readFileSync("input.txt", "utf-8");
 const lines = input.split("\n").filter(line => line);
 
 // tag::part1[]
-
-console.log("Day 05, part 1: ");
+const sumOfMetadata = parseLine(lines[0]).sumOfMetadataDeep();
+console.log("Day 05, part 1: " + sumOfMetadata);
 //end::part1[]
 
 // tag::part2[]

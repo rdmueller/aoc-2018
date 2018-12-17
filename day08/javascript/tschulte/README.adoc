@@ -4,9 +4,17 @@ https://adventofcode.com/2018/day/6
 
 == First Star
 
+Again a class based solution.
+The tree is modelled using classes.
+The root node has a method `sumOfMetadataDeep` to recursively get the sum of the metadata values.
 
 [source, js]
 ....
-include::part1.js[tags=parseLine]
+include::part1.js[]
+....
+
+[source, js]
+....
+include::solution.js[tags=parseLine]
 ....
 
