@@ -10,21 +10,59 @@ type coord struct {
 	x, y int
 }
 type ground struct {
-	lines []string
+	lines [][]string
 }
 func (g *ground) print() {
 	for _, line := range g.lines {
-		fmt.Println(line)
+		fmt.Println(strings.Join(line, ""))
+	}
+}
+func (g *ground) isFlooding(p coord) bool {
+	x := p.x
+	y := p.y
+	if g.lines[y][x] == "." {
+		if y > 0 {
+			above := g.lines[y-1][x]
+			if above == "+" || above == "|" {
+				return true
+			}
+		}
+		if x > 0 {
+			left := g.lines[y][x-1]
+			if left == "~" || (left == "|" && y+1 < len(g.lines) && (g.lines[y+1][x] == "#" || g.lines[y+1][x] == "~")) {
+				return true
+			}
+		}
+		if x + 1 < len(g.lines[0]) - 1 {
+			right := g.lines[y][x+1]
+			if right == "~" {
+				return true
+			}
+		}
+	}
+	return false
+}
+func (g *ground) tick() {
+	for y := len(g.lines) - 1; y > 0; y-- {
+		for x := 0; x < len(g.lines[0]); x++ {
+			if g.isFlooding(coord{x,y}) {
+				g.lines[y][x] = "|"
+			}
+		}
 	}
 }
 func main() {
 	input := readInput("../test.txt")
 	g := generateMap(input)
-	g.print()
+	for {
+		fmt.Print("\u001b[2J\u001b[H") // clear screen
+		g.tick()
+		g.print()
+		fmt.Scanln()
+	}
 }
 
 func part1(lines []string) {
-	
 	fmt.Println("Solution for part1:", 0)
 }
 
@@ -77,7 +115,7 @@ func generateMap(readings []string) ground {
 				l += "."
 			}
 		}
-		g.lines = append(g.lines, l)
+		g.lines = append(g.lines, strings.Split(l, ""))
 	}
 	fmt.Println(min, max)
 	return g
