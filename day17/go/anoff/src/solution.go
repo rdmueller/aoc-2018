@@ -19,8 +19,8 @@ func (g *ground) print() {
 }
 func main() {
 	input := readInput("../test.txt")
-	generateMap(input)
-	//g.print()
+	g := generateMap(input)
+	g.print()
 }
 
 func part1(lines []string) {
@@ -30,30 +30,40 @@ func part1(lines []string) {
 
 func generateMap(readings []string) ground {
 	clay := make(map[coord]bool)
-	min := coord{math.MaxInt32, 0}
-	max := coord{}
 	for _, reading := range readings {
 		// x=501, y=3..7
 		xy := strings.Split(reading, ", ")
-		y12 := strings.Split(xy[1][2:], "..")
-		x, _ := strconv.Atoi(xy[0][2:])
-		y1, _ := strconv.Atoi(y12[0])
-		y2, _ := strconv.Atoi(y12[1])
-		for y := y1; y <= y2; y++ {
-			clay[coord{x,y}] = true
-		}
-		if x < min.x {
-			min.x = x
-		} else if x > max.x {
-			max.x = x
-		}
-		if y1 < min.y {
-			min.y = y1
-		} else if y2 > max.y {
-			max.y = y2
+		n23 := strings.Split(xy[1][2:], "..")
+		n1, _ := strconv.Atoi(xy[0][2:])
+		n2, _ := strconv.Atoi(n23[0])
+		n3, _ := strconv.Atoi(n23[1])
+		if xy[0][0] == 'x' {
+			// x=n1, y=n2..n3
+			for y := n2; y <= n3; y++ {
+				clay[coord{n1,y}] = true
+			}
+		} else {
+			// y=n1, x=n2..n3
+			for x := n2; x <= n3; x++ {
+				clay[coord{x,n1}] = true
+			}
 		}
 	}
-
+	min := coord{math.MaxInt32, 0}
+	max := coord{}
+	for c := range clay {
+		if c.x < min.x {
+			min.x = c.x
+		} else if c.x > max.x {
+			max.x = c.x
+		}
+		if c.y < min.y {
+			min.y = c.y
+		} else if c.y > max.y {
+			max.y = c.y
+		}
+	}
+				
 	// generate ground map
 	var g ground
 	for y := min.y; y <= max.y; y++ {
@@ -61,6 +71,8 @@ func generateMap(readings []string) ground {
 		for x := min.x; x <= max.x; x++ {
 			if _, hasClay := clay[coord{x, y}]; hasClay {
 				l += "#"
+			} else if y == 0 && x == 500 {
+				l += "+"
 			} else {
 				l += "."
 			}
