@@ -148,6 +148,8 @@ a| * graphs are fun but are super headache if you don't have 📝 (or experience
 ** `el := q[i]; q = append(q[:i], q[i+1:]...)` to remove an element in the middle
 * Go has a `...` spread operator
 
+|{tschulte}
+a| * how to define classes in JavaScript
 |====
 
 === Day 8

@@ -4,6 +4,7 @@
 
 const assert = require("assert");
 const { parseLine, executionOrder } = require("./part1");
+const { parallelExecutionTime } = require("./part2");
 
 const lines = [
   "Step C must be finished before step A can begin.",
@@ -25,7 +26,7 @@ C      -->D----->E
 
 */
 
-const steps = lines.reduce(parseLine, []);
+let steps = lines.reduce(parseLine, []);
 
 assert.deepStrictEqual(steps.map(step => step.id), [
   "A",
@@ -39,3 +40,7 @@ assert.deepStrictEqual(steps[0].parents, [steps[2]]);
 assert.deepStrictEqual(steps[0].children, [steps[1], steps[3]]);
 
 assert.equal(executionOrder(steps), "CABDFE");
+
+// we need fresh steps, because they have state
+steps = lines.reduce(parseLine, []);
+assert.equal(parallelExecutionTime(steps, 2, 0), 15);

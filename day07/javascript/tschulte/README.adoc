@@ -22,3 +22,17 @@ include::part1.js[]
 include::solution.js[tags=part1]
 ....
 
+== Second Star
+
+Here I failed to build the solution using TDD:(
+The test is only the final test, although implementation took some time.
+
+[source, js]
+....
+include::part2.js[]
+....
+
+[source, js]
+....
+include::solution.js[tags=part2]
+....
