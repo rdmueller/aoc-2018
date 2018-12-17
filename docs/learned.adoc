@@ -148,6 +148,8 @@ a| * graphs are fun but are super headache if you don't have 📝 (or experience
 ** `el := q[i]; q = append(q[:i], q[i+1:]...)` to remove an element in the middle
 * Go has a `...` spread operator
 
+|{tschulte}
+a| * how to define classes in JavaScript
 |====
 
 === Day 8
@@ -156,6 +158,15 @@ a| * graphs are fun but are super headache if you don't have 📝 (or experience
 |{robertwalter83}
 a| * That, even after all these years, recursion can still cause a knot in my brain
 * immutable data can sometimes be a burden
+
+|====
+
+=== Day 9
+[cols="1,10"]
+|====
+|{robertwalter83}
+a| * That it is vital to have an intuitive understanding of how the core data structures behave within a language to use them successfully
+* you can basically do anything with lists and dictionaries
 
 |====
 
@@ -177,5 +188,22 @@ a| * there is no asciidoctor plugin for xcode!
 |====
 |{anoff}
 a| * I still seem to lack knowledge of how pointers and linked lists work; spent 3 hours implementing my own type with a bi-linked list but in practice it threw a lot of weird pointer exceptions
+
+|====
+
+=== Day 13
+
+[cols="1,10"]
+|====
+|{rdmueller}
+a| * if you want to animate your output on the console `print "\u001b[2J"` clears the screen and `print "\u001b[H"` moves the curser to the upper left corner
+|====
+
+=== Day 16
+
+[cols="1,10"]
+|====
+|{anoff}
+a| * The correct syntax to assign functions to a variable is `var := func (input string) bool {}` (anonymous function)
 
 |====

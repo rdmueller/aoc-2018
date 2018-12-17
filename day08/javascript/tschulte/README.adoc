@@ -1,0 +1,28 @@
+This solution is written in JavaScript.
+
+https://adventofcode.com/2018/day/6
+
+== First Star
+
+Again a class based solution.
+The tree is modelled using classes.
+The root node has a method `sumOfMetadataDeep` to recursively get the sum of the metadata values.
+
+[source, js]
+....
+include::parts.js[]
+....
+
+[source, js]
+....
+include::solution.js[tags=part1]
+....
+
+== Second Star
+
+This time I just added a new method to the existing Node class. See above.
+
+[source, js]
+....
+include::solution.js[tags=part2]
+....

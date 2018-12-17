@@ -1,0 +1,67 @@
+**https://adventofcode.com/2018/day/13[rtfChallenge]**
+
+Initially I wanted to solve this challenge using a graph of the network. After some time away from the problem I realized that it should be rather easy to solve it using the original input throughout the program instead of a graph representation.
+
+== Parsing the input
+
+For each cart in the initial map I create a struct containing the position and the driving direction `dx, dy`. Each line of the map is stored in the `Network` struct after removing the cart symbols from them.
+
+[source, go]
+....
+include::./src/solution.go[tags=structs]
+....
+
+The cart has three methods:
+* `move()` to move in the driving direction
+* `turnRight()` turn 90° right, modifies `dx, dy` properties
+* `turnLeft()` turn 90° left
+
+== Part 1
+
+For each tick the carts are moved in reading order. If a collision occurs the cart is removed from the list of active carts and added onto a list of crashed ones. To get the solution for part1 run ticks until the first carts show up in the crashed list and log their positions.
+
+[plantuml, day13-p1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+while (all carts active)
+  while (for y = 0..lines)
+    while (for x = 0..cols)
+      if (cart at x,y) then (Y)
+        :move cart forward;
+        if (another cart
+        at new position) then (Y)
+          :collide carts;
+        endif
+        if (at crossing) then (Y)
+          :take a turn;
+        endif
+        :update direction
+        if curve is hit;
+      endif
+    endwhile
+  endwhile
+endwhile
+:print location of
+crashed cart;
+end
+@enduml
+....
+
+== Part 2
+
+Part two is quite similar to solving the first one. Except the exit criteria is to check for only one remaining active cart (instead of checking for one crashed cart).
+
+== Go solution
+
+Solution can be run with `cd src && go run solution.go`
+
+Unit tests can be run with `go test`
+
+[source, go]
+....
+include::./src/solution.go[]
+....
