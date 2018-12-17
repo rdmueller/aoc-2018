@@ -7,10 +7,10 @@ public class Solution {
 	public static void main(String[] args) throws IOException {
 
 		try (BufferedReader reader = new BufferedReader(
-				new InputStreamReader(Solution.class.getResourceAsStream("input.txt")))) {
+				new InputStreamReader(Solution.class.getResourceAsStream("test0.txt")))) {
 
 			for (String line; (line = reader.readLine()) != null;) {
-				System.out.println(line);
+				XY.parse(line).forEach(System.out::println);
 			}
 		}
 	}
