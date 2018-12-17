@@ -1,0 +1,66 @@
+
+**https://adventofcode.com/2018/day/17[rtfChallenge]**
+
+== Part 1
+
+Still struggling with https://adventofcode.com/2018/day/15[day 15] I was kind of obsessed with the whole reading direction thing and was wondering how to best simulate the water flow. I did exactly that and for my first shot I basically did this (see commit https://github.com/anoff/aoc-2018/blob/4378e889be900c97bd41dba9a5cddae1b3d35e45/day17/go/anoff/src/solution.go[4378e889be900c97bd41dba9a5cddae1b3d35e45]):
+
+[plantuml, day17-p1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+while (more water spreads)
+  while (for y=1..yMax)
+    while (for x=1..xMax)
+      if (water is coming
+      into tile(x,y)) then (Y)
+        :mark tile as wet;
+      endif
+    endwhile
+  endwhile
+endwhile
+end
+@enduml
+....
+
+What is nice about this solution is the fact that I could simulate the water spreading by adding a delay into the outer most loop. What was not so nice is that it took `59s` to calculate my real input - and it was wrong. Also assuming some nasty second part 2 I decided to rewrite my code to a more efficient solution.
+
+For this I first created a map of all cavities that would end up as stationary water reservoirs once they get touched by a droplet of water. You can see the result of this here: link:../src/confined.txt. I iterate over all rows (starting bottom) once and for each tile I check if there are solid walls on both sides and that until the wall ``#`` is reached there is either solid clay ``#`` or another confined space ``o`` under it.
+
+With this prepared map a recursive function is started off at the position of the source ``+``. Each _advance_ means the function calls itself for the new position.
+
+1. modify the current tile
+  1. dirt ``.`` becomes moving water ``|``
+  1. contained space ``o`` becomes stationary water ``~``
+1. if the bottom tile is dirt ``.``
+  1. _advance_ into bottom tile
+1. if the bottom tile is a confined space ``o``
+  1. _advance_ into bottom tile
+  1. if left/right is dirt ``.`` and has a valid floor*, _advance_ to side
+1. if left/right tile is confined space ``o``
+  1. _advance_ to the side
+1. if left/right tile is dirt ``.`` but the current tile has a valid floor* (this basically means it is the edge of something)
+  1. _advance_ to the side
+
+*_valid floor_ means that water can stay on top of it; this is dirt ``.``, confined space ``o`` and clay ``#``.
+
+After the map is completed I just iterate over it and count all stationary ``~`` and moving ``|`` water tiles.
+
+This solution takes an incredible `160ms` on my input - compared to the `59s` with the line based iterative approach.
+
+== Part 2
+
+The second part is just counting only the stationary water tiles - trivial.
+
+== Go solution
+
+1. run: `go build -o game && ./game`
+1. Profit
+
+[source, go]
+....
+include::./src/solution.go[]
+....
