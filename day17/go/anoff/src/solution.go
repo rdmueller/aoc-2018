@@ -160,25 +160,26 @@ func (g *ground) markConfinedSpaces() {
 		}
 	}
 }
-func main() {
-	part1()
-}
 
-func part1() {
-	input := readInput("../test.txt")
+func main() {
+	input := readInput("../input.txt")
 	g := generateMap(input)
 	g.markConfinedSpaces()
 	g.seed()
-	var wet int
+	var wet, atRest int
 	for _, line := range g.lines {
 		for _, c := range line {
 			if c == "|" || c == "~" {
 				wet++
 			}
+			if c == "~" {
+				atRest++
+			}
 		}
 	}
-	g.print()
+	// g.print()
 	fmt.Println("Solution for part1:", wet)
+	fmt.Println("Solution for part2:", atRest)
 }
 
 func generateMap(readings []string) ground {
@@ -202,7 +203,7 @@ func generateMap(readings []string) ground {
 			}
 		}
 	}
-	min := coord{math.MaxInt32, 0}
+	min := coord{math.MaxInt32, math.MaxInt32}
 	max := coord{}
 	for c := range clay {
 		if c.x < min.x {
@@ -219,12 +220,13 @@ func generateMap(readings []string) ground {
 				
 	// generate ground map
 	var g ground
+	min.y-- // add header row with source
 	for y := min.y; y <= max.y; y++ {
 		var l string
-		for x := min.x; x <= max.x; x++ {
+		for x := min.x-1; x <= max.x+1; x++ {
 			if _, hasClay := clay[coord{x, y}]; hasClay {
 				l += "#"
-			} else if y == 0 && x == 500 {
+			} else if y == min.y && x == 500 {
 				l += "+"
 			} else {
 				l += "."
