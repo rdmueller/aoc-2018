@@ -76,9 +76,9 @@ func TestDijkstra2DUnobstructed(t *testing.T) {
 	if len(path) != 4 {
 		t.Error("Wrong path length for unobstructed path")
 	}
-	_, path = Dijkstra2D(walkable, Position{0, 0}, Position{3, 3})
-	if path[0].y != 0 || path[1].y != 0 || path[2].y != 0 {
-		t.Error("Does not prefer horizontal movements", path)
+	_, path = Dijkstra2D(walkable, Position{3, 3}, Position{0, 0})
+	if path[0].x != 3 || path[1].x != 3 || path[2].x != 3 {
+		t.Error("Does not respect reading direction prio", path)
 	}
 }
 
