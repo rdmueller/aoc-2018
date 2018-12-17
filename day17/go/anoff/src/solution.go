@@ -61,72 +61,124 @@ func (g *ground) isConfined(p coord) bool {
 	if y == len(g.lines) - 1 {
 		return false
 	}
-	for left := p.x; left > 0; left-- {
-		if g.lines[y+1][left] != "#" && g.lines[y+1][left] != "~" {
+	for left := p.x; left >= 0; left-- {
+		if g.lines[y+1][left] != "#" && g.lines[y+1][left] != "o" {
 			return false
 		}
-		if g.lines[y][left] == "#" || g.lines[y][left] == "~" {
+		if g.lines[y][left] == "#" {
 			break
+		}
+		if left == 0 {
+			return false
 		}
 	}
 	for right := p.x; right < len(g.lines[0]); right++ {
-		if g.lines[y+1][right] != "#" && g.lines[y+1][right] != "~" {
+		if g.lines[y+1][right] != "#" && g.lines[y+1][right] != "o" {
 			return false
 		}
-		if g.lines[y][right] == "#" || g.lines[y][right] == "~" {
+		if g.lines[y][right] == "#" {
 			break
+		}
+		if right == len(g.lines[0]) - 1 {
+			return false
 		}
 	}
 	return true
 }
-func (g *ground) tick() {
+// start propagation from source
+func (g *ground) seed() {
+	for x := 0; x < len(g.lines[0]); x++ {
+		if g.lines[0][x] == "+" {
+			g.propagate(coord{x,0})
+		}
+	}
+}
+func (g *ground) propagate(p coord) {
+	isFloor := func (symbol string) bool {
+		if symbol == "o" || symbol == "~" || symbol == "#" {
+			return true
+		}
+		return false
+	}
+	x := p.x
+	y := p.y
+	// make "wet"
+	switch g.lines[y][x] {
+		case "o":
+			g.lines[y][x] = "~"
+		case ".":
+			g.lines[y][x] = "|"
+		case "+":
+			// do not modify but continue propagation
+		default:
+			//fmt.Println("this should not happen", g.lines[y][x])
+			return
+	}
+
+	var below, left, right string
+	if y + 1 < len(g.lines) {
+		below = g.lines[y+1][x]
+	}
+	if x > 0 {
+		left = g.lines[y][x-1]
+	}
+	if x +1 < len(g.lines[0]) {
+		right = g.lines[y][x+1]
+	}
+	if below == "." {
+		g.propagate(coord{x, y+1})
+	} else if below == "o" {
+		g.propagate(coord{x, y+1})
+		if left == "." && isFloor(g.lines[y+1][x-1]) {
+			// left has floor
+			g.propagate(coord{x-1, y})
+		}
+		if right == "." && isFloor(g.lines[y+1][x+1]) {
+			// right has floor
+			g.propagate(coord{x+1, y})
+		}
+	}
+	if left == "o" {
+		g.propagate(coord{x-1, y})
+	}
+	if left == "." && isFloor(below) {
+		g.propagate(coord{x-1, y})
+	}
+	if right == "o" {
+		g.propagate(coord{x+1, y})
+	}
+	if right == "." && isFloor(below) {
+		g.propagate(coord{x+1, y})
+	}
+}
+func (g *ground) markConfinedSpaces() {
 	for y := len(g.lines) - 1; y > 0; y-- {
 		for x := 0; x < len(g.lines[0]); x++ {
-			if g.isFlooding(coord{x,y}) {
-				g.lines[y][x] = "|"
-			}
-			if g.lines[y][x] == "|" && g.isConfined(coord{x,y}) {
-				g.lines[y][x] = "~"
+			if g.lines[y][x] == "." && g.isConfined(coord{x,y}) {
+				g.lines[y][x] = "o"
 			}
 		}
 	}
 }
 func main() {
-	//animate()
 	part1()
 }
 
-func animate() {
+func part1() {
 	input := readInput("../test.txt")
 	g := generateMap(input)
-	for {
-		fmt.Print("\u001b[2J\u001b[H") // clear screen
-		g.tick()
-		g.print()
-		fmt.Scanln()
-	}
-}
-func part1() {
-	input := readInput("../input.txt")
-	g := generateMap(input)
-	var wetPrev int
-	for {
-		var wet int
-		g.tick()
-		for _, line := range g.lines {
-			for _, c := range line {
-				if c == "|" || c == "~" {
-					wet++
-				}
+	g.markConfinedSpaces()
+	g.seed()
+	var wet int
+	for _, line := range g.lines {
+		for _, c := range line {
+			if c == "|" || c == "~" {
+				wet++
 			}
 		}
-		if wet == wetPrev {
-			fmt.Println("Solution for part1:", wet)
-			break
-		}
-		fmt.Println("Wet tiles", wet)
-		wetPrev = wet
 	}
+	g.print()
+	fmt.Println("Solution for part1:", wet)
 }
 
 func generateMap(readings []string) ground {
@@ -180,6 +232,5 @@ func generateMap(readings []string) ground {
 		}
 		g.lines = append(g.lines, strings.Split(l, ""))
 	}
-	fmt.Println(min, max)
 	return g
 }
