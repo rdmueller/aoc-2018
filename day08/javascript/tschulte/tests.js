@@ -3,7 +3,7 @@
 "use strict";
 
 const assert = require("assert");
-const { parseLine } = require("./part1");
+const { parseLine } = require("./parts");
 
 assert.deepEqual(parseLine("0 1 99").children, []);
 assert.deepEqual(parseLine("0 1 99").metadata, [99]);
@@ -17,3 +17,7 @@ assert.equal(
   parseLine("2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2").sumOfMetadataDeep(),
   138
 );
+
+assert.equal(parseLine("0 1 99").value(), 99);
+
+assert.equal(parseLine("2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2").value(), 66);

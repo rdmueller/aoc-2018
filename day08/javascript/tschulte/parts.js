@@ -16,12 +16,25 @@ class Node {
     this.metadata = numbers.splice(0, metadataCount);
   }
 
+  sum(a, b) {
+    return a + b;
+  }
+
   sumOfMetadataDeep() {
-    const sum = (sum, value) => sum + value;
     return (
-      this.metadata.reduce(sum, 0) +
-      this.children.map(child => child.sumOfMetadataDeep()).reduce(sum, 0)
+      this.metadata.reduce(this.sum, 0) +
+      this.children.map(child => child.sumOfMetadataDeep()).reduce(this.sum, 0)
     );
+  }
+  value() {
+    if (this.children.length === 0) {
+      return this.metadata.reduce(this.sum, 0);
+    }
+    return this.metadata
+      .map(i => i - 1)
+      .filter(i => i >= 0 && i < this.children.length)
+      .map(i => this.children[i].value())
+      .reduce(this.sum, 0);
   }
 }
 
