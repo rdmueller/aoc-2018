@@ -50,4 +50,33 @@ public class BoardTest {
 				//
 				"....." );
 	}
+	
+	@Test
+	public void flows() {
+
+		final Board.Builder builder = new Board.Builder();
+
+		final Board board = builder
+				//
+				.addClay(499, 20)
+				//
+				.addClay(499, 21)
+				//
+				.addClay(499, 22)
+				//
+				.addClay(500, 22)
+				//
+				.addClay(501, 22)
+				//
+				.addClay(501, 21)
+				//
+				.addClay(501, 20)
+				//
+				.build();
+		
+		System.out.println(board);
+		assertThat(board.flow()).isTrue();
+		System.out.println(board);
+		assertThat(board.flow()).isFalse();
+	}
 }
