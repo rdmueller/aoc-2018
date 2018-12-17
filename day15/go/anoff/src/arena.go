@@ -48,19 +48,27 @@ func (a *Arena) isOccupied(pos Position) (bool, *Fighter) {
 	return false, &Fighter{}
 }
 
-func (a *Arena) print() *Arena {
+func (a *Arena) print(showStats bool) *Arena {
 	for y, line := range a.lines {
+		var fighters []*Fighter
 		for x, c := range line {
 			if isOccupied, f := a.isOccupied(Position{x, y}); isOccupied {
 				if f.alliance == "goblins" {
+					fighters = append(fighters, f)
 					fmt.Print("G")
 				} else if f.alliance == "elves" {
+					fighters = append(fighters, f)
 					fmt.Print("E")
 				} else {
 					fmt.Print(string(c))
 				}
 			} else {
 				fmt.Print(string(c))
+			}
+		}
+		if showStats && len(fighters) > 0 {
+			for _, f := range fighters {
+				fmt.Printf(" %s(%d)", strings.ToUpper(strings.Split(f.alliance, "")[0]), f.hp)
 			}
 		}
 		fmt.Println("")

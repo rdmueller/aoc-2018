@@ -30,11 +30,31 @@ func (f *Fighter) takeDamage(power int) *Fighter {
 }
 
 func (f *Fighter) inAttackDistance(opponents []*Fighter) (bool, *Fighter) {
+	victims := make(map[int][]*Fighter)
+	minHp := 9999
 	for _, o := range opponents {
-		// TODO: handle multiple matches, top-down prio
 		if manhattanDistance(f.pos.x, f.pos.y, o.pos.x, o.pos.y) == 1 {
-			return true, o
+			victims[o.hp] = append(victims[o.hp], o)
+			if o.hp < minHp {
+				minHp = o.hp
+			}
 		}
 	}
-	return false, &Fighter{}
+	if len(victims) == 0 {
+		return false, &Fighter{}
+	}
+	if len(victims[minHp]) == 0 {
+		return true, victims[minHp][0]
+	}
+	// sort victims with lowest HP by reading dir
+	minDistance := 99999 // min dist to origin
+	var victim *Fighter
+	for _, f := range victims[minHp] {
+		d := manhattanDistance(f.pos.x, f.pos.y, 0, 0)
+		if d < minDistance {
+			minDistance = d
+			victim = f
+		}
+	}
+	return true, victim
 }

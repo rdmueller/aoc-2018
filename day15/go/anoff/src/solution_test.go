@@ -17,7 +17,8 @@ func TestExamples(t *testing.T) {
 		{"../test5.txt", 18740},
 	}
 	for _, table := range tables {
-		rounds, hitpoints := part1(table.file)
+		input := readInput(table.file)
+		rounds, hitpoints := part1(input)
 		if rounds*hitpoints != table.expected {
 			t.Error("Wrong result for", table.file, ", rounds:", rounds, ", hitpoints:", hitpoints)
 		}
