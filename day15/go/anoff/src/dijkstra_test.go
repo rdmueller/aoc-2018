@@ -78,11 +78,11 @@ func TestDijkstra2DUnobstructed(t *testing.T) {
 	}
 	_, path = Dijkstra2D(walkable, Position{3, 3}, Position{0, 0})
 	if path[0].x != 3 || path[1].x != 3 || path[2].x != 3 {
-		t.Error("Does not respect reading direction prio", path)
+		t.Error("Does not respect reading direction prio, up first", path)
 	}
 
 	_, path = Dijkstra2D(walkable, Position{5, 5}, Position{2, 2})
-	if path[0].y != 5 || path[1].y != 5 || path[2].y != 5 {
+	if path[0].x != 5 || path[1].x != 5 || path[2].x != 5 {
 		t.Error("Does not respect reading direction prio, should walk towards 0,0 (y first)", path)
 	}
 }

@@ -84,12 +84,7 @@ func Dijkstra2D(walkable []Position, start Position, dest Position) (bool, []Pos
 		for _, n := range Q.getNeighbors(u) {
 			var newDist int
 			// prioritise horizontal movements (penalty verticals by 2 distance)
-			if n.pos.x != u.pos.x {
-				// TODO: this causes errors because actually the path should always be directed towards top/left
-				newDist = u.distance + 2
-			} else {
-				newDist = u.distance + 1
-			}
+			newDist = u.distance + 1
 			if newDist < n.distance {
 				n.distance = newDist
 				n.prev = u
