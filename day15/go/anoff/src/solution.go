@@ -6,9 +6,9 @@ import (
 )
 
 func main() {
-	input := readInput("../test0.txt")
+	input := readInput("../input.txt")
 	rounds, hp := part1(input)
-	animate(input)
+	//animate(input)
 	fmt.Println("Solution for part1:", rounds*hp, "(Rounds:", rounds, "HP:", hp, ")")
 }
 
@@ -19,13 +19,16 @@ func animate(input []string) {
 	game.arena.print(true)
 	i := 0
 	for {
-		game.round()
+		hasOpenTurns, _ := game.round()
 		fmt.Print("\u001b[2J\u001b[H") // clear screen
 		//fmt.Println("\n\nStep", i)
 		game.arena.print(true)
 		fmt.Scanln()
 		time.Sleep(3 * time.Millisecond)
 		if len(game.arena.getElves()) == 0 || len(game.arena.getGoblins()) == 0 {
+			if !hasOpenTurns {
+				i++
+			}
 			fmt.Println("Round", i, "Remaining HP", game.arena.getHitPoints())
 			break
 		}
@@ -37,8 +40,12 @@ func part1(input []string) (int, int) {
 	game := newGame(&arena)
 	i := 0
 	for {
-		game.round()
+		hasOpenTurns, _ := game.round()
 		if len(game.arena.getElves()) == 0 || len(game.arena.getGoblins()) == 0 {
+			if !hasOpenTurns {
+				fmt.Println("Was final blow!")
+				i++ // increase round count by one if the previous round in case this was the very last move to end the round
+			}
 			return i, game.arena.getHitPoints()
 		}
 		i++

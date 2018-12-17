@@ -100,12 +100,17 @@ func (g *Game) turn() bool {
 	return false
 }
 
-func (g *Game) round() *Game {
-	for hasTurns := g.turn(); hasTurns; hasTurns = g.turn() {	}
+// runs one round, returns (true, *Game) if game was finished with open turns
+func (g *Game) round() (bool, *Game) {
+	for hasTurns := g.turn(); hasTurns; hasTurns = g.turn() {
+		if (len(g.arena.getElves()) == 0 || len(g.arena.getGoblins()) == 0) && hasTurns {
+			return true, g
+		}
+	}
 	for _, f := range g.arena.fighters {
 		f.tookTurn = false
 	}
-	return g
+	return false, g
 }
 func newGame(a *Arena) Game {
 	var g Game
