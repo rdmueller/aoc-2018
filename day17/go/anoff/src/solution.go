@@ -29,7 +29,13 @@ func (g *ground) isFlooding(p coord) bool {
 		}
 		if x > 0 {
 			left := g.lines[y][x-1]
-			if left == "~" || (left == "|" && y+1 < len(g.lines) && (g.lines[y+1][x] == "#" || g.lines[y+1][x] == "~")) {
+			if left == "~" {
+				return true
+			}
+			if left == "|" && y+1 < len(g.lines) && (g.lines[y+1][x] == "#" || g.lines[y+1][x] == "~") {
+				return true
+			}
+			if left == "|" && y+1 < len(g.lines) && g.lines[y+1][x-1] == "#" {
 				return true
 			}
 		}
@@ -38,15 +44,49 @@ func (g *ground) isFlooding(p coord) bool {
 			if right == "~" {
 				return true
 			}
+			if right == "|" && y+1 < len(g.lines) && (g.lines[y+1][x] == "#" || g.lines[y+1][x] == "~") {
+				return true
+			}
+			if right == "|" && y+1 < len(g.lines) && g.lines[y+1][x+1] == "#" {
+				return true
+			}
 		}
 	}
 	return false
+}
+// check if point is a confined area (left&right walls, bottom floored)
+func (g *ground) isConfined(p coord) bool {
+	y := p.y
+	// last line is never confined
+	if y == len(g.lines) - 1 {
+		return false
+	}
+	for left := p.x; left > 0; left-- {
+		if g.lines[y+1][left] != "#" && g.lines[y+1][left] != "~" {
+			return false
+		}
+		if g.lines[y][left] == "#" || g.lines[y][left] == "~" {
+			break
+		}
+	}
+	for right := p.x; right < len(g.lines[0]); right++ {
+		if g.lines[y+1][right] != "#" && g.lines[y+1][right] != "~" {
+			return false
+		}
+		if g.lines[y][right] == "#" || g.lines[y][right] == "~" {
+			break
+		}
+	}
+	return true
 }
 func (g *ground) tick() {
 	for y := len(g.lines) - 1; y > 0; y-- {
 		for x := 0; x < len(g.lines[0]); x++ {
 			if g.isFlooding(coord{x,y}) {
 				g.lines[y][x] = "|"
+			}
+			if g.lines[y][x] == "|" && g.isConfined(coord{x,y}) {
+				g.lines[y][x] = "~"
 			}
 		}
 	}
