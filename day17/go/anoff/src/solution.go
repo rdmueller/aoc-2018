@@ -17,43 +17,6 @@ func (g *ground) print() {
 		fmt.Println(strings.Join(line, ""))
 	}
 }
-func (g *ground) isFlooding(p coord) bool {
-	x := p.x
-	y := p.y
-	if g.lines[y][x] == "." {
-		if y > 0 {
-			above := g.lines[y-1][x]
-			if above == "+" || above == "|" {
-				return true
-			}
-		}
-		if x > 0 {
-			left := g.lines[y][x-1]
-			if left == "~" {
-				return true
-			}
-			if left == "|" && y+1 < len(g.lines) && (g.lines[y+1][x] == "#" || g.lines[y+1][x] == "~") {
-				return true
-			}
-			if left == "|" && y+1 < len(g.lines) && g.lines[y+1][x-1] == "#" {
-				return true
-			}
-		}
-		if x + 1 < len(g.lines[0]) - 1 {
-			right := g.lines[y][x+1]
-			if right == "~" {
-				return true
-			}
-			if right == "|" && y+1 < len(g.lines) && (g.lines[y+1][x] == "#" || g.lines[y+1][x] == "~") {
-				return true
-			}
-			if right == "|" && y+1 < len(g.lines) && g.lines[y+1][x+1] == "#" {
-				return true
-			}
-		}
-	}
-	return false
-}
 // check if point is a confined area (left&right walls, bottom floored)
 func (g *ground) isConfined(p coord) bool {
 	y := p.y
