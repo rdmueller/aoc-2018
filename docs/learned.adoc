@@ -207,3 +207,12 @@ a| * if you want to animate your output on the console `print "\u001b[2J"` clear
 a| * The correct syntax to assign functions to a variable is `var := func (input string) bool {}` (anonymous function)
 
 |====
+
+=== Day 17
+
+[cols="1,10"]
+|====
+|{anoff}
+a| * You can use `fmt.Scanln()` to pause your program until a newline is entered. This is amazing in combination with {rdmueller} finding of Day 13 how to reset a screen to do animations.
+
+|====
