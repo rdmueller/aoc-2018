@@ -92,6 +92,11 @@ func (g *ground) tick() {
 	}
 }
 func main() {
+	//animate()
+	part1()
+}
+
+func animate() {
 	input := readInput("../test.txt")
 	g := generateMap(input)
 	for {
@@ -101,9 +106,27 @@ func main() {
 		fmt.Scanln()
 	}
 }
-
-func part1(lines []string) {
-	fmt.Println("Solution for part1:", 0)
+func part1() {
+	input := readInput("../input.txt")
+	g := generateMap(input)
+	var wetPrev int
+	for {
+		var wet int
+		g.tick()
+		for _, line := range g.lines {
+			for _, c := range line {
+				if c == "|" || c == "~" {
+					wet++
+				}
+			}
+		}
+		if wet == wetPrev {
+			fmt.Println("Solution for part1:", wet)
+			break
+		}
+		fmt.Println("Wet tiles", wet)
+		wetPrev = wet
+	}
 }
 
 func generateMap(readings []string) ground {
