@@ -1,0 +1,32 @@
+== Solution written in elm 0.19
+
+goto https://guide.elm-lang.org/install.html to find your elm installation guide
+
+to build:
+
+    elm make src/Main.elm
+
+This should produce index.html in the root directory, which you can open locally (also checked in for convenience).
+
+== Input
+
+The input string is parsed into a list of "Stars", which have a current position and speed.
+
+=== Part 1 & 2
+
+We have a Sky that consists of the aforementioned stars. 
+The basic heuristic to solve this is that we move the stars as long as their new "Area" is getting smaller compared to the last one measured.
+This means that we:
+
+  * update each star according to it's current position and speed
+  * remember the top left and bottom right corners based on the stars' new positions
+  * compare the new area size to the last one we measured
+    ** if the new size is smaller, we continue from above
+    ** if the new size is bigger, we assume that the one before that contains our message, so we render it to see if the stars form a readable message
+
+Hence, our model consists of 
+
+  * the Sky 
+  * a tuple of areas (memory of depth 2, the last area size and the current one)
+  * an integer to count the "seconds" (for part2)
+  * a flag where we register whether or not our area is shrinking or extending (makes it easier to fallback to the old star positions)
