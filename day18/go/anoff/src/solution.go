@@ -7,8 +7,40 @@ type field struct {
 	x, y int
 	state string // open (.), lumberyard (#), tree (|)
 	neighbors []*field
+	nextState string
 }
-
+func (f *field) calcNextState() *field {
+	switch f.state {
+		case ".":
+			if f.countNeighborsOfState("|") >= 3 {
+				f.nextState = "|"
+			}
+		case "|":
+			if f.countNeighborsOfState("#") >= 3 {
+				f.nextState = "#"
+			}
+		case "#":
+			if f.countNeighborsOfState("|") < 1 || f.countNeighborsOfState("#") < 1  {
+				f.nextState = "."
+			}
+	}
+	return f
+}
+func (f *field) switchState() *field {
+	if f.nextState != "" {
+		f.state = f.nextState
+	}
+	return f
+}
+func (f *field) countNeighborsOfState(state string) int {
+	count := 0
+	for _, n := range f.neighbors {
+		if n.state == state {
+			count++
+		}
+	}
+	return count
+}
 type area struct {
 	fields []*field
 	rows [][]*field
@@ -24,6 +56,16 @@ func (a *area) print() *area {
 	}
 	return a
 }
+
+func (a *area) tick() *area {
+	for _, f := range a.fields {
+		f.calcNextState()
+	}
+	for _, f := range a.fields {
+		f.switchState()
+	}
+	return a
+}
 func main() {
 	input := readInput("../test.txt")
 	part1(input)
@@ -33,6 +75,8 @@ func main() {
 func part1(input []string) {
 	a := NewAreaFromInput(input)
 	a.print()
+	fmt.Println("")
+	a.tick().print()
 	fmt.Println("Solution for part1:", 0)
 }
 
