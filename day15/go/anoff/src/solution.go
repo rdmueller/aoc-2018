@@ -56,9 +56,10 @@ func part1(input []string) (int, int) {
 }
 
 /* Tested answers
-
+ ..about 3 different ones yesterday
 74 2653 = 196322
 47 590 = 27730
 70 2653 = 209587
 67 2704 = 181168
+68 2682 = 182376
 */

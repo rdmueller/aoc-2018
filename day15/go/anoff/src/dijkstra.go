@@ -22,15 +22,22 @@ func (g *grid) addNode(n *node) *grid {
 }
 
 func (g *grid) getShortest() *node {
-	shortestN := g.nodes[0]
 	shortestDistance := g.nodes[0].distance
+	paths := make(map[int][]*node)
 	for _, n := range g.nodes {
 		if n.distance < shortestDistance {
 			shortestDistance = n.distance
-			shortestN = n
+		}
+		paths[n.distance] = append(paths[n.distance], n)
+	}
+	var bestNode *node
+	for _, n := range paths[shortestDistance] {
+		// pick by reading order
+		if bestNode == nil || bestNode.pos.y > n.pos.y || (bestNode.pos.y == n.pos.y && bestNode.pos.x > n.pos.x) {
+			bestNode = n
 		}
 	}
-	return shortestN
+	return bestNode
 }
 
 func (g *grid) remove(d *node) *grid {
