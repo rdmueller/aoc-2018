@@ -1,0 +1,78 @@
+
+**https://adventofcode.com/2018/day/15[rtfChallenge]**
+
+LOL
+
+== Architecture
+
+Braindump of classes I might need..
+
+[plantuml, day15-class, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+class Arena {
+  lines []string
+  fighters []*Fighter
+  //*self// addFighter(f *Fighter)
+  //[]*Fighter// getGoblins()
+  //[]*Fighter// getElves()
+  //bool// isOccupied(pos Position)
+  //*self// print()
+  //bool, []Position// path(start Position, dest Position)
+  //[]Position// getAttackPositions(fighter *Fighter)
+  //int// getHitPoints()
+}
+
+class Fighter {
+	id string
+	pos Position
+	hp int
+	power int
+  alliance string // elf, goblin
+  tookTurn bool
+  //*self// move(pos Position)
+  //*self// takeDamage(power int)
+  //bool, *Fighter// inAttackDistance(opponents *[]Fighter)
+}
+
+class Position {
+  x int
+  y int
+  //bool// IsEqual(p2 Position)
+}
+
+class Game {
+  arena *Arena
+  roundsPlayed int
+  //*self// turn()
+  //bool, *self// round()
+}
+
+Game o-- Arena
+Arena o-- Fighter
+Fighter -- Position
+Arena -- Position
+@enduml
+....
+
+== Part 1
+
+Given the above types and methods just play rounds until either all elves or all goblins are dead..
+
+== Part 2
+
+Well... took me like `5m 52s` to find the answer but it worked 🤷‍ Getting this one was rather easy after solving part 1. Just increase the elf power until all of them survive.
+
+TIP: One possible optimization I could do is to keep track of the `walkable` tiles for each round/tick. Currently the entire map is scanned for occupatied slots for each shortest path operation. Since there are a bunch for each turn a cached `walkable` list should significantly boost the performance.
+
+== Run solution
+
+1. Get into directory of this README
+1. Set gopath to current dir `export GOPATH=$PWD`
+1. Install dependency `go get github.com/satori/go.uuid`
+1. `cd src`
+1. `go build -o solution && ./solution`
+1. Profit
