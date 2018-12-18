@@ -49,9 +49,6 @@ public class Solution {
 //						System.out.println("Step [" + step + "]. The same board was seen on step [" + oldStep+ "]. Period is [" + period + "].");
 
 						final int start = oldStep % period;
-						if ((step % period) != start) {
-							throw new AssertionError();
-						}
 
 						if ((999999999 % period) == start) {
 							System.out.println("Resource value after 1000000000 steps: " + board.resourceValue());
