@@ -16,14 +16,13 @@ skinparam shadowing false
 class Arena {
   lines []string
   fighters []*Fighter
-  //bool// isOccupied(pos Position)
-  +//int// distance(fighter *Fighter, dest Position)
-  //[]Position// path(fighter *Fighter, dest Position)
-  //[]Position// getAttackPositions(fighter *Fighter)
-  //*self// print()
   //*self// addFighter(f *Fighter)
   //[]*Fighter// getGoblins()
   //[]*Fighter// getElves()
+  //bool// isOccupied(pos Position)
+  //*self// print()
+  //bool, []Position// path(start Position, dest Position)
+  //[]Position// getAttackPositions(fighter *Fighter)
   //int// getHitPoints()
 }
 
@@ -33,22 +32,23 @@ class Fighter {
 	hp int
 	power int
   alliance string // elf, goblin
-  //*self// takeDamage(power int)
+  tookTurn bool
   //*self// move(pos Position)
-  +//*self// attack(target *Fighter)
-  //bool, *Fighter// inAttackPosition(opponents *[]Fighter)
+  //*self// takeDamage(power int)
+  //bool, *Fighter// inAttackDistance(opponents *[]Fighter)
 }
 
 class Position {
   x int
   y int
-  +//bool// isOccupied(arena *Arena)
+  //bool// IsEqual(p2 Position)
 }
 
 class Game {
   arena *Arena
   roundsPlayed int
-  +//*self// round()
+  //*self// turn()
+  //bool, *self// round()
 }
 
 Game o-- Arena
@@ -60,11 +60,13 @@ Arena -- Position
 
 == Part 1
 
-
+Given the above types and methods just play rounds until either all elves or all goblins are dead..
 
 == Part 2
 
-oh god..
+Well... took me like `5m 52s` to find the answer but it worked 🤷‍ Getting this one was rather easy after solving part 1. Just increase the elf power until all of them survive.
+
+TIP: One possible optimization I could do is to keep track of the `walkable` tiles for each round/tick. Currently the entire map is scanned for occupatied slots for each shortest path operation. Since there are a bunch for each turn a cached `walkable` list should significantly boost the performance.
 
 == Run solution
 
@@ -72,5 +74,5 @@ oh god..
 1. Set gopath to current dir `export GOPATH=$PWD`
 1. Install dependency `go get github.com/satori/go.uuid`
 1. `cd src`
-1. `go build -o game && ./game`
+1. `go build -o solution && ./solution`
 1. Profit

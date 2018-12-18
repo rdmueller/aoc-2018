@@ -122,12 +122,10 @@ func newArenaFromInput(input []string) Arena {
 			if char == 'G' {
 				f := NewFighter("goblins")
 				f.move(Position{x, y})
-				f.id = fmt.Sprintf("%d", len(a.fighters)) // TODO: remove hacky ID
 				a.addFighter(&f)
 			} else if char == 'E' {
 				f := NewFighter("elves")
 				f.move(Position{x, y})
-				f.id = fmt.Sprintf("%d", len(a.fighters)) // TODO: remove hacky ID
 				a.addFighter(&f)
 			}
 		}
