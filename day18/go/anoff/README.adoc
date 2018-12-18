@@ -1,0 +1,42 @@
+
+**https://adventofcode.com/2018/day/18[rtfChallenge]**
+
+== Part 1
+
+
+
+[plantuml, day18-p1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+while (more water spreads)
+  while (for y=1..yMax)
+    while (for x=1..xMax)
+      if (water is coming
+      into tile(x,y)) then (Y)
+        :mark tile as wet;
+      endif
+    endwhile
+  endwhile
+endwhile
+end
+@enduml
+....
+
+
+== Part 2
+
+
+
+== Go solution
+
+1. run: `go build -o game && ./game`
+1. Profit
+
+[source, go]
+....
+include::./src/solution.go[]
+....
