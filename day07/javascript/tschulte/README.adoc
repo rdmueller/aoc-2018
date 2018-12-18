@@ -1,0 +1,38 @@
+This solution is written in JavaScript.
+
+https://adventofcode.com/2018/day/6
+
+== First Star
+
+This is the first time, I used a class in JavaScript to solve the puzzle.
+The `parseLine` function reduces the line array to get an array of Steps.
+A Step is an object with id and multiple parents and multiple children of type Step.
+This array of Steps is sorted by id.
+
+When the steps are parsed, the step order is evaluated by repeatedly find the first step that can be executed.
+Since the steps array is sorted by id, the first found step is always the alphabetically first to execute.
+
+[source, js]
+....
+include::part1.js[]
+....
+
+[source, js]
+....
+include::solution.js[tags=part1]
+....
+
+== Second Star
+
+Here I failed to build the solution using TDD:(
+The test is only the final test, although implementation took some time.
+
+[source, js]
+....
+include::part2.js[]
+....
+
+[source, js]
+....
+include::solution.js[tags=part2]
+....

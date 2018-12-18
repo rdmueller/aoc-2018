@@ -148,6 +148,8 @@ a| * graphs are fun but are super headache if you don't have 📝 (or experience
 ** `el := q[i]; q = append(q[:i], q[i+1:]...)` to remove an element in the middle
 * Go has a `...` spread operator
 
+|{tschulte}
+a| * how to define classes in JavaScript
 |====
 
 === Day 8
@@ -211,5 +213,14 @@ a| * if I had not rebased my codebase I could see how many hours I wasted on thi
 |====
 |{anoff}
 a| * The correct syntax to assign functions to a variable is `var := func (input string) bool {}` (anonymous function)
+
+|====
+
+=== Day 17
+
+[cols="1,10"]
+|====
+|{anoff}
+a| * You can use `fmt.Scanln()` to pause your program until a newline is entered. This is amazing in combination with {rdmueller} finding of Day 13 how to reset a screen to do animations.
 
 |====
