@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"strings"
 )
+// tag::program[]
 type command struct {
 	op string
 	args [3]int
 }
-
 type program struct {
 	commands []*command
 	pointerRegister int
 	registers [6]int
 	operations map[string]operation
 }
-
+// end::program[]
 func (p *program) instructions() {
 	for _, c := range p.commands {
 		fmt.Println(c)

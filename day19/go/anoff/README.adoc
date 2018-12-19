@@ -3,35 +3,188 @@
 
 == Part 1
 
+For part 1 I just reused my code from link:../../../day16/go/anoff/[day 16]. Some changes were necessary to allow `6 registers` instead of ``4`` that the previous challenge had.
+In addition to that I wrote a `program` type that handles the pointer updates and running the correct command.
+
+[source, go]
+....
+include::./src/solution.go[program]
+....
+
+The `program.step()` method executes the next command in the program and returns `true` if the program terminated.
+
+NOTE: My program execution does not manipulate the original register but rather creates a copy, therefore an additonal step is required to update the programs registers.
+
 [plantuml, day19-p1, png]
 ....
 @startuml
 skinparam defaulttextalignment center
 skinparam monochrome true
 skinparam shadowing false
+:program.step();
 start
-:init sampleWithMultiMatchCounter = 0;
-while (for each sample)
-  :init opsCounter = 0;
-  while (for each operation)
-    :calculate output
-    for sample & operation;
-    if (output is expected
-    sample output) then (Y)
-      :inc opsCounter;
-    endif
-  endwhile
-  if (opsCounter >= 3) then (Y)
-    :inc sampleWithMultiMatchCounter;
-  endif
-endwhile
-:print sampleWithMultiMatchCounter;
+:get pointer
+from register;
+:read command
+from list;
+:execute command
+with current registers;
+:update registers;
+if (new pointer
+is out of bound) then (Y)
+  :return true;
+else (points to valid command)
+  :return false;
+endif
 end
 @enduml
 ....
 
 == Part 2
 
+This one was interesting. At first I thought it might be necessary to build an optimizer into my `program` interpreter. But I did not know where to start so I decided to start decompiling/assembling the program code and bring it into a higher language that allows me to find patterns in the code.
+
+Here are my lengthy thoughts
+
+=== Translate operations into _register language_
+
+To avoid confusion with immediate values the registers are name A B C D E F, where I always noted the pointer register (2) as C*.
+
+I highlighted the sections that seem to implement some sort of conditions.
+
+[source,text]
+----
+0   addi 2 16 2   C* = C* + 16 // GOTO 17
+1   seti 1 1 1    B = 1
+2   seti 1 4 3    D = 1
+3   mulr 1 3 5    F = B * D
+4   eqrr 5 4 5    F = E == F <1>
+5   addr 5 2 2    C* = C* + F   // GOTO 6+F
+6   addi 2 1 2    C* = C* + 1   // GOTO 8
+7   addr 1 0 0    A = B + A
+8   addi 3 1 3    D = D + 1
+9   gtrr 3 4 5    F = D > E <2>
+10  addr 2 5 2    C* = C* + F   // GOTO 11+F
+11  seti 2 4 2    C* = 2        // GOTO 3
+12  addi 1 1 1    B = B + 1
+13  gtrr 1 4 5    F = B > D <3>
+14  addr 5 2 2    C* = C* + F   // GOTO 15+F
+15  seti 1 0 2    C* = 1        // GOTO 2
+16  mulr 2 2 2    C* = C* * C*  // 16*16 -> EXIT <4>
+17  addi 4 2 4    E = E + 2
+18  mulr 4 4 4    E = E * E
+19  mulr 2 4 4    E = C* * E = 19 * E
+20  muli 4 11 4   E = E * 11
+21  addi 5 1 5    F = F + 1
+22  mulr 5 2 5    F = F * C* = F * 22
+23  addi 5 17 5   F = F + 17
+24  addr 4 5 4    E = E + F
+25  addr 2 0 2    C* = C* + A // GOTO 26+A
+26  seti 0 9 2    C* = 0      // GOTO 1
+27  setr 2 3 5    F = C* = 27
+28  mulr 5 2 5    F = F * C* = 27*28 = 756
+29  addr 2 5 5    F = C* + F = 29 + 756 = 785
+30  mulr 2 5 5    F = C* * F = 785 * 30 = 23550
+31  muli 5 14 5   F = F * 14 = 329700
+32  mulr 5 2 5    F = F * C* = 10550400
+33  addr 4 5 4    E = E + F
+34  seti 0 9 0    A = 0
+35  seti 0 6 2    C* = 0 // GOTO 1
+----
+<1> line 4 and 5 form an `IF` statement that might skip #7
+<2> line 9 and 10 form an `IF` statement that jumps back to #3
+<3> 13 and 14 either exit the program or jump back to #2
+<4> setting to pointer to 16*16 will reach the end of the program, therefore I noted it as `EXIT`
+
+=== Grouping lines
+
+First I ordered the program in execution order and grouped together all those additions and multiplications. I also rewrote the conditions that I identified in the previous step and use goto-notation for jumps.
+
+[source,text]
+----
+0       GOTO 17
+17..20  E = (E+2) * (E+2) * 19 * 11
+21..23  F = (F+1) * 22 + 17
+24      E = E + F
+25      GOTO #26+A
+26      GOTO 1
+27..32  F = 10550400
+33      E = E + F
+34      A = 0
+35      GOTO 1
+
+1       B = 1
+2       D = 1
+3       F = B * D
+4..7    if E == F { A = B + A; F = 1 } else { F = 0 }
+8       D = D + 1
+9..11   if D > E { GOTO 12; F = 1 } else { GOTO 3; F = 0 }
+12      B = B + 1
+13..16  if B > E { EXIT; F = 1 } else { GOTO 2; F = 0 }
+----
+
+=== Introducing loops
+
+Next step was to aggregate the lines up top even further and actually give them the correct values with the starting conditions of `A=1, B=0, C=0, D=0, E=0, F=0`.
+
+I still kept the previous jump points as a reference.
+
+[source,text]
+----
+E = 875
+F = 10550400          <1>
+E = E + F
+A = 0
+B = 1                  #1
+
+while B <= E {
+  D = 1                #2
+  while D <= E {
+    F = B * D          #3
+    if E == F {
+      A += B
+    }
+    D = D + 1
+  }
+  B++                  #12
+}
+----
+<1> this already includes the double run of #17..35 with A first being 1 and then set to 0
+
+=== `For` loops
+
+In the (almost) last step I rewrote it to use `for` loops instead of `while` as the code clearly loops until something is reached and increments.
+
+[source,go]
+----
+A = 0
+E = 10550400 + 875
+for B := 1; B <= E; B++ {
+  for D := 1; D <= E; D++ {
+    F = B * D
+    if E == F {
+      A += B
+    }
+  }
+}
+print(A)
+----
+
+One final observation is that the inner loop and condition actually check if ``B`` is a factor of ``F`` but instead of the looping I can make use of the modulo ``%`` operator in go. The final code is then.
+
+[source,go]
+----
+A = 0
+E = 10550400 + 875
+for B := 1; B <= E; B++ {
+  if E % B == 0 {
+    A += B
+  }
+}
+print(A)
+----
+
+This code executes in less than a second so everything is good 🙃
 
 == Go solution
 
