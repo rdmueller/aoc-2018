@@ -5,7 +5,7 @@ import (
 
 func TestMuli(t *testing.T) {
 	ops := getOperations()
-	reg := [4]int{2, 0, 0, 0}
+	reg := [6]int{2, 0, 0, 0, 0, 0}
 	store8in2 := [3]int{0, 4, 2}
 	res := ops["muli"](reg, store8in2)
 	if res[2] != 8 {
@@ -15,7 +15,7 @@ func TestMuli(t *testing.T) {
 
 func TestBanr(t *testing.T) {
 	ops := getOperations()
-	reg := [4]int{15, 9, 3, 6}
+	reg := [6]int{15, 9, 3, 6, 5, 2}
 	op1 := [3]int{0, 1, 1}
 	res := ops["banr"](reg, op1)
 	if res[1] != 9 {
