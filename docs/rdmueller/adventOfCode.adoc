@@ -14,4 +14,6 @@ Just prepend the following shebang to your file
 and make the file executable with a `chmod u+x filename.py`.
 You can then execute the file as `./filename.py`.
 
+NOTE:: Other well documented solutions written in python can be found on https://www.michaelfogleman.com/aoc18/[the blog of Michael Fogleman]
+
 include::generatedDays.adoc[]
