@@ -9,6 +9,7 @@ public abstract class OpIR extends Op{
 	private final int registerC;
 
 	public OpIR(int valueA, int registerB, int registerC) {
+		super(valueA, registerB, registerC);
 		if (registerB <0 || registerB >= Registers.COUNT) {
 			throw new IllegalArgumentException();
 		}

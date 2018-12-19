@@ -123,4 +123,14 @@ public class OpTest {
 		assertThat(op.apply(new Registers(14, 14, 3, 125, 10, 20))).isEqualTo(new Registers(14, 14, 1, 125, 10, 20));
 	}
 
+	@Test
+	public void parsesSupported() {
+		assertThat(Op.parse("addi 1 2 3")).isEqualTo(new AddI(1, 2, 3));
+		assertThat(Op.parse("seti 5 0 1")).isEqualTo(new SetI(5, 0, 1));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void parsesUnsupported() {
+		Op.parse("fubi 1 2 3");
+	}
 }
