@@ -3,7 +3,7 @@
 	<groupId>org.hisrc.aoc</groupId>
 	<artifactId>aoc-2018-day13</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>AOC 2018 Day 07</name>
+	<name>AOC 2018 Day 13</name>
 	<inceptionYear>2018</inceptionYear>
 	<dependencies>
 		<dependency>
