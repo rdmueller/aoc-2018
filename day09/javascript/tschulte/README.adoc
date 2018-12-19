@@ -2,11 +2,32 @@ This solution is written in JavaScript.
 
 https://adventofcode.com/2018/day/6
 
+Today I wanted to use some knowledge gained by watching https://www.youtube.com/watch?v=dxzBZpzzzo8.
+
 == First Star
 
+My first idea was to implement a class `Circle` that holds the circle state.
+After some back and forth, it ended up having an `addNextMarble` method returning the score of that step.
+The `currentMarble` getter is only for testing purposes.
+
+[source, js]
+....
+include::part1.js[tags=Circle]
+....
+
+To be able to test the steps, I created a `MarbleGame` class.
+
+[source, js]
+....
+include::part1.js[tags=MarbleGame]
+....
+
+And the `parseLine` method just extracts the info from the test input and returns a new `MarbleGame` instance.
+Here I used the newly learned spread operator.
 
 [source, js]
 ....
 include::part1.js[tags=parseLine]
 ....
 
+Interestingly the final tests with the examples from the aoc description did not work, but since I could not find an error, I tried the solution with the real input and it was correct.
