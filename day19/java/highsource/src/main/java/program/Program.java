@@ -2,18 +2,18 @@ package program;
 
 import java.util.List;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import op.Op;
 import register.Registers;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class Program {
 	
 	private final int instructionPointerRegister;
-	private Registers registers = new Registers(0, 0, 0, 0, 0, 0);
 	private final List<Op> ops;
+	private Registers registers;
 	
-	private int getInstructionPointer() {
+	public int getInstructionPointer() {
 		return registers.get(instructionPointerRegister);
 	}
 	
@@ -32,11 +32,10 @@ public class Program {
 		
 		if (ip < 0 || ip >= ops.size()) {
 			throw new IllegalStateException();
-//			return false;
 		}
 		
 //		System.out.print("ip=");
-//		System.out.print(StringUtils.rightPad(Integer.toString(ip), 2, ' '));
+//		System.out.print(ip);
 //		System.out.print("[");
 //		System.out.print(registers.toString());
 //		System.out.print("] ");
