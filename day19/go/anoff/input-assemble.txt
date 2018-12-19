@@ -1,0 +1,145 @@
+Trying to decode it myself
+
+Pointer is stored in register 2 (C*)
+
+To avoid confusion with immediate values the registers are name A B C D E F
+
+The first column is the command number, also the current value of C*
+
+For pat 2 the whole thing starts with A=0, B=1, C=0, D=0, E=0, F=0
+
+0   addi 2 16 2   C* = C* + 16 // GOTO 17
+1   seti 1 1 1    B = 1
+2   seti 1 4 3    D = 3
+3   mulr 1 3 5    F = B * D
+4   eqrr 5 4 5    F = E == F
+5   addr 5 2 2    C* = C* + F
+6   addi 2 1 2    C* = C* + 2
+7   addr 1 0 0    A = B + A
+8   addi 3 1 3    D = B + 3
+9   gtrr 3 4 5    F = D > E
+10  addr 2 5 2    C* = C* + F // GOTO 11+F
+11  seti 2 4 2    C* = 2 // GOTO 3
+12  addi 1 1 1    B = B + 1
+13  gtrr 1 4 5    F = B > D
+14  addr 5 2 2    C* = C* + F // GOTO 15+F
+15  seti 1 0 2    C* = 1 // GOTO 2
+16  mulr 2 2 2    C* = C* * 2 // 16*2 -> 32 -> GOTO 33
+17  addi 4 2 4    E = E + 2
+18  mulr 4 4 4    E = E * E
+19  mulr 2 4 4    E = C* * E = 19 * E
+20  muli 4 11 4   E = E * 11
+21  addi 5 1 5    F = F + 1
+22  mulr 5 2 5    F = F * C* = F * 22
+23  addi 5 17 5   F = F + 17
+24  addr 4 5 4    E = E + F
+25  addr 2 0 2    C* = C* + A // GOTO 26+A
+26  seti 0 9 2    C* = 0 // GOTO 1
+27  setr 2 3 5    F = C* = 27
+28  mulr 5 2 5    F = F * C* = 27*28 = 756
+29  addr 2 5 5    F = C* + F = 29 + 756 = 785
+30  mulr 2 5 5    F = C* * F = 785 * 30 = 23550
+31  muli 5 14 5   F = F * 14 = 329700
+32  mulr 5 2 5    F = F * C* = 10550400
+33  addr 4 5 4    E = E + F
+34  seti 0 9 0    A = 0
+35  seti 0 6 2    C* = 0 // GOTO 1
+
+Aggregating together operations that form a condition
+
+0       GOTO 17
+17..20  E = (E+2) * (E+2) * 19 * 11
+21..23  F = (F+1) * 22 + 17
+24      E = E + F
+25      GOTO #26+A
+26      GOTO 1
+27..32  F = 10550400
+33      E = E + F
+34      A = 0
+35      GOTO 1
+
+1       B = 1
+2       D = 2
+3       F = B * D
+4..8    if E == F { A = B + A; D = B + 3; F = 1 } else { F = 0 }
+9..11   if D > E { GOTO 12; F = 1 } else { GOTO 3; F = 0 }
+12      B = B + 1
+13..16  if B > E { GOTO 33; F = 1 } else { GOTO 2; F = 0 }
+
+Reordering the jumps, jump targets are marked with their number
+
+17..35
+func bignum(A, E, F) (E, F) {
+  E = (E+2) * (E+2) * 19 * 11
+  F = (F+1) * 22 + 17
+  E = E + F
+  if A == 1 {
+    F = 10550400
+    E = E + F               #33
+    A = 0
+  }
+  GOTO 1
+}
+
+1..
+func dostuff() {
+  B = 1                     #1
+  D = 2                     #2
+  F = B * D                 #3
+  if E == F {
+    A += B
+    D = B + 3
+    F = 1
+  } else {
+    F = 0
+  }
+  if D > E {
+    F = 1
+    GOTO 12
+  } else {
+    F = 0
+    GOTO 3
+  }
+  B++                       #12
+  if B > E {
+    F = 1
+    GOTO 33
+  } else {
+    F = 0
+    GOTO 2
+  }
+}
+
+Given the starting conditions of A = 1, B..F = 0
+
+E = 836                   #17
+F = 39
+E = 875
+F = 10550400
+E = 10551275              #33
+A = 0
+B = 1                     #1
+D = 2                     #2
+F = B * D                 #3
+if E == F {
+  A += B
+  D = B + 3
+  F = 1
+} else {
+  F = 0
+}
+if D > E {
+  F = 1
+  GOTO 12
+} else {
+  F = 0
+  GOTO 3
+}
+B++                       #12
+if B > E {
+  F = 1
+  GOTO 33
+} else {
+  F = 0
+  GOTO 2
+}
