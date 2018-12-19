@@ -2,40 +2,23 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 
-type command struct {
-	op string
-	args [3]int
-}
-type program struct {
-	commands []*command
-}
-func (p *program) instructions() {
-	for _, c := range p.commands {
-		fmt.Println(c)
-	}
-}
+var DEBUG = false
+
 func main() {
-	input := readInput("../test.txt")
-	//ops := getOperations()
+	input := readInput("../input.txt")
 	p := NewProgram(input)
-	p.instructions()
+	p.print()
+	part1(&p)
 }
 
-
-func NewProgram(input []string) program {
-	var commands []*command
-	for _, line := range input {
-		str := strings.Split(line, " ")
-		nums := StringSlice2IntSlice(str[1:])
-		if str[0] == "#ip" {
-			commands = append(commands, &command{op:str[0], args:[3]int{nums[0], -1, -1}})
-		} else {
-			c := command{op:str[0], args:[3]int{nums[0], nums[1], nums[2]}}
-			commands = append(commands, &c)
+func part1(p *program) {
+	for {
+		programEnded := p.step(DEBUG)
+		if programEnded {
+			fmt.Println("Solution for part 1:", p.registers[0])
+			break
 		}
 	}
-	return program{commands: commands}
 }
