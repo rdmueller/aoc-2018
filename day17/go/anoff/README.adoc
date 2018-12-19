@@ -28,22 +28,22 @@ end
 
 What is nice about this solution is the fact that I could simulate the water spreading by adding a delay into the outer most loop. What was not so nice is that it took `59s` to calculate my real input - and it was wrong. Also assuming some nasty second part 2 I decided to rewrite my code to a more efficient solution.
 
-For this I first created a map of all cavities that would end up as stationary water reservoirs once they get touched by a droplet of water. You can see the result of this here: link:../src/confined.txt. I iterate over all rows (starting bottom) once and for each tile I check if there are solid walls on both sides and that until the wall ``#`` is reached there is either solid clay ``#`` or another confined space ``o`` under it.
+For this I first created a map of all cavities that would end up as stationary water reservoirs once they get touched by a droplet of water. You can see the result in link:../src/confined.txt[confined.txt]. I iterate over all rows (starting bottom) once and for each tile I check if there are solid walls on both sides and that until the wall ``#`` is reached there is either solid clay ``#`` or another confined space ``o`` under it.
 
 With this prepared map a recursive function is started off at the position of the source ``+``. Each _advance_ means the function calls itself for the new position.
 
-1. modify the current tile
-  1. dirt ``.`` becomes moving water ``|``
-  1. contained space ``o`` becomes stationary water ``~``
-1. if the bottom tile is dirt ``.``
-  1. _advance_ into bottom tile
-1. if the bottom tile is a confined space ``o``
-  1. _advance_ into bottom tile
-  1. if left/right is dirt ``.`` and has a valid floor*, _advance_ to side
-1. if left/right tile is confined space ``o``
-  1. _advance_ to the side
-1. if left/right tile is dirt ``.`` but the current tile has a valid floor* (this basically means it is the edge of something)
-  1. _advance_ to the side
+. modify the current tile
+.. dirt ``.`` becomes moving water ``|``
+.. contained space ``o`` becomes stationary water ``~``
+. if the bottom tile is dirt ``.``
+.. _advance_ into bottom tile
+. if the bottom tile is a confined space ``o``
+.. _advance_ into bottom tile
+.. if left/right is dirt ``.`` and has a valid floor*, _advance_ to side
+. if left/right tile is confined space ``o``
+.. _advance_ to the side
+. if left/right tile is dirt ``.`` but the current tile has a valid floor* (this basically means it is the edge of something)
+.. _advance_ to the side
 
 *_valid floor_ means that water can stay on top of it; this is dirt ``.``, confined space ``o`` and clay ``#``.
 
