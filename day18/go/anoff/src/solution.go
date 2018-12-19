@@ -94,28 +94,32 @@ func part1(input []string) {
 
 func part2(input []string) {
 	a := NewAreaFromInput(input)
-
-	deltaScoreK1 := 0
-	scoreK1 := 0
-	minute := 0
-	for i := 0; i < 10000; i++ {
+	scores := NewScoreFilter(900) // keep track of the last elements
+	patternStartIndex := -1
+	patternStartRound := -1
+	pattern := []int{}
+	for i := 0; i < 800; i++ {
 		a.tick()
 		score := a.score()
-		deltaScore := score - scoreK1
-		if deltaScore == deltaScoreK1 {
-			fmt.Println("Found recurring delta", minute, deltaScore)
+		scores.add(score)
+		for l := 10; l < 50; l++ {
+			patternStartIndex, pattern = scores.findRecurringPatternOfLength(l)
+			if patternStartIndex != -1 {
+				patternStartRound = i - 2*l + 1
+				fmt.Println("Found reccuring pattern of length", l, "starting at index", patternStartIndex, "in round", patternStartRound, pattern)
+				break
+			}
 		}
-		if score == scoreK1 {
-			fmt.Println("Found recurring score", minute, score)
+		if patternStartIndex > 0 {
+			break
 		}
-		if minute > 1000 {
-			fmt.Println(score, scoreK1)
-		}
-		deltaScoreK1 = deltaScore
-		scoreK1 = score
-		minute++
 	}
-	fmt.Println("Solution for part2:", 0)
+
+	if patternStartIndex == -1 {
+		panic("No pattern found for part 2")
+	}
+	roundsToDo := 1000000000 - patternStartRound - 1 // not really sure why I need the -1...was desperate :(
+	fmt.Println("Solution for part2:", pattern[roundsToDo % len(pattern)])
 }
 
 func NewAreaFromInput(input []string) *area {
