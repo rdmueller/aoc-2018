@@ -11,13 +11,13 @@ func main() {
 	p := NewProgram(input)
 	p.print()
 	//part1(&p)
-	p = NewProgram(input)
 	part2(&p)
 }
 
 func part1(p *program) {
 	for {
 		programEnded := p.step(DEBUG)
+		fmt.Scanln()
 		if programEnded {
 			fmt.Println("Solution for part 1:", p.registers[0])
 			break
@@ -26,12 +26,12 @@ func part1(p *program) {
 }
 
 func part2(p *program) {
-	p.registers[0] = 1
-	for i := 0; i < 20; i++ {
-		programEnded := p.step(DEBUG)
-		if programEnded {
-			fmt.Println("Solution for part 2:", p.registers[0])
-			break
+	E := 10550400 + 875
+	A := 0
+	for B := 1; B <= E; B++ {
+		if E % B == 0 {
+			A += B
 		}
 	}
+	fmt.Println("Solution for part 2:", A)
 }
