@@ -46,4 +46,85 @@ func TestScorefilterContains(t *testing.T) {
 	if !s.contains([]int{4, 3, 4, 1, 2}) {
 		t.Error("Scorefilter does not recognize containing sequence", s.list)
 	}
+	if s.contains([]int{4, 4, 4, 4}) {
+		t.Error("Scorefilter recognizes unknown sequence", s.list)
+	}
+}
+
+func TestScorefilterContainsBack(t *testing.T) {
+	s := NewScoreFilter(6)
+	seq := []int{0, 4, 6, 2, 6, 4, 0, 4, 3, 4, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5 }
+	for _, val := range seq {
+		s.add(val)
+	}
+	if !s.containsBack([]int{5, 1, 2, 3, 4, 5}) {
+		t.Error("Does not match valid sequence at list end", s.getValues())
+	}
+	if s.containsBack([]int{4, 4, 4, 4}) {
+		t.Error("Scorefilter recognizes unknown sequence", s.getValues())
+	}
+	if s.containsBack([]int{2, 3, 4}) {
+		t.Error("Scorefilter recognizes partial sequence that is not at the end", s.getValues())
+	}
+}
+
+func TestScorefilterVals(t *testing.T) {
+	s := NewScoreFilter(6)
+	seq := []int{0, 4, 6, 2, 6, 4 }
+	for _, v := range seq {
+		s.add(v)
+	}
+	vals := s.getValues()
+	for i, exp := range seq {
+		if vals[i] != exp {
+			t.Error("Value in filter not as expected", vals[i], "!=", exp)
+		}
+	}
+	s = NewScoreFilter(20)
+	s.add(3).add(5).add(7)
+	vals = s.getValues()
+	if len(vals) != 3 {
+		t.Error("Does not return the correct number as elements")
+	}
+}
+
+func TestScorefilterFindRecurringPatternOfLength(t *testing.T) {
+	s := NewScoreFilter(30)
+	seq := []int{0, 4, 0, 1, 6, 1, 1, 2, 3, 4, 1, 2, 3, 4, 0, 6, 3, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6}
+	for _, v := range seq {
+		s.add(v)
+	}
+	patternStartIx, pattern := s.findRecurringPatternOfLength(4)
+	if patternStartIx == -1 {
+		t.Error("Did not find recurring pattern of length:4")
+	}
+	if patternStartIx != 6 {
+		t.Error("Pattern detected at wrong index, expected:", 6, ", got:", patternStartIx)
+	}
+	exp := []int{1,2,3,4}
+	for i, _ := range pattern {
+		if pattern[i] != exp[i] {
+			t.Error("Found wrong pattern, expected:", exp, ", found:", pattern)
+			break
+		}
+	}
+
+	// find pattern at the end
+	patternStartIx, pattern = s.findRecurringPatternOfLength(6)
+	if patternStartIx == -1 {
+		t.Error("Did not find recurring pattern of length:6 at the end of the queue")
+	}
+	if patternStartIx != 17 {
+		t.Error("Pattern detected at wrong index, expected:", 17, ", got:", patternStartIx)
+	}
+	exp = []int{1,2,3,4,5,6}
+	for i, _ := range pattern {
+		if pattern[i] != exp[i] {
+			t.Error("Found wrong pattern, expected:", exp, ", found:", pattern)
+			break
+		}
+	}
+
+	// handle large patterns
+	s.findRecurringPatternOfLength(60)
 }

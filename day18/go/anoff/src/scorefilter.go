@@ -36,3 +36,44 @@ func (s *scoreFilter) contains(values []int) bool {
 	}
 	return false
 }
+// check if the string is equal to the back(right, newest) of the filter
+func (s *scoreFilter) containsBack(values []int) bool {
+	n := s.list.Back()
+	for i := len(values) - 1; i >= 0; i-- {
+		if (n == nil) {
+			// stop if start of list is reached
+			return false
+		}
+		if n.Value != values[i] {
+			return false
+		}
+		n = n.Prev()
+	}
+	return true
+}
+func (s *scoreFilter) getValues() []int {
+	var vals []int
+	for e := s.list.Front(); e != nil; e = e.Next() {
+		vals = append(vals, e.Value.(int))
+	}
+	return vals
+}
+
+// -> index, pattern
+func (s *scoreFilter) findRecurringPatternOfLength(l int) (int, []int) {
+	var pattern []int
+	vals := s.getValues()
+	for i := 0; i + l < len(vals); i++ {
+		if vals[i] == vals[i+l] {
+			pattern = append(pattern, vals[i])
+			if len(pattern) == l {
+				return i-l+1, pattern
+			}
+		} else if len(pattern) == l {
+			return i-l+1, pattern
+		} else if len(pattern) > 0 {
+			pattern = []int{}
+		}
+	}
+	return -1, []int{}
+}
