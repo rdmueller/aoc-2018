@@ -94,15 +94,16 @@ func part1(input []string) {
 
 func part2(input []string) {
 	a := NewAreaFromInput(input)
-	scores := NewScoreFilter(900) // keep track of the last elements
+	maxExpectedPatternLength := 80
+	scores := NewScoreFilter(2*maxExpectedPatternLength) // keep track of the last elements
 	patternStartIndex := -1
 	patternStartRound := -1
 	pattern := []int{}
-	for i := 0; i < 800; i++ {
+	for i := 0; i < 5000; i++ {
 		a.tick()
 		score := a.score()
 		scores.add(score)
-		for l := 10; l < 50; l++ {
+		for l := 20; l < maxExpectedPatternLength; l++ {
 			patternStartIndex, pattern = scores.findRecurringPatternOfLength(l)
 			if patternStartIndex != -1 {
 				patternStartRound = i - 2*l + 1
