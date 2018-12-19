@@ -1,0 +1,46 @@
+
+**https://adventofcode.com/2018/day/19[rtfChallenge]**
+
+== Part 1
+
+[plantuml, day19-p1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:init sampleWithMultiMatchCounter = 0;
+while (for each sample)
+  :init opsCounter = 0;
+  while (for each operation)
+    :calculate output
+    for sample & operation;
+    if (output is expected
+    sample output) then (Y)
+      :inc opsCounter;
+    endif
+  endwhile
+  if (opsCounter >= 3) then (Y)
+    :inc sampleWithMultiMatchCounter;
+  endif
+endwhile
+:print sampleWithMultiMatchCounter;
+end
+@enduml
+....
+
+== Part 2
+
+
+== Go solution
+
+. `cd src`
+. tests: `go test`
+. run: `go build -o game && ./game`
+. Profit
+
+[source, go]
+....
+include::./src/solution.go[]
+....
