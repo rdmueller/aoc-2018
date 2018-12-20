@@ -1,16 +1,24 @@
 package main
 
 import (
+	"strings"
 )
 
-func expandPattern(pattern string) []string {
-	var combinations []string
-
+func exandPattern(pattern string) []string {
+	if pattern[0]!= '^' {
+		panic("Expect pattern to start with ^")
+	}
+	if pattern[len(pattern)-1] != '$' {
+		panic("Expect pattern to end with $")
+	}
+	combinations, _ := expandGroup(pattern[1:len(pattern)-1])
 	return combinations
 }
-
 // (ABC|BVD|S(A|B)C)F -> []string{"ABCF", "BCDF", "SACF", "SBCF"}
 func expandGroup(pattern string) ([]string, int) {
+	if strings.Count(pattern, "(") > strings.Count(pattern, ")") {
+		panic("Parenthesis unbalanced, should have at least as many ) as (")
+	}
 	var combinations []string
 	activeCombinations := []string{""}
 	appendToAll := func (slice []string, s string) []string {
@@ -46,10 +54,3 @@ func expandGroup(pattern string) ([]string, int) {
 	combinations = append(combinations, activeCombinations...)
 	return combinations, len(pattern)
 }
-/*
-^ENWWW(NEEE|SSE(EE|N))$
-ENWWW NEEE EE
-ENWWW NEEE N
-ENWWW SSE EE
-ENWWW SSE N
-*/
