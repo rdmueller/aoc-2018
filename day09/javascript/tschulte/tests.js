@@ -3,36 +3,61 @@
 "use strict";
 
 const assert = require("assert");
-const { parseLine, MarbleGame, Circle } = require("./part1");
+const { parseLine, MarbleGame, Circle, CircleMarble } = require("./part1");
+const { bigGame } = require("./part2");
 
+// CircleMarble
+const firstMarble = new CircleMarble(0);
+assert.equal(firstMarble.value, 0);
+assert.equal(firstMarble.next, firstMarble);
+assert.equal(firstMarble.previous, firstMarble);
+const secondMarble = firstMarble.insertAfter(1);
+assert.equal(secondMarble.value, 1);
+assert.equal(firstMarble.next, secondMarble);
+assert.equal(firstMarble.previous, secondMarble);
+assert.equal(secondMarble.next, firstMarble);
+assert.equal(secondMarble.previous, firstMarble);
+assert.equal(firstMarble.nextN(1), secondMarble);
+assert.equal(firstMarble.nextN(2), firstMarble);
+assert.equal(firstMarble.previousN(1), secondMarble);
+assert.equal(firstMarble.previousN(2), firstMarble);
+
+secondMarble.remove();
+assert.equal(firstMarble.next, firstMarble);
+assert.equal(firstMarble.previous, firstMarble);
+assert.equal(secondMarble.next, secondMarble);
+assert.equal(secondMarble.previous, secondMarble);
+
+// circle
 const circle = new Circle();
 
 assert.deepEqual(circle.marbles, [0]);
-assert.equal(circle.currentMarble, 0);
+assert.equal(circle.currentMarble.value, 0);
 
 assert.equal(circle.addNextMarble(), 0);
-assert.deepEqual(circle.marbles, [1, 0]);
-assert.equal(circle.currentMarble, 1);
+assert.deepEqual(circle.marbles, [0, 1]);
+assert.equal(circle.currentMarble.value, 1);
 
 assert.equal(circle.addNextMarble(), 0);
-assert.deepEqual(circle.marbles, [2, 1, 0]);
-assert.equal(circle.currentMarble, 2);
+assert.deepEqual(circle.marbles, [0, 2, 1]);
+assert.equal(circle.currentMarble.value, 2);
 
 assert.equal(circle.addNextMarble(), 0);
-assert.deepEqual(circle.marbles, [2, 1, 3, 0]);
-assert.equal(circle.currentMarble, 3);
+assert.deepEqual(circle.marbles, [0, 2, 1, 3]);
+assert.equal(circle.currentMarble.value, 3);
 
 assert.equal(circle.addNextMarble(), 0);
-assert.deepEqual(circle.marbles, [4, 2, 1, 3, 0]);
-assert.equal(circle.currentMarble, 4);
+assert.deepEqual(circle.marbles, [0, 4, 2, 1, 3]);
+assert.equal(circle.currentMarble.value, 4);
 
 for (let i = 5; i < 23; i++) {
   assert.equal(circle.addNextMarble(), 0);
 }
 assert.equal(circle.addNextMarble(), 32);
 
-assert.equal(circle.currentMarble, 19);
+assert.equal(circle.currentMarble.value, 19);
 assert.deepEqual(circle.marbles, [
+  0,
   16,
   8,
   17,
@@ -54,7 +79,6 @@ assert.deepEqual(circle.marbles, [
   14,
   7,
   15,
-  0
 ]);
 
 for (let i = 1; i < 23; i++) {
@@ -76,7 +100,6 @@ assert.equal(
   63
 );
 
-/* This does not work, although it should.
 assert.equal(
   parseLine("10 players; last marble is worth 1618 points").highscore,
   8317
@@ -97,4 +120,5 @@ assert.equal(
   parseLine("30 players; last marble is worth 5807 points").highscore,
   37305
 );
-*/
+
+assert.equal(bigGame(new MarbleGame(9, 5), 10).highscore, 63);
