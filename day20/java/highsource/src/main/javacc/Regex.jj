@@ -1,0 +1,64 @@
+options {
+	STATIC = false;
+}
+PARSER_BEGIN(RegexParser)
+
+package expr;
+
+public class RegexParser {
+}
+
+PARSER_END(RegexParser)
+
+TOKEN :
+{
+	< Step: "N" | "E" | "W" | "S" >
+}
+
+TOKEN :
+{
+	< Start: "^" >
+|	< End: "$" >		
+}
+
+TOKEN :
+{
+	< LeftParenthesis: "(" >
+|	< RightParenthesis: ")" >		
+|	< Pipe: "|" >
+}
+
+
+void Input() :
+{}
+{
+	<Start>
+	Expr()
+	<End>
+	<EOF>
+}
+void Expr() :
+{}
+{
+	(
+		Step() | Branch()
+	)+
+}
+Step Step() :
+{
+	Token t;
+}
+{
+	t = <Step>
+	{
+		return new Step(t.image.charAt(0));
+	}
+}
+void Branch() :
+{
+}
+{
+	<LeftParenthesis>
+	Expr()
+	<RightParenthesis>
+}
