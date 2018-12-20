@@ -4,17 +4,20 @@ import (
 	"fmt"
 	"strings"
 )
+// (0,0) is always top left
 type Pos struct {
 	x, y int
 }
-func (p *Pos) isWall() bool {
-	return true
-}
 type Room struct {
 	rows []string
-	origin Pos
+	origin Pos		// position that the paths are taken from
 }
-
+func (r *Room) isWall(p Pos) bool {
+	if r.rows[p.y][p.x] == '#' {
+		return true
+	}
+	return false
+}
 func (r *Room) print() {
 	for _, row := range r.rows {
 		fmt.Println(row)
@@ -42,7 +45,7 @@ func (r *Room) expand(growX int, growY int) *Room {
 			}
 			r.origin.y -= 2*growY
 		} else {
-			for i := 0; i < growX; i++ {
+			for i := 0; i < growY; i++ {
 				r.rows = append(r.rows, rowRoom, rowWalled)
 			}
 		}
@@ -71,4 +74,11 @@ func (r *Room) expand(growX int, growY int) *Room {
 		r.origin.x -= 2*growX
 	}
 	return r
+}
+
+func (r *Room) dim() (int, int) {
+	xdim := len(r.rows[0])
+	ydim := len(r.rows)
+
+	return xdim, ydim
 }
