@@ -1,8 +1,12 @@
 package expr;
 
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @RequiredArgsConstructor
-public class Step {
+@EqualsAndHashCode(callSuper=false)
+@ToString
+public class Step extends Expr {
 	private final char direction;
 }

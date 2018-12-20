@@ -1,9 +1,13 @@
 options {
 	STATIC = false;
+	JDK_VERSION = "1.8";
 }
 PARSER_BEGIN(RegexParser)
 
 package expr;
+
+import java.util.List;
+import java.util.ArrayList;
 
 public class RegexParser {
 }
@@ -29,22 +33,47 @@ TOKEN :
 }
 
 
-void Input() :
-{}
+Expr parseRoute() :
+{
+	Expr route;
+}
 {
 	<Start>
-	Expr()
+	route = route()
 	<End>
 	<EOF>
+	{
+		return route;
+	}
 }
-void Expr() :
-{}
+Expr route() :
+{
+	final List<Expr> steps = new ArrayList<Expr>();
+	Expr step;
+}
 {
 	(
-		Step() | Branch()
+		step = step()
+		{
+			steps.add(step);
+		}
+		|
+		step = branch()
+		{
+			steps.add(step);
+		}
 	)+
+	{
+		if (steps.size() == 1) {
+			return steps.get(0);
+		}
+		else {
+			return new Route(steps);
+		}
+	}
+	
 }
-Step Step() :
+Step step() :
 {
 	Token t;
 }
@@ -54,16 +83,32 @@ Step Step() :
 		return new Step(t.image.charAt(0));
 	}
 }
-void Branch() :
+Expr branch() :
 {
+	final List<Expr> options = new ArrayList<Expr>();
+	Expr option;
 }
 {
 	<LeftParenthesis>
-	Expr()
+	option = route()
+	{
+		options.add(option);
+	}
 	(
 		<Pipe>
-		Expr()
+		option = route()
+		{
+			options.add(option);
+		}
 	)
 	*
 	<RightParenthesis>
+	{
+		if (options.size() == 1) {
+			return options.get(0);
+		}
+		else {
+			return new Branch(options);
+		}
+	}
 }
