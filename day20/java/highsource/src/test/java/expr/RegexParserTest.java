@@ -13,7 +13,8 @@ public class RegexParserTest {
 
 	@Test
 	public void parses() throws ParseException {
-		parse("^N(E)N$");
 		parse("^WNE$");
+		parse("^N(E)N$");
+		parse("^N(E|W)N$");
 	}
 }

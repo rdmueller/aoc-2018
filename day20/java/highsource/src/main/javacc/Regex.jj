@@ -60,5 +60,10 @@ void Branch() :
 {
 	<LeftParenthesis>
 	Expr()
+	(
+		<Pipe>
+		Expr()
+	)
+	*
 	<RightParenthesis>
 }
