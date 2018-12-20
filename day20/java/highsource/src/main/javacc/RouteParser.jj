@@ -2,17 +2,17 @@ options {
 	STATIC = false;
 	JDK_VERSION = "1.8";
 }
-PARSER_BEGIN(RegexParser)
+PARSER_BEGIN(RouteParser)
 
 package expr;
 
 import java.util.List;
 import java.util.ArrayList;
 
-public class RegexParser {
+public class RouteParser {
 }
 
-PARSER_END(RegexParser)
+PARSER_END(RouteParser)
 
 TOKEN :
 {
@@ -33,7 +33,7 @@ TOKEN :
 }
 
 
-Expr parseRoute() :
+Expr parseExpr() :
 {
 	Expr route;
 }
@@ -95,13 +95,20 @@ Branch branch() :
 		options.add(option);
 	}
 	(
+		LOOKAHEAD(<Pipe> route())
 		<Pipe>
 		option = route()
 		{
 			options.add(option);
 		}
-	)
-	*
+	) *
+	(
+		<Pipe>
+		{
+			option = new Stand();
+			options.add(option);
+		}
+	) ?
 	<RightParenthesis>
 	{
 		return new Branch(options);
