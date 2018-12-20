@@ -11,8 +11,5 @@ import lombok.ToString;
 @ToString
 public abstract class Expr {
 
-	public Set<XY> traceFrom(XY start, Facility facility) {
-		throw new UnsupportedOperationException();
-	}
-
+	public abstract Set<XY> traceFrom(XY start, Facility facility);
 }

@@ -7,9 +7,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import expr.Expr;
+
 public class Facility {
 	private final Set<XY> rooms = new HashSet<>();
 	private final Map<XY, Set<XY>> doors = new HashMap<>();
+	
+	public Set<XY>  trace(Expr expr) {
+		return expr.traceFrom(new XY(0,0), this);
+	}
 
 	public Facility step(XY from, XY to) {
 		Objects.requireNonNull(from, "from must not be null.");
