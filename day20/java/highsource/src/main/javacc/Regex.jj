@@ -83,7 +83,7 @@ Step step() :
 		return new Step(t.image.charAt(0));
 	}
 }
-Expr branch() :
+Branch branch() :
 {
 	final List<Expr> options = new ArrayList<Expr>();
 	Expr option;
@@ -104,11 +104,6 @@ Expr branch() :
 	*
 	<RightParenthesis>
 	{
-		if (options.size() == 1) {
-			return options.get(0);
-		}
-		else {
-			return new Branch(options);
-		}
+		return new Branch(options);
 	}
 }

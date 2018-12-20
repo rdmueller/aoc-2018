@@ -16,7 +16,7 @@ public class RegexParserTest {
 	@Test
 	public void parses() throws ParseException {
 		assertThat(parse("^WNE$")).isEqualTo(new Route(new Step('W'), new Step('N'), new Step('E')));
-		assertThat(parse("^N(E)N$")).isEqualTo(new Route(new Step('N'), new Step('E'), new Step('N')));
+		assertThat(parse("^N(E)N$")).isEqualTo(new Route(new Step('N'), new Branch(new Step('E')), new Step('N')));
 		assertThat(parse("^N(E|W)N$"))
 				.isEqualTo(new Route(new Step('N'), new Branch(new Step('E'), new Step('W')), new Step('N')));
 		parse("^N(E|(W|E))N$");
