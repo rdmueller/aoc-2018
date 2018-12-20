@@ -1,20 +1,23 @@
 package facility;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 
 import expr.Expr;
 
 public class Facility {
 	private final Set<XY> rooms = new HashSet<>();
 	private final Map<XY, Set<XY>> doors = new HashMap<>();
-	
-	public Set<XY>  trace(Expr expr) {
-		return expr.traceFrom(new XY(0,0), this);
+
+	public Set<XY> trace(Expr expr) {
+		return expr.traceFrom(new XY(0, 0), this);
 	}
 
 	public Facility step(XY from, XY to) {
@@ -25,6 +28,34 @@ public class Facility {
 		doors.computeIfAbsent(from, ignored -> new HashSet<>()).add(to);
 		doors.computeIfAbsent(to, ignored -> new HashSet<>()).add(from);
 		return this;
+	}
+
+	public int calculateFurtherstPath() {
+
+		final XY initialRoom = new XY(0,0);
+		
+		final Map<XY, Integer> distanceByRoom = new HashMap<>();
+		distanceByRoom.put(initialRoom, 0);
+		final NavigableSet<XY> roomsToVisit = new TreeSet<>(Comparator.comparingInt(XY::getY).thenComparingInt(XY::getX));
+		
+		roomsToVisit.add(initialRoom);
+
+		while (!roomsToVisit.isEmpty()) {
+			final XY currentRoom = roomsToVisit.pollFirst();
+			final int currentDistance = distanceByRoom.get(currentRoom);
+			final Set<XY> neighbours = doors.getOrDefault(currentRoom, Collections.emptySet());
+			for (XY neighbour : neighbours) {
+				final int neighbourDistance = distanceByRoom.getOrDefault(neighbour, Integer.MAX_VALUE);
+				if (currentDistance + 1 < neighbourDistance) {
+					distanceByRoom.put(neighbour, currentDistance + 1);
+					roomsToVisit.add(neighbour);
+				}
+			}
+		}
+
+		return distanceByRoom.values().stream().mapToInt(Integer::intValue).max()
+				.orElseThrow(IllegalStateException::new);
+
 	}
 
 	@Override
@@ -56,8 +87,7 @@ public class Facility {
 				}
 				if (x == 0 && y == 0) {
 					sb.append('X');
-				}
-				else if (rooms.contains(current)) {
+				} else if (rooms.contains(current)) {
 					sb.append('.');
 				} else {
 					sb.append('#');

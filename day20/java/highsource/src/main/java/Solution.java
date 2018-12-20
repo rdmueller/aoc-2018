@@ -24,6 +24,10 @@ public class Solution {
 				final Facility facility = new Facility();
 				expr.traceFrom(new XY(0,0), facility);
 				System.out.println(facility);
+				// Part 1
+				{
+					System.out.println(facility.calculateFurtherstPath());
+				}
 			}
 		}
 	}
