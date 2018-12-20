@@ -1,0 +1,64 @@
+
+**https://adventofcode.com/2018/day/20[rtfChallenge]**
+
+== Part 1
+
+For this challenge I parsed the input into a custom struct `field` that already contains pointers to all its neighboring fields.
+
+[source, go]
+....
+include::./src/solution.go[struct]
+....
+
+The `field` has the following methods:
+. `calcNextState() *field` set `.nextState` depending on the neighboring fields
+. `switchState() *field` set `.state == .nextState`
+. `countNeighborsOfState(state string) int` return the number of neighbors being in the given `state`
+
+With those methods part 1 can be implemented as following.
+
+[plantuml, day18-p1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+while (for minute 0..9)
+  while (for each field)
+    :field.calcNextState();
+  endwhile
+  while (for each field)
+    :field.switchState();
+  endwhile
+endwhile
+:init trees, yards = 0;
+while (for each field)
+  :inc trees by
+  field.countNeighborsOfState("|");
+  :inc yards by
+  field.countNeighborsOfState("#");
+endwhile
+:print trees * yards;
+end
+@enduml
+....
+
+== Part 2
+
+My basic idea for part 2 is that at some point the scores will be recurring in a specific pattern - this is an observation I made when looking at the output. Even though I could have read the pattern from the output I wanted to detect it automatically (and in a generic way).
+So I implemented a `scoreFilter` struct that takes in values and has a `findRecurringPatternOfLength(l int) (int, []int)` method that returns the index (or `-1`) and the pattern that is being found of a given length. This is done by checking if there is a sequence of the given length that is occurs at least twice e.g. `02816123412348978` would return `1234` as a recurring sequence if you specify `l = 4`.
+
+The code for solution two checks if there is a recurring pattern of length `20..80` and if it finds one it stops the actual simulation (see part1).
+
+Given the round the pattern was first seen in and the actual pattern (= score sequence) we can extrapolate what the score will be reached in round 1000000000.
+
+== Go solution
+
+1. run: `go build -o game && ./game`
+1. Profit
+
+[source, go]
+....
+include::./src/solution.go[**]
+....
