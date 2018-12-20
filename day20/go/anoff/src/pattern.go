@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-func exandPattern(pattern string) []string {
+func expandPattern(pattern string) []string {
 	if pattern[0]!= '^' {
 		panic("Expect pattern to start with ^")
 	}

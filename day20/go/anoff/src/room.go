@@ -82,3 +82,25 @@ func (r *Room) dim() (int, int) {
 
 	return xdim, ydim
 }
+
+func (r *Room) markDoor(p Pos) *Room {
+	row := strings.Split(r.rows[p.y], "")
+	if row[p.x] == "?" {
+		if row[p.x-1] == "#" {
+			row[p.x] = "-"
+		} else {
+			row[p.x] = "|"
+		}
+		r.rows[p.y] = strings.Join(row, "")
+	}
+
+	return r
+}
+
+// mark all unknown positions as walls
+func (r *Room) fillWalls() *Room {
+	for i, _ := range r.rows {
+		r.rows[i] = strings.Replace(r.rows[i], "?", "#", -1)
+	}
+	return r
+}
