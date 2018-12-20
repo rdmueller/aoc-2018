@@ -6,7 +6,7 @@ import (
 type Path struct {
 	sequence string // the NWSE sequence string
 	ix int // current step in the sequence
-	pos Pos // position in the room
+	pos Position // position in the room
 	room *Room
 }
 
@@ -21,7 +21,7 @@ func NewPath(sequence string, r *Room) Path {
 func (p *Path) step() bool {
 	// helper to expand the room if necessary
 	// 	also adjust the target position if they are affected
-	expandToReach := func (dest Pos, intermediate Pos) (Pos, Pos) {
+	expandToReach := func (dest Position, intermediate Position) (Position, Position) {
 		xdim, ydim := p.room.dim()
 		if dest.x <= 0 {
 			p.room.expand(-1, 0)

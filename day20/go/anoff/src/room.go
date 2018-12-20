@@ -4,15 +4,11 @@ import (
 	"fmt"
 	"strings"
 )
-// (0,0) is always top left
-type Pos struct {
-	x, y int
-}
 type Room struct {
 	rows []string
-	origin Pos		// position that the paths are taken from
+	origin Position		// position that the paths are taken from
 }
-func (r *Room) isWall(p Pos) bool {
+func (r *Room) isWall(p Position) bool {
 	if r.rows[p.y][p.x] == '#' {
 		return true
 	}
@@ -29,7 +25,7 @@ func NewRoom() Room {
 	r.rows = append(r.rows, "#?#")
 	r.rows = append(r.rows, "?X?")
 	r.rows = append(r.rows, "#?#")
-	r.origin = Pos{1,1}
+	r.origin = Position{1,1}
 	return r
 }
 
@@ -83,7 +79,7 @@ func (r *Room) dim() (int, int) {
 	return xdim, ydim
 }
 
-func (r *Room) markDoor(p Pos) *Room {
+func (r *Room) markDoor(p Position) *Room {
 	row := strings.Split(r.rows[p.y], "")
 	if row[p.x] == "?" {
 		if row[p.x-1] == "#" {
@@ -103,4 +99,28 @@ func (r *Room) fillWalls() *Room {
 		r.rows[i] = strings.Replace(r.rows[i], "?", "#", -1)
 	}
 	return r
+}
+
+func (r *Room) getRooms() []Position {
+	var rooms []Position
+	for y, row := range r.rows {
+		for x, c := range row {
+			if c == '.' {
+				rooms = append(rooms, Position{x,y})
+			}
+		}
+	}
+	return rooms
+}
+
+func (r *Room) getWalkable() []Position {
+	var positions []Position
+	for y, row := range r.rows {
+		for x, c := range row {
+			if c == '.' || c == '|' || c == '-' || c == 'X' {
+				positions = append(positions, Position{x,y})
+			}
+		}
+	}
+	return positions
 }

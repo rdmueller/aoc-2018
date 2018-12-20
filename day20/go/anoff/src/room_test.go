@@ -34,11 +34,11 @@ func TestRoomExpand(t *testing.T) {
 
 func TestRoomIsWall(t *testing.T) {
 	room := NewRoom()
-	m := map[Pos]bool{
-		Pos{1,1}: false,
-		Pos{1,2}: false,
-		Pos{0,0}: true,
-		Pos{1,1}: false,
+	m := map[Position]bool{
+		Position{1,1}: false,
+		Position{1,2}: false,
+		Position{0,0}: true,
+		Position{1,1}: false,
 	}
 	for p, exp := range m {
 		if room.isWall(p) != exp {
