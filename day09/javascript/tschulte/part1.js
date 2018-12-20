@@ -31,19 +31,22 @@ class MarbleGame {
 
 // tag::Circle[]
 class Circle {
-  constructor(
-    marbles = [0],
-    currentMarble = 0,
-    lastAddedMarble = currentMarble
-  ) {
-    this.marbles = marbles;
-    this.currentIndex = marbles.indexOf(currentMarble);
-    this.lastAddedMarble = lastAddedMarble;
+  constructor() {
+    this.firstMarble = new CircleMarble(0);
+    this.currentMarble = this.firstMarble;
+    this.lastAddedMarble = 0;
   }
 
-  /** get the current marble for tests */
-  get currentMarble() {
-    return this.marbles[this.currentIndex];
+  /** Only for tests */
+  get marbles() {
+    const marbles = [];
+    let i = this.firstMarble;
+    while (true) {
+      marbles.push(i.value);
+      i = i.next;
+      if (i == this.firstMarble) return marbles;
+    }
+    return marbles;
   }
 
   /**
@@ -53,14 +56,12 @@ class Circle {
     const nextMarble = this.lastAddedMarble + 1;
     this.lastAddedMarble = nextMarble;
     if (nextMarble % 23 === 0) {
-      const index = this.checkIndex(this.currentIndex - 7);
-      const removed = this.marbles.splice(index, 1);
-      this.currentIndex = this.checkIndex(index);
-      return nextMarble + removed[0];
+      const removed = this.currentMarble.previousN(7);
+      this.currentMarble = removed.next;
+      removed.remove();
+      return nextMarble + removed.value;
     } else {
-      const index = this.checkIndex(this.currentIndex + 2);
-      this.marbles.splice(index, 0, nextMarble);
-      this.currentIndex = index;
+      this.currentMarble = this.currentMarble.nextN(1).insertAfter(nextMarble);
       return 0;
     }
   }
@@ -70,8 +71,47 @@ class Circle {
 }
 // end::Circle[]
 
+class CircleMarble {
+  constructor(value) {
+    this.value = value;
+    this.previous = this;
+    this.next = this;
+  }
+  /**
+   * Get the n-th next item
+   */
+  nextN(n) {
+    if (n === 0) return this;
+    return this.next.nextN(n - 1);
+  }
+  /**
+   * Get the n-th previous item
+   */
+  previousN(n) {
+    if (n === 0) return this;
+    return this.previous.previousN(n - 1);
+  }
+  /** insert a marble after this CircleMarble. Returns the new CircleMarble. */
+  insertAfter(marble) {
+    const circleMarble = new CircleMarble(marble);
+    circleMarble.next = this.next;
+    circleMarble.previous = this;
+    this.next.previous = circleMarble;
+    this.next = circleMarble;
+    return circleMarble;
+  }
+  /** remove this CircleMarble from the circle */
+  remove() {
+    this.next.previous = this.previous;
+    this.previous.next = this.next;
+    this.previous = this;
+    this.next = this;
+  }
+}
+
 module.exports = {
   parseLine,
   MarbleGame,
-  Circle
+  Circle,
+  CircleMarble
 };

@@ -3,6 +3,7 @@
 "use strict";
 
 const { parseLine } = require("./part1");
+const { bigGame } = require("./part2");
 
 const fs = require("fs");
 const input = fs.readFileSync("input.txt", "utf-8");
@@ -15,5 +16,5 @@ console.log("Day 05, part 1: " + game.highscore);
 //end::part1[]
 
 // tag::part2[]
-console.log("Day 05, part 2: ");
+console.log("Day 05, part 2: " + bigGame(game, 100).highscore);
 // end::part2[]

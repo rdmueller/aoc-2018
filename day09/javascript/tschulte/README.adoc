@@ -31,3 +31,20 @@ include::part1.js[tags=parseLine]
 ....
 
 Interestingly the final tests with the examples from the aoc description did not work, but since I could not find an error, I tried the solution with the real input and it was correct.
+
+== Second Star
+
+The second part should just have been to increase the lastMarble.
+
+[source, js]
+....
+include::part2.js[tags=bigGame]
+....
+
+But since my first solution used an array to store the circle data, this did not work because the solution used array modifications a lot which does not perform when the array is large.
+
+Therefore I had to refactor the code of part1 to use a double linked list.
+The code above for part 1 shows the refactored code.
+See the git history for the first solution.
+
+Interestingly, after refactoring the tests that did not pass in the first version did work.
