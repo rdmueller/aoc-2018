@@ -65,10 +65,10 @@ func (g *grid) getNeighbors(d *node) []*node {
 }
 // a dijkstra implementation that only allows simple 2D movement (non diagonal)
 // https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Pseudocode
-func Dijkstra2D(walkable []Position, start Position, dest Position) (bool, []Position) {
+func Dijkstra2D(walkable []*Position, start Position, dest Position) (bool, []*Position) {
 	var Q grid
 	for _, p := range walkable {
-		n := newNode(p)
+		n := newNode(*p)
 		if p.IsEqual(start) {
 			n.distance = 0
 		}
@@ -79,12 +79,12 @@ func Dijkstra2D(walkable []Position, start Position, dest Position) (bool, []Pos
 		u := Q.getShortest()
 		Q.remove(u)
 		if u.pos.IsEqual(dest) {
-			steps := []Position{u.pos}
+			steps := []*Position{&u.pos}
 			if u.prev == nil {
-				return false, []Position{Position{-1, -1}} // TODO: Check this case, why does this occur..
+				return false, []*Position{&Position{-1, -1}} // TODO: Check this case, why does this occur..
 			}
 			for p := u.prev; p.prev != nil; p = p.prev {
-				steps = append([]Position{p.pos}, steps...)
+				steps = append([]*Position{&p.pos}, steps...)
 			}
 			return true, steps
 		}
@@ -98,7 +98,7 @@ func Dijkstra2D(walkable []Position, start Position, dest Position) (bool, []Pos
 			}
 		}
 		if len(Q.nodes) == 0 {
-			return false, []Position{Position{-1, -1}}
+			return false, []*Position{&Position{-1, -1}}
 		}
 	}
 }

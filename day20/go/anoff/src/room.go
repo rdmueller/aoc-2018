@@ -7,6 +7,7 @@ import (
 type Room struct {
 	rows []string
 	origin Position		// position that the paths are taken from
+	passedRooms map[Position]bool
 }
 func (r *Room) isWall(p Position) bool {
 	if r.rows[p.y][p.x] == '#' {
@@ -26,6 +27,8 @@ func NewRoom() Room {
 	r.rows = append(r.rows, "?X?")
 	r.rows = append(r.rows, "#?#")
 	r.origin = Position{1,1}
+	r.passedRooms = make(map[Position]bool)
+	r.passedRooms[r.origin] = true
 	return r
 }
 
@@ -79,7 +82,8 @@ func (r *Room) dim() (int, int) {
 	return xdim, ydim
 }
 
-func (r *Room) markDoor(p Position) *Room {
+func (r *Room) markDoor(p *Position) *Room {
+	r.passedRooms[*p] = true
 	row := strings.Split(r.rows[p.y], "")
 	if row[p.x] == "?" {
 		if row[p.x-1] == "#" {
@@ -101,24 +105,45 @@ func (r *Room) fillWalls() *Room {
 	return r
 }
 
-func (r *Room) getRooms() []Position {
-	var rooms []Position
+func (r *Room) getRooms2() []*Position {
+	var rooms []*Position
+	for k, v := range r.passedRooms {
+		if v == true && k.x % 2 == 1 && k.y % 2 == 1 {
+			rooms = append(rooms, &k)
+		}
+	}
+	return rooms
+}
+
+func (r *Room) getWalkable2() []Position {
+	var walkable []Position
+	for k, v := range r.passedRooms {
+		if v == true {
+			walkable = append(walkable, k)
+		}
+	}
+	return walkable
+}
+
+func (r *Room) getRooms() []*Position {
+	var rooms []*Position
 	for y, row := range r.rows {
 		for x, c := range row {
 			if c == '.' {
-				rooms = append(rooms, Position{x,y})
+				rooms = append(rooms, &Position{x,y})
 			}
 		}
 	}
 	return rooms
 }
 
-func (r *Room) getWalkable() []Position {
-	var positions []Position
+func (r *Room) getWalkable() []*Position {
+	var positions []*Position
 	for y, row := range r.rows {
 		for x, c := range row {
 			if c == '.' || c == '|' || c == '-' || c == 'X' {
-				positions = append(positions, Position{x,y})
+				p := Position{x,y}
+				positions = append(positions, &p)
 			}
 		}
 	}

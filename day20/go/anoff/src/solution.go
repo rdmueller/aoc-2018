@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	_"strings"
 )
 
 func main() {
-	input := strings.Join(readInput("../input.txt"), "")
-	part1(input)
+	// input := strings.Join(readInput("../input.txt"), "")
+	// part1(input)
+	for i := 0; i < 1000; i++ {
+		part1("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$")
+	}
 }
 
 func exploreRoom(input string) *Room {
@@ -23,7 +26,7 @@ func exploreRoom(input string) *Room {
 type RoomScore struct {
 	distance int
 	room Position
-	steps []Position
+	steps []*Position
 }
 func part1(input string) {
 	room := exploreRoom(input)
@@ -33,16 +36,16 @@ func part1(input string) {
 	var farestRoom *RoomScore
 	var scores []*RoomScore
 	for _, r := range rooms {
-		isReachable, steps := Dijkstra2D(walkable, start, r)
+		isReachable, steps := Dijkstra2D(walkable, start, *r)
 		if isReachable {
-			rs := RoomScore{distance: len(steps), room: r, steps: steps}
+			rs := RoomScore{distance: len(steps), room: *r, steps: steps}
 			scores = append(scores, &rs)
 			if farestRoom == nil || rs.distance > farestRoom.distance {
 				farestRoom = &rs
 			}
 		}
 	}
-	fmt.Println("Solution for part 1:", farestRoom.distance/2, ", for room", farestRoom.room)
+	//fmt.Println("Solution for part 1:", farestRoom.distance/2, ", for room", farestRoom.room)
 }
 
 func animate(path *Path) {

@@ -21,7 +21,7 @@ func NewPath(sequence string, r *Room) Path {
 func (p *Path) step() bool {
 	// helper to expand the room if necessary
 	// 	also adjust the target position if they are affected
-	expandToReach := func (dest Position, intermediate Position) (Position, Position) {
+	expandToReach := func (dest *Position, intermediate *Position) {
 		xdim, ydim := p.room.dim()
 		if dest.x <= 0 {
 			p.room.expand(-1, 0)
@@ -36,7 +36,6 @@ func (p *Path) step() bool {
 		} else if dest.y > ydim-1 {
 			p.room.expand(0, 1)
 		}
-		return dest, intermediate
 	}
 	step := p.sequence[p.ix]
 	intermediate := p.pos
@@ -56,12 +55,12 @@ func (p *Path) step() bool {
 			dest.x -= 2
 			intermediate.x--
 	}
-	dest, intermediate = expandToReach(dest, intermediate)
+	expandToReach(&dest, &intermediate)
 	if p.room.isWall(dest) || p.room.isWall(intermediate) {
 		panic("Did not expect to hit a wall")
 	}
 	// mark the path as discovered
-	p.room.markDoor(intermediate)
+	p.room.markDoor(&intermediate).markDoor(&dest)
 	p.pos = dest
 	p.ix++
 	if p.ix >= len(p.sequence) {
