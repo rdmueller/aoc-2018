@@ -6,6 +6,8 @@ import java.io.StringReader;
 import expr.Expr;
 import expr.ParseException;
 import expr.RouteParser;
+import facility.Facility;
+import facility.XY;
 
 public class Solution {
 
@@ -19,7 +21,9 @@ public class Solution {
 				
 				final RouteParser parser = new RouteParser(new StringReader(line));
 				final Expr expr = parser.parseExpr();
-				System.out.println(expr);
+				final Facility facility = new Facility();
+				expr.traceFrom(new XY(0,0), facility);
+				System.out.println(facility);
 			}
 		}
 	}
