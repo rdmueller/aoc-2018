@@ -66,10 +66,10 @@ func TestGridRemove(t *testing.T) {
 }
 
 func TestDijkstra2DUnobstructed(t *testing.T) {
-	var walkable []Position
+	var walkable []*Position
 	for x := 0; x < 10; x++ {
 		for y := 0; y < 10; y++ {
-			walkable = append(walkable, Position{x, y})
+			walkable = append(walkable, &Position{x, y})
 		}
 	}
 	_, path := Dijkstra2D(walkable, Position{0, 0}, Position{1, 3})
@@ -88,11 +88,11 @@ func TestDijkstra2DUnobstructed(t *testing.T) {
 }
 
 func TestDijkstra2DObstructed(t *testing.T) {
-	var walkable []Position
+	var walkable []*Position
 	for x := 0; x < 10; x++ {
 		for y := 0; y < 10; y++ {
 			if y != 0 || x < 2 || x > 5 {
-				walkable = append(walkable, Position{x, y})
+				walkable = append(walkable, &Position{x, y})
 			}
 		}
 	}
