@@ -1,9 +1,17 @@
 package main
 
 import (
-	"strings"
+	"fmt"
 )
-
+type Pattern struct {
+	sequence []rune
+}
+func (p *Pattern) get(ix int) rune {
+	return p.sequence[ix]
+}
+func (p *Pattern) length() int {
+	return len(p.sequence)
+}
 func expandPattern(pattern string) []string {
 	if pattern[0]!= '^' {
 		panic("Expect pattern to start with ^")
@@ -11,14 +19,12 @@ func expandPattern(pattern string) []string {
 	if pattern[len(pattern)-1] != '$' {
 		panic("Expect pattern to end with $")
 	}
-	combinations, _ := expandGroup(pattern[1:len(pattern)-1])
+	p := Pattern{[]rune(pattern[1:len(pattern)-1])}
+	combinations, _ := expandGroup(&p, 0)
 	return combinations
 }
 // (ABC|BVD|S(A|B)C)F -> []string{"ABCF", "BCDF", "SACF", "SBCF"}
-func expandGroup(pattern string) ([]string, int) {
-	if strings.Count(pattern, "(") > strings.Count(pattern, ")") {
-		panic("Parenthesis unbalanced, should have at least as many ) as (")
-	}
+func expandGroup(pattern *Pattern, ix int) ([]string, int) {
 	var combinations []string
 	activeCombinations := []string{""}
 	appendToAll := func (slice []string, s string) []string {
@@ -27,12 +33,12 @@ func expandGroup(pattern string) ([]string, int) {
 		}
 		return slice
 	}
-	for i := 0; i < len(pattern); i++ {
-		c := string(pattern[i])
+	for ; ix < pattern.length(); ix++ {
+		c := string(pattern.get(ix))
 		switch c {
 			case "(":
 				// extract sub groups
-				options, offset := expandGroup(pattern[i+1:])
+				options, offset := expandGroup(pattern, ix+1)
 				var c []string
 				for _, opt := range options {
 					for _, comb := range activeCombinations {
@@ -40,17 +46,18 @@ func expandGroup(pattern string) ([]string, int) {
 					}
 				}
 				activeCombinations = c
-				i += offset
+				ix = offset
+				fmt.Println("Index updated", ix)
 			case "|":
 				combinations = append(combinations, activeCombinations...)
 				activeCombinations = []string{""}
 			case ")":
 				combinations = append(combinations, activeCombinations...)
-				return combinations, i+1
+				return combinations, ix
 			default:
 				activeCombinations = appendToAll(activeCombinations, c)
 		}
 	}
 	combinations = append(combinations, activeCombinations...)
-	return combinations, len(pattern)
+	return combinations, ix
 }
