@@ -50,3 +50,15 @@ func TestExpandGroupTrailing(t *testing.T) {
 		t.Error("Not returning the correct combinations", exp2, res2)
 	}
 }
+
+func testExpandGroupSkipGroup(t *testing.T) {
+	pattern := "ENNWSWW(NEWS|)SSSE"
+	exp := []string{
+		"ENNWSWWSSSE",
+		"ENNWSWWNEWSSSSE",
+	}
+	res, _ := expandGroup(pattern)
+	if !StringSliceEqual(exp, res) {
+		t.Error("Not returning the correct paths", exp, res)
+	}
+}
