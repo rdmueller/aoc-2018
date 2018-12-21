@@ -57,6 +57,35 @@ public class Facility {
 				.orElseThrow(IllegalStateException::new);
 
 	}
+	
+	public int calculateNumberOfRoomsWithShortesPathOver999() {
+
+		final XY initialRoom = new XY(0,0);
+		
+		final Map<XY, Integer> distanceByRoom = new HashMap<>();
+		distanceByRoom.put(initialRoom, 0);
+		final NavigableSet<XY> roomsToVisit = new TreeSet<>(Comparator.comparingInt(XY::getY).thenComparingInt(XY::getX));
+		
+		roomsToVisit.add(initialRoom);
+
+		while (!roomsToVisit.isEmpty()) {
+			final XY currentRoom = roomsToVisit.pollFirst();
+			final int currentDistance = distanceByRoom.get(currentRoom);
+			final Set<XY> neighbours = doors.getOrDefault(currentRoom, Collections.emptySet());
+			for (XY neighbour : neighbours) {
+				final int neighbourDistance = distanceByRoom.getOrDefault(neighbour, Integer.MAX_VALUE);
+				if (currentDistance + 1 < neighbourDistance) {
+					distanceByRoom.put(neighbour, currentDistance + 1);
+					roomsToVisit.add(neighbour);
+				}
+			}
+		}
+
+		return (int) distanceByRoom.values().stream().mapToInt(Integer::intValue).
+				filter(l -> l >= 1000).count();
+
+	}
+	
 
 	@Override
 	public String toString() {

@@ -28,6 +28,10 @@ public class Solution {
 				{
 					System.out.println(facility.calculateFurtherstPath());
 				}
+				// Part 2
+				{
+					System.out.println(facility.calculateNumberOfRoomsWithShortesPathOver999());
+				}
 			}
 		}
 	}
