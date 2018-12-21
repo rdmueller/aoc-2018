@@ -17,62 +17,92 @@ func parsePattern(pattern string) string {
 // return new position and offset in string
 func walkPattern(pattern string, area *Area, startPositions map[*vPosition]bool, exec func(*Path)) (map[*vPosition]bool, int) {
 	endPositions := make(map[*vPosition]bool)
-	doSequence := func (sequence string) []Path {
-		var paths []Path
+	doSequence := func (sequence string) []*Path {
+		var paths []*Path
 		for s := range startPositions {
 			var p Path
-			area.alignPosition(s)
-			p.pos = *s // empty path should also be added with correct start pos
+			start := *s
+			area.alignPosition(&start)
 
 			if len(sequence) > 0 {
+				p = NewPath(sequence, area)
+				p.pos = start // fix position again because p is being overwritten
 				// fmt.Println("\nWalking sequence", sequence, "from", p.pos)
 				// area.printPosition(p.pos)
-				p = NewPath(sequence, area)
-				p.pos = *s // fix position again because p is being overwritten
 				exec(&p)
+				paths = append(paths, &p)
 			}
-			paths = append(paths, p)
 		}
 		return paths
 	}
+	cleanMap := func (old map[*vPosition]bool) map[*vPosition]bool {
+		n := make(map[*vPosition]bool)
+		seen := make(map[vPosition]bool)
+		for v := range old {
+			area.alignPosition(v)
+			p := *v
+			if exists, _ := seen[p]; !exists {
+				seen[p] = true
+				n[v] = true
+			}
+		}
+		return n
+	}
+	startPositions = cleanMap(startPositions)
 	sequence := ""
 	for i := 0; i < len(pattern); i++ {
 		c := string(pattern[i])
 		switch c {
 			case "(":
 				paths := doSequence(sequence)
+				// fix offsets after moving
 				startPositions = make(map[*vPosition]bool)
 				for _, p := range paths {
-					startPositions[&p.pos] = true
+					e := p.pos
+					startPositions[&e] = true
 				}
-				// start = p.pos // update position after walking the sequence
 				sequence = ""
 				newPos, offset := walkPattern(pattern[i+1:], area, startPositions, exec)
+				// only use those ends as new starts
+				startPositions = make(map[*vPosition]bool)
 				for p := range newPos {
-					endPositions[p] = true
+					area.alignPosition(p)
+					startPositions[p] = true
 				}
 				i += offset
 				// fmt.Println("Index updated", i)
 			case "|":
 				paths := doSequence(sequence)
 				for _, p := range paths {
-					endPositions[&p.pos] = true
+					e := p.pos
+					endPositions[&e] = true
 				}
 				sequence = ""
 			case ")":
 				// add the "skip this group" option
 				if len(sequence) == 0 {
 					for s := range startPositions {
+						area.alignPosition(s)
 						endPositions[s] = true
 					}
 				}
-				doSequence(sequence)
+				paths := doSequence(sequence)
+				for _, p := range paths {
+					e := p.pos
+					endPositions[&e] = true
+				}
 				sequence = ""
-				return endPositions, i
+				endPositions = cleanMap(endPositions)
+				// fmt.Println("Returning end positions as new starts")
+				// for p := range endPositions {
+				// 	e := *p
+				// 	fmt.Println(" ", e, p)
+				// }
+				return endPositions, i+1
 			default:
 				sequence += c
 		}
 	}
-
+	doSequence(sequence)
 	return endPositions, -1
 }

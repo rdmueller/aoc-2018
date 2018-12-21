@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	input := strings.Join(readInput("../test0.txt"), "")
+	input := strings.Join(readInput("../test1.txt"), "")
 	part1(input)
 }
 
