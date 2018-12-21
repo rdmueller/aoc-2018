@@ -22,12 +22,13 @@ func walkPattern(pattern string, area *Area, startPositions map[*vPosition]bool,
 		for s := range startPositions {
 			var p Path
 			area.alignPosition(s)
-			p.pos = *s
+			p.pos = *s // empty path should also be added with correct start pos
 
 			if len(sequence) > 0 {
-				fmt.Println("\nWalking sequence", sequence, "from", p.pos)
-				area.printPosition(p.pos)
+				// fmt.Println("\nWalking sequence", sequence, "from", p.pos)
+				// area.printPosition(p.pos)
 				p = NewPath(sequence, area)
+				p.pos = *s // fix position again because p is being overwritten
 				exec(&p)
 			}
 			paths = append(paths, p)
