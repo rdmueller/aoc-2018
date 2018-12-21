@@ -15,50 +15,61 @@ func parsePattern(pattern string) string {
 }
 
 // return new position and offset in string
-func walkPattern(pattern string, area *Area, start Position, exec func(*Path)) (Position, int) {
-	doSequence := func (sequence string) Path {
-		var p Path
-		if len(sequence) > 0 {
-			// fmt.Println("\nWalking sequence", sequence, "from", start)
-			// area.printPosition(start)
-			p = NewPath(sequence, area)
-			p.pos = start
-			exec(&p)
+func walkPattern(pattern string, area *Area, startPositions map[vPosition]bool, exec func(*Path)) (map[vPosition]bool, int) {
+	endPositions := make(map[vPosition]bool)
+	doSequence := func (sequence string) []Path {
+		var paths []Path
+		for s := range startPositions {
+			var p Path
+			p.pos = s
+			if len(sequence) > 0 {
+				// fmt.Println("\nWalking sequence", sequence, "from", start)
+				// area.printPosition(start)
+				p = NewPath(sequence, area)
+				exec(&p)
+			}
+			paths = append(paths, p)
 		}
-		return p
+		return paths
 	}
 	sequence := ""
 	for i := 0; i < len(pattern); i++ {
 		c := string(pattern[i])
 		switch c {
 			case "(":
-				p := doSequence(sequence)
-				start = p.pos // update position after walking the sequence
+				paths := doSequence(sequence)
+				startPositions = make(map[vPosition]bool)
+				for _, p := range paths {
+					startPositions[p.pos] = true
+				}
+				// start = p.pos // update position after walking the sequence
 				sequence = ""
-				newPos, offset := walkPattern(pattern[i+1:], area, start, exec)
-				start = newPos
+				newPos, offset := walkPattern(pattern[i+1:], area, startPositions, exec)
+				for p := range newPos {
+					endPositions[p] = true
+				}
 				i += offset
 				// fmt.Println("Index updated", i)
 			case "|":
-				// if map expanded, move the position by the delta of origin as well
-				var pOrigin Position
-				pOrigin = area.origin
-				doSequence(sequence)
-				// align to changed origin if applicable
-				if !area.origin.IsEqual(pOrigin) {
-					//fmt.Println("fixing offset")
-					start.x -= pOrigin.x - area.origin.x
-					start.y -= pOrigin.y - area.origin.y
+				paths := doSequence(sequence)
+				for _, p := range paths {
+					endPositions[p.pos] = true
 				}
 				sequence = ""
 			case ")":
+				// add the "skip this group" option
+				if len(sequence) == 0 {
+					for s := range startPositions {
+						endPositions[s] = true
+					}
+				}
 				doSequence(sequence)
 				sequence = ""
-				return start, i
+				return endPositions, i
 			default:
 				sequence += c
 		}
 	}
 
-	return Position{-1, -1}, -1
+	return endPositions, -1
 }

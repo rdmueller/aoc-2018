@@ -2,11 +2,15 @@ package main
 
 import (
 )
-
+// versioned position
+type vPosition struct {
+	Position
+	version int
+}
 type Path struct {
 	sequence string // the NWSE sequence string
 	ix int // current step in the sequence
-	pos Position // position in the map
+	pos vPosition // position in the map
 	area *Area
 }
 
@@ -21,7 +25,7 @@ func NewPath(sequence string, r *Area) Path {
 func (p *Path) step() bool {
 	// helper to expand the map if necessary
 	// 	also adjust the target position if they are affected
-	expandToReach := func (dest *Position, intermediate *Position) {
+	expandToReach := func (dest *vPosition, intermediate *vPosition) {
 		xdim, ydim := p.area.dim()
 		if dest.x <= 0 {
 			p.area.expand(-1, 0)

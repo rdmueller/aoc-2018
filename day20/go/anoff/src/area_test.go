@@ -34,11 +34,11 @@ func TestAreaExpand(t *testing.T) {
 
 func TestAreaIsWall(t *testing.T) {
 	area := NewArea()
-	m := map[Position]bool{
-		Position{1,1}: false,
-		Position{1,2}: false,
-		Position{0,0}: true,
-		Position{1,1}: false,
+	m := map[vPosition]bool{
+		vPosition{Position{1,1,}, area.expV}: false,
+		vPosition{Position{1,2,}, area.expV}: false,
+		vPosition{Position{0,0,}, area.expV}: true,
+		vPosition{Position{1,1,}, area.expV}: false,
 	}
 	for p, exp := range m {
 		if area.isWall(p) != exp {
