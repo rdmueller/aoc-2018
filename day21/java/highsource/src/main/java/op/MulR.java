@@ -1,5 +1,7 @@
 package op;
 
+import java.math.BigInteger;
+
 public class MulR extends OpRR {
 
 	public MulR(int registerA, int registerB, int registerC) {
@@ -7,7 +9,7 @@ public class MulR extends OpRR {
 	}
 
 	@Override
-	protected int calculate(int a, int b) {
-		return a * b;
+	protected BigInteger calculate(BigInteger a, BigInteger b) {
+		return a.multiply(b);
 	}
 }

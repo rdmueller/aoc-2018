@@ -117,7 +117,7 @@ public class OpTest {
 	}
 
 	@Test
-	public void Eqrr() {
+	public void eqrr() {
 		Op op = new EqRR(0, 1, 2);
 		assertThat(op.apply(new Registers(13, 14, 3, 125, 10, 20))).isEqualTo(new Registers(13, 14, 0, 125, 10, 20));
 		assertThat(op.apply(new Registers(14, 14, 3, 125, 10, 20))).isEqualTo(new Registers(14, 14, 1, 125, 10, 20));

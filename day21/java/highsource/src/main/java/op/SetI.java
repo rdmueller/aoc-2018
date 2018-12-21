@@ -1,5 +1,7 @@
 package op;
 
+import java.math.BigInteger;
+
 import register.Registers;
 
 public class SetI extends Op {
@@ -20,7 +22,7 @@ public class SetI extends Op {
 
 	@Override
 	public final Registers apply(Registers registers) {
-		final int a = this.valueA;
+		final BigInteger a = BigInteger.valueOf(this.valueA);
 		final int c = this.registerC;
 		return registers.set(c, a);
 	}

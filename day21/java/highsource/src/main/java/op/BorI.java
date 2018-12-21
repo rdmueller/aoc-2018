@@ -1,5 +1,7 @@
 package op;
 
+import java.math.BigInteger;
+
 public class BorI extends OpRI {
 
 	public BorI(int registerA, int valueB, int registerC) {
@@ -7,7 +9,7 @@ public class BorI extends OpRI {
 	}
 
 	@Override
-	protected int calculate(int a, int b) {
-		return a | b;
+	protected BigInteger calculate(BigInteger a, BigInteger b) {
+		return a.or(b);
 	}
 }

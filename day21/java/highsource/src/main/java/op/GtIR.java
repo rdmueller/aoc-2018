@@ -1,5 +1,7 @@
 package op;
 
+import java.math.BigInteger;
+
 public class GtIR extends OpIR {
 
 	public GtIR(int valueA, int registerB, int registerC) {
@@ -7,8 +9,8 @@ public class GtIR extends OpIR {
 	}
 
 	@Override
-	protected int calculate(int a, int b) {
-		return a > b ? 1 : 0;
+	protected BigInteger calculate(BigInteger a, BigInteger b) {
+		return a.compareTo(b) > 0 ? BigInteger.ONE : BigInteger.ZERO;
 	}
 
 }

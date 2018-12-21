@@ -1,5 +1,6 @@
 package program;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -14,12 +15,12 @@ public class Program {
 	private Registers registers;
 	
 	public int getInstructionPointer() {
-		return registers.get(instructionPointerRegister);
+		return registers.get(instructionPointerRegister).intValue();
 	}
 	
 	private void increaseInstructionPointer() {
 		final int ip = getInstructionPointer();
-		registers = registers.set(instructionPointerRegister, ip + 1);
+		registers = registers.set(instructionPointerRegister, BigInteger.valueOf(ip + 1));
 	}
 	
 	public Registers getRegisters() {

@@ -1,13 +1,14 @@
 package op;
 
+import java.math.BigInteger;
+
 public class AddI extends OpRI {
 
 	public AddI(int registerA, int valueB, int registerC) {
 		super(registerA, valueB, registerC);
 	}
-
 	@Override
-	protected int calculate(int a, int b) {
-		return a + b;
+	protected BigInteger calculate(BigInteger a, BigInteger b) {
+		return a.add(b);
 	}
 }

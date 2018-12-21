@@ -1,9 +1,12 @@
 package op;
 
+import java.math.BigInteger;
+
 import register.Registers;
 
 public abstract class OpIR extends Op{
 	
+	// TODO
 	private final int valueA;
 	private final int registerB;
 	private final int registerC;
@@ -23,13 +26,14 @@ public abstract class OpIR extends Op{
 	
 	@Override
 	public final Registers apply(Registers registers) {
-		int a = this.valueA;
-		int b = registers.get(this.registerB);
+		// TODO
+		BigInteger a = BigInteger.valueOf(this.valueA);
+		BigInteger b = registers.get(this.registerB);
 		int c = this.registerC;
-		int result = calculate(a, b);
+		BigInteger result = calculate(a, b);
 		return registers.set(c, result);
 	}
 	
-	protected abstract int calculate (int a, int b);
+	protected abstract BigInteger calculate (BigInteger a, BigInteger b);
 }
 
