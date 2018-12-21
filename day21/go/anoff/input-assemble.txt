@@ -1,0 +1,80 @@
+Registers A B C D E* F
+#ip 4
+
+00  seti 123 0 3      D = 123
+01  bani 3 456 3      D = D(123) & 456
+02  eqri 3 72 3       D = 72 == D  // true
+03  addr 3 4 4        E* = E* + D     // GOTO 05
+04  seti 0 0 4        E* = 0          // GOTO 01
+05  seti 0 2 3        D = 0
+06  bori 3 65536 2    C = D | 65536 
+07  seti 1397714 1 3  D = 1397714
+08  bani 2 255 5      F = C & 255
+09  addr 3 5 3        D = D + F
+10  bani 3 16777215 3 D = D & 16777215
+11  muli 3 65899 3    D = D * 65899
+12  bani 3 16777215 3 D = D & 16777215
+13  gtir 256 2 5      F = 256 > C
+14  addr 5 4 4        E* = F + E*
+15  addi 4 1 4        E* = E* + 1     // GOTO 17
+16  seti 27 6 4       E* = 27         // GOTO 28
+17  seti 0 6 5        F = 0
+18  addi 5 1 1        B = F + 1
+19  muli 1 256 1      B = B * 256
+20  gtrr 1 2 1        B = B > C
+21  addr 1 4 4        E* = E* + B
+22  addi 4 1 4        E* = E* + 1     // GOT 24
+23  seti 25 2 4       E* = 25         // GOTO 26
+24  addi 5 1 5        F = F + 1
+25  seti 17 0 4       E* = 17         // GOTO 18
+26  setr 5 7 2        C = F
+27  seti 7 4 4        E* = 7          // GOTO 08
+28  eqrr 3 0 5        F = D == A  // only line to influence
+29  addr 5 4 4        E* = F + E*
+30  seti 5 8 4        E* = 5          // GOTO 06
+
+As the first few lines (character vs num check) are true we can start the actual program at line 5
+
+05        D = 0
+06        C = D | 65536
+07        D = 1397714
+08        F = C & 255
+09        D = D + F
+10        D = D & 16777215
+11        D = D * 65899
+12        D = D & 16777215
+13..16    if 256 > C { F = 1; GOTO 28 } else { F = 0; GOTO 17 }
+17        F = 0
+18        B = F + 1
+19        B = B * 256
+20..23    if B > C { B = 1; GOTO 26 } else { B = 0; GOTO 24 }
+24        F = F + 1
+25        E* = 17         // GOTO 18
+26        C = F
+27        E* = 7          // GOTO 08
+28..30    if D == A { F = 1; EXIT } else { F = 0; GOTO 06} // only line to influence
+
+D := 0
+while D != A {
+  C = D | 65536         // 06
+  D = 1397714
+  while {
+    F = C & 255         // 08
+    D = D + F
+    D = D & 16777215
+    D = D * 65899
+    D = D & 16777215
+    if 256 > C {   // 13..16
+      break
+    }
+    for F := 0; B <= C ; F++ {
+      B := 256 * (F + 1)
+    }
+    C = F
+  }
+}
+EXIT
+
+
+1039046, too low
+1222607, too low
