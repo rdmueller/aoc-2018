@@ -54,6 +54,7 @@ As the first few lines (character vs num check) are true we can start the actual
 27        E* = 7          // GOTO 08
 28..30    if D == A { F = 1; EXIT } else { F = 0; GOTO 06} // only line to influence
 
+// tag::def[assembled]
 D := 0
 while D != A {
   C = D | 65536         // 06
@@ -74,7 +75,4 @@ while D != A {
   }
 }
 EXIT
-
-
-1039046, too low
-1222607, too low
+// end::def[assembled]
