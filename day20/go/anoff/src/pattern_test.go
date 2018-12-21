@@ -17,8 +17,12 @@ func testExpandGroup(t *testing.T) {
 	if len(exp) != len(res) {
 		t.Error("Mismatched number of combinations", len(exp), len(res))
 	}
-	if !StringSliceEqual(exp, res) {
-		t.Error("Not returning the correct paths", exp, res)
+	var resStr []string
+	for _, c := range res {
+		resStr = append(resStr, c.toString())
+	}
+	if !StringSliceEqual(exp, resStr) {
+		t.Error("Not returning the correct paths", exp, resStr)
 	}
 }
 
@@ -35,8 +39,12 @@ func TestExpandGroupTrailing(t *testing.T) {
 	if len(exp) != len(res) {
 		t.Error("Mismatched number of combinations", len(exp), len(res))
 	}
-	if !StringSliceEqual(exp, res) {
-		t.Error("Not returning the correct combinations", exp, res)
+	var resStr []string
+	for _, c := range res {
+		resStr = append(resStr, c.toString())
+	}
+	if !StringSliceEqual(exp, resStr) {
+		t.Error("Not returning the correct combinations", exp, resStr)
 	}
 
 	pattern2 := Pattern{[]rune("ENWWW(NEEE|SSE(EE|N))")}
@@ -46,8 +54,12 @@ func TestExpandGroupTrailing(t *testing.T) {
 		"ENWWWSSEN",
 	}
 	res2, _ := expandGroup(&pattern2, 0)
-	if !StringSliceEqual(exp2, res2) {
-		t.Error("Not returning the correct combinations", exp2, res2)
+	var resStr2 []string
+	for _, c := range res2 {
+		resStr2 = append(resStr2, c.toString())
+	}
+	if !StringSliceEqual(exp, resStr2) {
+		t.Error("Not returning the correct combinations", exp2, resStr2)
 	}
 }
 
@@ -58,7 +70,11 @@ func testExpandGroupSkipGroup(t *testing.T) {
 		"ENNWSWWNEWSSSSE",
 	}
 	res, _ := expandGroup(&pattern, 0)
-	if !StringSliceEqual(exp, res) {
-		t.Error("Not returning the correct paths", exp, res)
+	var resStr []string
+	for _, c := range res {
+		resStr = append(resStr, c.toString())
+	}
+	if !StringSliceEqual(exp, resStr) {
+		t.Error("Not returning the correct paths", exp, resStr)
 	}
 }
