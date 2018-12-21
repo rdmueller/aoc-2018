@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func TestExploreRoom(t *testing.T) {
+func TestExploreArea(t *testing.T) {
 	m := map[string]string{
 		"../test0.txt": "../test0-out.txt",
 		"../test1.txt": "../test1-out.txt",
@@ -14,7 +14,7 @@ func TestExploreRoom(t *testing.T) {
 	for in, out := range m {
 		input := strings.Join(readInput(in), "")
 		exp := readInput(out)
-		r := exploreRoom(input)
+		r := exploreArea(input)
 		for y, line := range exp {
 			for x, _ := range line {
 				if r.rows[y][x] != exp[y][x] {
