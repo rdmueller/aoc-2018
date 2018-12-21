@@ -44,9 +44,12 @@ public class Solution {
 				final Program program = new Program(boundToRegister, ops, new Registers(0, 0, 0, 0, 0, 0));
 
 				while (program.execute()) {
-					System.out.println();
+					if (program.getInstructionPointer() == 28) {
+						System.out.print(program.getRegisters().get(3));
+						break;
+					}
 				}
-				System.out.println("Registers after execution:" + program.getRegisters());
+//				System.out.println("Registers after execution:" + program.getRegisters());
 			}
 		}
 	}
