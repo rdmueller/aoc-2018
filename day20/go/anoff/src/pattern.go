@@ -10,43 +10,55 @@ func parsePattern(pattern string) string {
 	if pattern[len(pattern)-1] != '$' {
 		panic("Expect pattern to end with $")
 	}
+	fmt.Print()
 	return pattern[1:len(pattern)-1]
 }
 
-func expandGroup(pattern *Pattern, ix int) ([]*Chunk, int) {
-	var combinations []*Chunk
-	activeCombinations := []*Chunk{&Chunk{sequence:""}}
-	appendToAll := func (chunks []*Chunk, s string) {
-		for i := 0; i < len(chunks); i++ {
-			chunks[i].append(s)
+// return new position and offset in string
+func walkPattern(pattern string, area *Area, start Position, exec func(*Path)) (Position, int) {
+	doSequence := func (sequence string) Path {
+		var p Path
+		if len(sequence) > 0 {
+			// fmt.Println("\nWalking sequence", sequence, "from", start)
+			// area.printPosition(start)
+			p = NewPath(sequence, area)
+			p.pos = start
+			exec(&p)
 		}
+		return p
 	}
-	for ; ix < pattern.length(); ix++ {
-		c := string(pattern.get(ix))
+	sequence := ""
+	for i := 0; i < len(pattern); i++ {
+		c := string(pattern[i])
 		switch c {
 			case "(":
-				// extract sub groups
-				options, offset := expandGroup(pattern, ix+1)
-				var c []*Chunk
-				for _, opt := range options {
-					for _, comb := range activeCombinations {
-						opt.prev = comb
-						c = append(c, opt)
-					}
-				}
-				activeCombinations = c
-				ix = offset
-				fmt.Println("Index updated", ix)
+				p := doSequence(sequence)
+				start = p.pos // update position after walking the sequence
+				sequence = ""
+				newPos, offset := walkPattern(pattern[i+1:], area, start, exec)
+				start = newPos
+				i += offset
+				// fmt.Println("Index updated", i)
 			case "|":
-				combinations = append(combinations, activeCombinations...)
-				activeCombinations = []*Chunk{&Chunk{sequence:""}}
+				// if map expanded, move the position by the delta of origin as well
+				var pOrigin Position
+				pOrigin = area.origin
+				doSequence(sequence)
+				// align to changed origin if applicable
+				if !area.origin.IsEqual(pOrigin) {
+					//fmt.Println("fixing offset")
+					start.x -= pOrigin.x - area.origin.x
+					start.y -= pOrigin.y - area.origin.y
+				}
+				sequence = ""
 			case ")":
-				combinations = append(combinations, activeCombinations...)
-				return combinations, ix
+				doSequence(sequence)
+				sequence = ""
+				return start, i
 			default:
-				appendToAll(activeCombinations, c)
+				sequence += c
 		}
 	}
-	combinations = append(combinations, activeCombinations...)
-	return combinations, ix
+
+	return Position{-1, -1}, -1
 }

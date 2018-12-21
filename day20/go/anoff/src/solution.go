@@ -6,21 +6,17 @@ import (
 )
 
 func main() {
-	input := strings.Join(readInput("../input.txt"), "")
+	input := strings.Join(readInput("../test0.txt"), "")
 	part1(input)
-	// for i := 0; i < 100; i++ {
-	// 	part1("^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$")
-	// }
 }
 
 func exploreArea(input string) *Area {
-	paths := expandPattern(input)
-	area := NewArea()
-	fmt.Println("Exploring", len(paths), "paths")
-	for _, p := range paths {
-		path := NewPath(p.toString(), &area)
-		path.walk()
+	walk := func(p *Path) {
+		p.walk()
 	}
+	pattern := parsePattern(input)
+	area := NewArea()
+	walkPattern(pattern, &area, area.origin, walk)
 	area.fillWalls()
 	return &area
 }
@@ -32,6 +28,7 @@ type RoomScore struct {
 func part1(input string) {
 	area := exploreArea(input)
 	fmt.Println("Area explored")
+	area.print()
 	walkable := area.getWalkable()
 	areas := area.getRooms()
 	start := area.origin

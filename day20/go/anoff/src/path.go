@@ -60,7 +60,7 @@ func (p *Path) step() bool {
 		panic("Did not expect to hit a wall")
 	}
 	// mark the path as discovered
-	p.area.markDoor(&intermediate).markDoor(&dest)
+	p.area.markDoor(intermediate).markDoor(dest)
 	p.pos = dest
 	p.ix++
 	if p.ix >= len(p.sequence) {

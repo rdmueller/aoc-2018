@@ -20,6 +20,19 @@ func (r *Area) print() {
 	}
 }
 
+func (r *Area) printPosition(p Position) {
+	for y, row := range r.rows {
+		for x, c := range row {
+			if x == p.x && y == p.y {
+				fmt.Print("0")
+			} else {
+				fmt.Print(string(c))
+			}
+		}
+		fmt.Println("")
+	}
+}
+
 func NewArea() Area {
 	var r Area
 	r.rows = append(r.rows, "#?#")
@@ -79,7 +92,7 @@ func (r *Area) dim() (int, int) {
 	return xdim, ydim
 }
 
-func (r *Area) markDoor(p *Position) *Area {
+func (r *Area) markDoor(p Position) *Area {
 	row := strings.Split(r.rows[p.y], "")
 	if row[p.x] == "?" {
 		if row[p.x-1] == "#" {
