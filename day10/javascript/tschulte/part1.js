@@ -26,8 +26,9 @@ class Light {
 
 // tag::Lights[]
 class Lights {
-  constructor(lights) {
+  constructor(lights, time = 0) {
     this.lights = lights;
+    this.time = time;
     const min = (min, val) => (val < min ? val : min);
     const max = (max, val) => (val > max ? val : max);
     const x = lights.map(val => val.x);
@@ -44,7 +45,7 @@ class Lights {
     return 1 + this.maxY - this.minY;
   }
   move() {
-    return new Lights(this.lights.map(light => light.move()));
+    return new Lights(this.lights.map(light => light.move()), this.time + 1);
   }
   moveUntilMessageAppears() {
     const nextLights = this.move();

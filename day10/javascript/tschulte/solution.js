@@ -15,5 +15,5 @@ console.log(message.toString());
 //end::part1[]
 
 // tag::part2[]
-console.log("Day 05, part 2: ");
+console.log("Day 05, part 2: " + message.time + "s");
 // end::part2[]

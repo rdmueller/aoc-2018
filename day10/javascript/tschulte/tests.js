@@ -85,3 +85,6 @@ assert.equal(
 #...#..###
 `
 );
+
+// part 2:
+assert.equal(message.time, 3);

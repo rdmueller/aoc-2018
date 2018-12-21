@@ -36,3 +36,13 @@ include::part1.js[tags=Lights]
 include::solution.js[tags=part1]
 ....
 
+== Second Star
+
+Luckily this was easy given that part 1 already created a new `Lights` object for each second passed.
+All that had to be done was to keep track of the time.
+The code above for part 1 already contains that member `time`, but if you check the git history, you will see that this was added to solve this part.
+
+[source, js]
+....
+include::solution.js[tags=part2]
+....
