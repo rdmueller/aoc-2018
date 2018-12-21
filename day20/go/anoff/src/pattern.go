@@ -15,16 +15,18 @@ func parsePattern(pattern string) string {
 }
 
 // return new position and offset in string
-func walkPattern(pattern string, area *Area, startPositions map[vPosition]bool, exec func(*Path)) (map[vPosition]bool, int) {
-	endPositions := make(map[vPosition]bool)
+func walkPattern(pattern string, area *Area, startPositions map[*vPosition]bool, exec func(*Path)) (map[*vPosition]bool, int) {
+	endPositions := make(map[*vPosition]bool)
 	doSequence := func (sequence string) []Path {
 		var paths []Path
 		for s := range startPositions {
 			var p Path
-			p.pos = s
+			area.alignPosition(s)
+			p.pos = *s
+
 			if len(sequence) > 0 {
-				// fmt.Println("\nWalking sequence", sequence, "from", start)
-				// area.printPosition(start)
+				fmt.Println("\nWalking sequence", sequence, "from", p.pos)
+				area.printPosition(p.pos)
 				p = NewPath(sequence, area)
 				exec(&p)
 			}
@@ -38,9 +40,9 @@ func walkPattern(pattern string, area *Area, startPositions map[vPosition]bool, 
 		switch c {
 			case "(":
 				paths := doSequence(sequence)
-				startPositions = make(map[vPosition]bool)
+				startPositions = make(map[*vPosition]bool)
 				for _, p := range paths {
-					startPositions[p.pos] = true
+					startPositions[&p.pos] = true
 				}
 				// start = p.pos // update position after walking the sequence
 				sequence = ""
@@ -53,7 +55,7 @@ func walkPattern(pattern string, area *Area, startPositions map[vPosition]bool, 
 			case "|":
 				paths := doSequence(sequence)
 				for _, p := range paths {
-					endPositions[p.pos] = true
+					endPositions[&p.pos] = true
 				}
 				sequence = ""
 			case ")":

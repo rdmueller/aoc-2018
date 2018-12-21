@@ -38,6 +38,7 @@ func (a *Area) printPosition(p vPosition) {
 
 func NewArea() Area {
 	var a Area
+	a.expV = 0
 	a.rows = append(a.rows, "#?#")
 	a.rows = append(a.rows, "?X?")
 	a.rows = append(a.rows, "#?#")
@@ -56,7 +57,6 @@ func (a *Area) expand(growX int, growY int) *Area {
 			for i := growY; i < 0; i++ {
 				a.rows = append([]string{rowWalled, rowArea}, a.rows...)
 			}
-			a.origin.y -= 2*growY
 		} else {
 			for i := 0; i < growY; i++ {
 				a.rows = append(a.rows, rowArea, rowWalled)
@@ -84,13 +84,31 @@ func (a *Area) expand(growX int, growY int) *Area {
 			}
 			a.rows[i] = strings.Repeat(pattern, -growX) + a.rows[i]
 		}
-		a.origin.x -= 2*growX
 	}
 	a.expV++
-	a.expansions.PushBack([2]int{growX, growY})
+	a.expansions.PushBack(struct{x, y int}{growX, growY})
+	a.alignPosition(&a.origin)
 	return a
 }
-
+func (a *Area) alignPosition(p *vPosition) {
+	if p.version != a.expV {
+		i := 0
+		for n := a.expansions.Front(); n != nil; n = n.Next() {
+			if i == p.version {
+				// fmt.Println("updating version..", a.expV, p)
+				grow := n.Value.(struct{x, y int})
+				if grow.x < 0 {
+					p.x -= 2*grow.x
+				}
+				if grow.y < 0 {
+					p.y -= 2*grow.y
+				}
+				p.version++
+			}
+			i++
+		}
+	}
+}
 func (a *Area) dim() (int, int) {
 	xdim := len(a.rows[0])
 	ydim := len(a.rows)

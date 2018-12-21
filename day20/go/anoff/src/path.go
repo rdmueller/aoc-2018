@@ -1,6 +1,7 @@
 package main
 
 import (
+	
 )
 // versioned position
 type vPosition struct {
@@ -29,17 +30,15 @@ func (p *Path) step() bool {
 		xdim, ydim := p.area.dim()
 		if dest.x <= 0 {
 			p.area.expand(-1, 0)
-			dest.x = 1
-			intermediate.x = 2
 		} else if dest.y <= 0 {
 			p.area.expand(0, -1)
-			dest.y = 1
-			intermediate.y = 2
 		} else if dest.x > xdim-1 {
 			p.area.expand(1, 0)
 		} else if dest.y > ydim-1 {
 			p.area.expand(0, 1)
 		}
+		p.area.alignPosition(dest)
+		p.area.alignPosition(intermediate)
 	}
 	step := p.sequence[p.ix]
 	intermediate := p.pos
@@ -59,7 +58,9 @@ func (p *Path) step() bool {
 			dest.x -= 2
 			intermediate.x--
 	}
+	//fmt.Println(dest)
 	expandToReach(&dest, &intermediate)
+	//fmt.Println(dest)
 	if p.area.isWall(dest) || p.area.isWall(intermediate) {
 		panic("Did not expect to hit a wall")
 	}

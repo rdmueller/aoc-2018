@@ -16,7 +16,8 @@ func exploreArea(input string) *Area {
 	}
 	pattern := parsePattern(input)
 	area := NewArea()
-	walkPattern(pattern, &area, map[vPosition]bool{area.origin:true}, walk)
+	startPositions := map[*vPosition]bool{&area.origin:true}
+	walkPattern(pattern, &area, startPositions, walk)
 	area.fillWalls()
 	return &area
 }
