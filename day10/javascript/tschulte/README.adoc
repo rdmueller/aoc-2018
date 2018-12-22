@@ -1,0 +1,48 @@
+This solution is written in JavaScript.
+
+https://adventofcode.com/2018/day/6
+
+== First Star
+
+I must confess, that I had no clue at first how to solve this puzzle.
+Only after having a peek at the aol slack for this day I got the tip to find the morphed lights with the minimum height or width.
+
+This time I wanted to have the classes immutable to prevent the problems of the previous days where the objects could not be re-used.
+
+The first class is `Light`, which has members for the position and the velocity and a method `move` to create a new `Light` at the position after one second.
+
+[source, js]
+....
+include::part1.js[tags=Light]
+....
+
+And the `parseLine` method creates a new `Light`.
+
+[source, js]
+....
+include::part1.js[tags=parseLine]
+....
+
+When all initial `Light` objects are created, a `Lights` object is created with all lights.
+The `Lights` object has a `moveUntilMessageAppears` method to find the message and a `toString` method to print the message.
+
+[source, js]
+....
+include::part1.js[tags=Lights]
+....
+
+[source, js]
+....
+include::solution.js[tags=part1]
+....
+
+== Second Star
+
+Luckily this was easy given that part 1 already created a new `Lights` object for each second passed.
+All that had to be done was to keep track of the time.
+The code above for part 1 already contains that member `time`, but if you check the git history, you will see that this was added to solve this part.
+
+[source, js]
+....
+include::solution.js[tags=part2]
+....

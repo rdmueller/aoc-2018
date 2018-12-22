@@ -1,0 +1,78 @@
+
+**https://adventofcode.com/2018/day/21[rtfChallenge]**
+
+== Part 1
+
+I thought I was being smart and went directly into assembling the code as I did for link:../../../day19/go/anoff/[day 19], but turns out that this time I did not manage to get the code down to something that would easily run.
+
+[source, go]
+....
+include::./input-assemble.txt[assembled]
+....
+
+Instead what I realized is that there is only one line my input (`Register 0`) can have an influence on. And that is the line that actually terminates the program - in my case operation `28`. This line `eqrr 3 0 5` compares the input of my input register 0 with register 3. If they match the program terminates.
+
+So my solution was to simply step until the pointer hits this operation for the first time and evaluate the content of register 3. This would be the answer to part 1.
+
+[plantuml, day21-p1, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:load program;
+while ()
+  :program.step();
+  if (IP points
+  to instruction 28) then (Y)
+    :print content of
+    register[3];
+    end
+  endif
+endwhile
+end
+@enduml
+....
+
+== Part 2
+
+I solved this one using brute force and just repeat the above step until I see a recurring value appear in `register[3]`. The longest running value would then be the previous.
+
+[plantuml, day21-p2, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:load program;
+:init hashmap;
+:init prev;
+while ()
+  :program.step();
+  if (IP points
+  to instruction 28) then (Y)
+    if (hasmap contains reg[3]) then (Y)
+      :print prev;
+      end
+    endif
+    :add reg[3] to hashmap;
+    :prev = reg[3];
+  endif
+endwhile
+end
+@enduml
+....
+
+== Go solution
+
+. `cd src`
+. tests: `go test`
+. run: `go build -o solution && ./solution`
+. Profit
+
+[source, go]
+....
+include::./src/solution.go[**]
+....
