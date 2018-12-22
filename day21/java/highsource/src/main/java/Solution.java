@@ -1,11 +1,13 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 import op.Op;
 import program.Program;
@@ -39,6 +41,7 @@ public class Solution {
 				throw new IllegalArgumentException("Bound to register was not set.");
 			}
 
+			// Part 1
 			{
 
 				final Program program = new Program(boundToRegister, ops, new Registers(0, 0, 0, 0, 0, 0));
@@ -49,7 +52,25 @@ public class Solution {
 						break;
 					}
 				}
-//				System.out.println("Registers after execution:" + program.getRegisters());
+			}
+			
+			// Part 2
+			{
+				Set<BigInteger> testValues = new LinkedHashSet<>();
+				
+				final Program program = new Program(boundToRegister, ops, new Registers(-1, 0, 0, 0, 0, 0));
+
+				while (program.execute()) {
+					if (program.getInstructionPointer() == 28) {
+						final BigInteger newValue = program.getRegisters().get(3);
+						if (testValues.add(newValue)) {
+							System.out.println(newValue);
+						}
+						else {
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
