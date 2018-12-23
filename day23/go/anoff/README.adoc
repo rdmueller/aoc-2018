@@ -1,0 +1,61 @@
+
+**https://adventofcode.com/2018/day/23[rtfChallenge]**
+
+== Part 1
+
+After repurposing some of my old code for positions and manhattan distance by turning it into a 3D type I was able to build the `Nanobot` type and simply find the one with the highest signal strength and then loop over all bots and find those in range.
+
+NOTE: For some reason the bot itself is to be considered as reachable too when calculating the overall sum.
+
+== Part 2
+
+`Activate diary mode`
+
+My first thought was _Grid search_, but never having implemented one myself in `Go` I looked for other solutions first. My second idea was to create a hashmap with any `Position3` in the room and the number of `nanobot.inRange()` as the _value_. The solution would then be simply searching the map for the highest value - taking distance to origin into account if there are multiple ones. This seemed feasible for the test data but after looking at the size of the room created by the real input data (`9,098,700,703,457,848,432` .. `9098700703457848432`) I realized that this approach will not scale. The room has 9 http://www.statman.info/conversions/number_scales.html[Quintillion] positions so if we assume each point takes one Byte we would have `9 EB = 1024 PB = 1024*1024 TB`.. won't fit in RAM.
+
+After looking at all those big numbers I realized it made no sense to search the room with a precision of ``1``, so I searched for the weakest robot. The weakest robot still has a signal strength of `49977702` so I could raster my room with almost factor `50,000,000` less precision. Looking back at the total space to search if I reduce my precision I came up with only `278` positions in the 3D room to scan. To go on the safe side I increased the precision by `x3` and now have to scan `8273` positions. That will fit in RAM.
+
+Turns out I can not find the total maximum with this approach but identify only the area likely to contain the global max. So back to grid search..
+
+After implementing the grid search wrong the first time I tried looking for multiple best grids at once but also saw that this ended up in a huge solution space. So I had to make the "closest to origin" assumption early on.
+
+NOTE: I think grid search might not be the correct term for this; I am doing a recursive search through space with a decreasing step size.
+
+Taken the number of bots in a given area as `score` and `area` as a box defined by two opposite points in 3D space:
+
+[plantuml, day23-p2, png]
+....
+@startuml
+skinparam defaulttextalignment center
+skinparam monochrome true
+skinparam shadowing false
+start
+:create all Nanobots;
+:p1 = x,y,z-min
+p2 = x,y,z-max
+stepsize = weakest bot strength;
+while (stepsize > 0)
+  :calc score in area(p1, p2)
+  with stepsize;
+  :set p1, p2 to position
+  of max score;
+  :stepsize = stepsize / 10;
+endwhile
+:calculate manhattan distance
+from 0,0,0 to position of max score;
+:print distance and position;
+end
+@enduml
+....
+
+== Go solution
+
+. `cd src`
+. tests: `go test`
+. run: `go build -o solution && ./solution`
+. Profit
+
+[source, go]
+....
+include::./src/solution.go[**]
+....
