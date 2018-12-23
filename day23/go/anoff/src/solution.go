@@ -56,69 +56,45 @@ func part2(bots []*Nanobot) {
 			zmax = n.pos.z
 		}
 	}
-	stepSize := minStrength(bots)/3
+	stepSize := minStrength(bots)
 	fmt.Println("X dim", xmax-xmin, (xmax-xmin)/stepSize)
 	fmt.Println("Y dim", ymax-ymin, (ymax-ymin)/stepSize)
 	fmt.Println("Z dim", zmax-zmin, (zmax-zmin)/stepSize)
 	fmt.Println("Room size", (xmax-xmin)/stepSize * (ymax-ymin)/stepSize * (zmax-zmin)/stepSize)
 	
-	// create a hashmap of positions
-	world := make(map[Position3]int) // count of nanobots in range for each pos
-	mostBots := 0
-	mostBotsCount := 1
-	var mostBotsPos Position3
-	for z := zmin; z <= zmax; z += stepSize {
-		for y := ymin; y <= ymax; y += stepSize {
-			for x := xmin; x <= xmax; x += stepSize {
-				p := Position3{x,y,z}
-				botsInRange := 0
-				for _, n := range bots {
-					if n.InRange(p) {
-						botsInRange++
-					}
-				}
-				if botsInRange > mostBots {
-					mostBots = botsInRange
-					mostBotsCount = 1
-					mostBotsPos = p
-				} else if botsInRange == mostBots {
-					mostBotsCount++
-				}
-				world[p] = botsInRange
-			}
-		}	
-	}
-	// check for multiple occurences
-	if mostBotsCount > 1 {
-		panic("Handle multiple best positions")
-	}
-	// find closest point to origin
-	bestPos := mostBotsPos
-	i := 0
-	for {
-		switch i%3 {
-			case 0:
-				bestPos.x--
-			case 1:
-				bestPos.y--
-			case 2:
-				bestPos.z--
-		}
-		botsInRange := 0
+	// helper function to get score any point
+	botsInRange := func (p Position3) int {
+		count := 0
 		for _, n := range bots {
-			if n.InRange(bestPos) {
-				botsInRange++
+			if n.InRange(p) {
+				count++
 			}
 		}
-		if botsInRange < mostBots {
-			break
-		} else {
-		//	fmt.Println("approaching")
-		}
-		i++
+		return count
 	}
-	shortestDistance := bestPos.Manhattan(Position3{0,0,0}) + 1
-	fmt.Println("Solution for part2:", shortestDistance, "at", bestPos)
+
+	p1 := Position3{xmin, ymin, zmin}
+	p2 := Position3{xmax, ymax, zmax}
+	var mostBots, mostBotsPrev int
+	var mostBotsPos Position3
+	for stepSize := minStrength(bots); stepSize > 0; stepSize /= 10 {
+		var possibleHits []Position3
+		mostBots, mostBotsPos, possibleHits = searchGrid(p1, p2, stepSize, botsInRange)
+		fmt.Println("..best score with stepsize", stepSize, "was", mostBots, len(possibleHits))
+		if mostBots < mostBotsPrev {
+			panic("Found lower best score than before :o")
+		}
+		p1 = Position3{mostBotsPos.x - stepSize*10/2, mostBotsPos.y - stepSize*10/2, mostBotsPos.z - stepSize*10/2}
+		p2 = Position3{mostBotsPos.x + stepSize*10/2, mostBotsPos.y + stepSize*10/2, mostBotsPos.z + stepSize*10/2}
+		mostBotsPrev = mostBots
+		// make sure grid length 1 is hit
+		if stepSize < 10 && stepSize != 1 {
+			stepSize = 10
+		}
+	}
+	bestPos := mostBotsPos
+	shortestDistance := bestPos.Manhattan(Position3{0,0,0})
+	fmt.Println("Solution for part2:", shortestDistance, "at", bestPos, "most bots:", mostBots)
 }
 
 func minStrength(bots []*Nanobot) int {
@@ -131,8 +107,50 @@ func minStrength(bots []*Nanobot) int {
 	return minStrength
 }
 
+
+func searchGrid(p1 Position3, p2 Position3, stepSize int, scoreFn func (Position3) int) (int, Position3, []Position3) {
+	bestScore := 0
+	bestScoreOccurence := 0
+	var bestScorePos []Position3
+	for z := p1.z; z < p2.z+stepSize; z += stepSize { // offset max by +stepSize to make sure it always covers p2
+		for y := p1.y; y < p2.y+stepSize; y += stepSize {
+			for x := p1.x; x < p2.x+stepSize; x += stepSize {
+				p := Position3{x,y,z}
+				score := scoreFn(p)
+				if score > bestScore {
+					bestScore = score
+					bestScoreOccurence = 1
+					bestScorePos = []Position3{p}
+				} else if score == bestScore {
+					bestScorePos = append(bestScorePos, p)
+				}
+			}
+		}	
+	}
+	var returnPos Position3
+	// check for multiple occurences
+	if bestScoreOccurence > 1 {
+		// panic("Handle multiple best positions")
+		shortestDistance := math.MaxInt32
+		for _, p := range bestScorePos {
+			d := p.Manhattan(Position3{0,0,0})
+			if d < shortestDistance {
+				shortestDistance = d
+				returnPos = p
+			}
+		}
+	} else {
+		returnPos = bestScorePos[0]
+	}
+	return bestScore, returnPos, bestScorePos
+}
 /*
 answers
 127664974, too high
+111228644, too high (grid search approach)
+111227644, after fixing +1000 bias in the code from previous trial
 104668669, too low
+
+most bots 713
+
 */
