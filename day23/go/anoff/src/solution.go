@@ -73,19 +73,37 @@ func part2(bots []*Nanobot) {
 		return count
 	}
 
+	type Searchbox struct {
+		p1 Position3
+		p2 Position3
+	}
 	p1 := Position3{xmin, ymin, zmin}
 	p2 := Position3{xmax, ymax, zmax}
 	var mostBots, mostBotsPrev int
 	var mostBotsPos Position3
-	for stepSize := minStrength(bots); stepSize > 0; stepSize /= 10 {
-		var possibleHits []Position3
-		mostBots, mostBotsPos, possibleHits = searchGrid(p1, p2, stepSize, botsInRange)
-		fmt.Println("..best score with stepsize", stepSize, "was", mostBots, len(possibleHits))
+	searchBoxes := []Searchbox{
+		Searchbox{p1: p1, p2: p2},
+	}
+	for stepSize := minStrength(bots); stepSize > 0; stepSize /= 100 {
+		mostBots = 0
+		bestScoreMap := make(map[int][]Searchbox)
+		for _, b := range searchBoxes {
+			score, _, allBestPos := searchGrid(b.p1, b.p2, stepSize, botsInRange)
+			for _, p := range allBestPos {
+				p1 := Position3{p.x - stepSize/2, p.y - stepSize/2, p.z - stepSize/2}
+				p2 := Position3{p.x + stepSize/2, p.y + stepSize/2, p.z + stepSize/2}
+				bestScoreMap[score] = append(bestScoreMap[score], Searchbox{p1, p2})
+			}
+			if score > mostBots {
+				mostBots = score
+			}
+		}
+		// use those boxes with best score for next iteration
+		searchBoxes = bestScoreMap[mostBots]
+		fmt.Println("..best score with stepsize", stepSize, "was", mostBots, "total boxes in next run", len(searchBoxes))
 		if mostBots < mostBotsPrev {
 			panic("Found lower best score than before :o")
 		}
-		p1 = Position3{mostBotsPos.x - stepSize*10/2, mostBotsPos.y - stepSize*10/2, mostBotsPos.z - stepSize*10/2}
-		p2 = Position3{mostBotsPos.x + stepSize*10/2, mostBotsPos.y + stepSize*10/2, mostBotsPos.z + stepSize*10/2}
 		mostBotsPrev = mostBots
 		// make sure grid length 1 is hit
 		if stepSize < 10 && stepSize != 1 {
