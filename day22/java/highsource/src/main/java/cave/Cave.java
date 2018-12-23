@@ -4,8 +4,9 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeSet;
 
 public class Cave {
@@ -27,8 +28,8 @@ public class Cave {
 
 	public Cave(int depth, int targetX, int targetY) {
 		this.depth = depth;
-		this.height = depth + 1001;
-		this.width = targetX + 1001;
+		this.height = depth + 51;
+		this.width = targetX + 51;
 		this.targetX = targetX;
 		this.bigDepth = BigInteger.valueOf(depth);
 		this.targetY = targetY;
@@ -89,27 +90,57 @@ public class Cave {
 	}
 
 	public Integer walk() {
+		return walkTo(new State(this.targetX, this.targetY, Tool.TORCH));
+	}
+
+	public Integer walkTo(State finalState) {
 
 		final State initialState = new State(0, 0, Tool.TORCH);
 
 		final Map<State, Integer> distanceByState = new HashMap<>();
 		final Map<State, State> previousByState = new HashMap<>();
 		distanceByState.put(initialState, 0);
-		final NavigableSet<State> statesToVisit = new TreeSet<>(Comparator.<State>comparingInt(s -> {
-			return Math.abs(s.getX() - this.targetX) + Math.abs(s.getY() - this.targetY);
-		}));
+		final Set<State> statesToVisit = new HashSet<>();
+
+//				new TreeSet<>(Comparator.<State>comparingInt(s -> {
+//			return Math.abs(s.getX() - finalState.getX()) + Math.abs(s.getY() - finalState.getY());
+//		}));
 
 		statesToVisit.add(initialState);
 
+		int targetDistance = Integer.MAX_VALUE;
+
 		while (!statesToVisit.isEmpty()) {
-			final State currentState = statesToVisit.pollFirst();
+
+			System.out.println("Final state is reachable with distance " + targetDistance + ", states visited:" + distanceByState.size() + ", states left:" + statesToVisit.size());
+
+			final State currentState = statesToVisit.stream().min(Comparator.<State>comparingInt(s -> {
+				return Math.abs(s.getX() - finalState.getX()) + Math.abs(s.getY() - finalState.getY());
+			})).orElseThrow(IllegalStateException::new);
+
+//			final State currentState = statesToVisit.iterator().next();
+			statesToVisit.remove(currentState);
 			final int currentDistance = distanceByState.get(currentState);
+
+			if (finalState.equals(currentState)) {
+				if (currentDistance < targetDistance) {
+					System.out.println("Final state is reachable with distance " + currentDistance + ".");
+					targetDistance = currentDistance;
+				}
+			}
+
+			if (currentDistance > targetDistance) {
+				continue;
+			}
+
 			final Collection<State> walk = currentState.walk(this);
 
 			for (State neighbour : walk) {
 				final int neighbourDistance = distanceByState.getOrDefault(neighbour, Integer.MAX_VALUE);
-				if (currentDistance + WALK_DISTANCE < neighbourDistance) {
-					distanceByState.put(neighbour, currentDistance + WALK_DISTANCE);
+				final int newDistance = currentDistance + WALK_DISTANCE;
+				if (newDistance < neighbourDistance) {
+					distanceByState.put(neighbour, newDistance);
+//					System.out.println("New distance to " + neighbour + " is " + newDistance);
 					previousByState.put(neighbour, currentState);
 					statesToVisit.add(neighbour);
 				}
@@ -118,17 +149,18 @@ public class Cave {
 			final Collection<State> change = currentState.change(this);
 			for (State neighbour : change) {
 				final int neighbourDistance = distanceByState.getOrDefault(neighbour, Integer.MAX_VALUE);
-				if (currentDistance + CHANGE_DISTANCE < neighbourDistance) {
-					distanceByState.put(neighbour, currentDistance + CHANGE_DISTANCE);
+				final int newDistance = currentDistance + CHANGE_DISTANCE;
+				if (newDistance < neighbourDistance) {
+					distanceByState.put(neighbour, newDistance);
 					previousByState.put(neighbour, currentState);
 					statesToVisit.add(neighbour);
 				}
 			}
 		}
 
-		final Integer resultingDistance = distanceByState.get(new State(targetX, targetY, Tool.TORCH));
+		final Integer resultingDistance = distanceByState.get(finalState);
 
-		State s = new State(targetX, targetY, Tool.TORCH);
+		State s = finalState;
 
 		do {
 			System.out.println(s);

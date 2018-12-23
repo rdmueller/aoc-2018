@@ -35,9 +35,9 @@ public class Solution {
 			System.out.println(targetX);
 			System.out.println(targetY);
 			
+			final Cave cave = new Cave(depth, targetX, targetY);
 			// Part 1
 			{
-				final Cave cave = new Cave(depth, targetX, targetY);
 				
 				int riskLevel = 0;
 				for (int y = 0; y <= targetY; y++) {
@@ -46,6 +46,10 @@ public class Solution {
 					}
 				}				
 				System.out.println(">>>>>>>> " + riskLevel);
+			}
+			// Part 2
+			{
+				System.out.println(">>>>>>>> " + cave.walk());
 			}
 		}
 	}
