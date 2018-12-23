@@ -73,34 +73,13 @@ func part2(bots []*Nanobot) {
 		return count
 	}
 
-	type Searchbox struct {
-		p1 Position3
-		p2 Position3
-	}
 	p1 := Position3{xmin, ymin, zmin}
 	p2 := Position3{xmax, ymax, zmax}
 	var mostBots, mostBotsPrev int
 	var mostBotsPos Position3
-	searchBoxes := []Searchbox{
-		Searchbox{p1: p1, p2: p2},
-	}
-	for stepSize := minStrength(bots); stepSize > 0; stepSize /= 100 {
-		mostBots = 0
-		bestScoreMap := make(map[int][]Searchbox)
-		for _, b := range searchBoxes {
-			score, _, allBestPos := searchGrid(b.p1, b.p2, stepSize, botsInRange)
-			for _, p := range allBestPos {
-				p1 := Position3{p.x - stepSize/2, p.y - stepSize/2, p.z - stepSize/2}
-				p2 := Position3{p.x + stepSize/2, p.y + stepSize/2, p.z + stepSize/2}
-				bestScoreMap[score] = append(bestScoreMap[score], Searchbox{p1, p2})
-			}
-			if score > mostBots {
-				mostBots = score
-			}
-		}
-		// use those boxes with best score for next iteration
-		searchBoxes = bestScoreMap[mostBots]
-		fmt.Println("..best score with stepsize", stepSize, "was", mostBots, "total boxes in next run", len(searchBoxes))
+	for stepSize := minStrength(bots); stepSize > 0; stepSize /= 10 {
+		mostBots, mostBotsPos, _ = searchGrid(p1, p2, stepSize, botsInRange)
+		fmt.Println("..best score with stepsize", stepSize, "was", mostBots)
 		if mostBots < mostBotsPrev {
 			panic("Found lower best score than before :o")
 		}
@@ -109,6 +88,8 @@ func part2(bots []*Nanobot) {
 		if stepSize < 10 && stepSize != 1 {
 			stepSize = 10
 		}
+		p1 = Position3{mostBotsPos.x - stepSize/2, mostBotsPos.y - stepSize/2, mostBotsPos.z - stepSize/2}
+		p2 = Position3{mostBotsPos.x + stepSize/2, mostBotsPos.y + stepSize/2, mostBotsPos.z + stepSize/2}
 	}
 	bestPos := mostBotsPos
 	shortestDistance := bestPos.Manhattan(Position3{0,0,0})
@@ -125,7 +106,7 @@ func minStrength(bots []*Nanobot) int {
 	return minStrength
 }
 
-
+// -> highest score, position closest to origin with highest score, all positions with highest score
 func searchGrid(p1 Position3, p2 Position3, stepSize int, scoreFn func (Position3) int) (int, Position3, []Position3) {
 	bestScore := 0
 	bestScoreOccurence := 0
@@ -167,8 +148,9 @@ answers
 127664974, too high
 111228644, too high (grid search approach)
 111227644, after fixing +1000 bias in the code from previous trial
+111227643
 104668669, too low
 
 most bots 713
-
+892
 */
