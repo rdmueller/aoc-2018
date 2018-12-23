@@ -1,9 +1,17 @@
 package cave;
 
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NavigableSet;
+import java.util.TreeSet;
 
 public class Cave {
 
+	private static final int WALK_DISTANCE = 1;
+	private static final int CHANGE_DISTANCE = 7;
 	private static final BigInteger REGION_TYPE_DIVISOR = BigInteger.valueOf(3);
 	private static final BigInteger GEOLOGIC_INDEX_FACTOR_X = BigInteger.valueOf(16807);
 	private static final BigInteger GEOLOGIC_INDEX_FACTOR_Y = BigInteger.valueOf(48271);
@@ -19,8 +27,8 @@ public class Cave {
 
 	public Cave(int depth, int targetX, int targetY) {
 		this.depth = depth;
-		this.height = depth + 100;
-		this.width = 1000;
+		this.height = depth + 1001;
+		this.width = targetX + 1001;
 		this.targetX = targetX;
 		this.bigDepth = BigInteger.valueOf(depth);
 		this.targetY = targetY;
@@ -28,12 +36,19 @@ public class Cave {
 		initGeologicIndexCache();
 	}
 
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
 	private void initGeologicIndexCache() {
 		for (int iy = 0; iy < height; iy++) {
 			for (int ix = 0; ix < width; ix++) {
 				geologicIndexCache[iy][ix] = doCalculateGeologicIndex(ix, iy);
 			}
-			System.out.println("> " + iy);
 		}
 	}
 
@@ -71,5 +86,55 @@ public class Cave {
 			BigInteger up = calculateErosionLevel(x, y - 1);
 			return left.multiply(up);
 		}
+	}
+
+	public Integer walk() {
+
+		final State initialState = new State(0, 0, Tool.TORCH);
+
+		final Map<State, Integer> distanceByState = new HashMap<>();
+		final Map<State, State> previousByState = new HashMap<>();
+		distanceByState.put(initialState, 0);
+		final NavigableSet<State> statesToVisit = new TreeSet<>(Comparator.<State>comparingInt(s -> {
+			return Math.abs(s.getX() - this.targetX) + Math.abs(s.getY() - this.targetY);
+		}));
+
+		statesToVisit.add(initialState);
+
+		while (!statesToVisit.isEmpty()) {
+			final State currentState = statesToVisit.pollFirst();
+			final int currentDistance = distanceByState.get(currentState);
+			final Collection<State> walk = currentState.walk(this);
+
+			for (State neighbour : walk) {
+				final int neighbourDistance = distanceByState.getOrDefault(neighbour, Integer.MAX_VALUE);
+				if (currentDistance + WALK_DISTANCE < neighbourDistance) {
+					distanceByState.put(neighbour, currentDistance + WALK_DISTANCE);
+					previousByState.put(neighbour, currentState);
+					statesToVisit.add(neighbour);
+				}
+			}
+
+			final Collection<State> change = currentState.change(this);
+			for (State neighbour : change) {
+				final int neighbourDistance = distanceByState.getOrDefault(neighbour, Integer.MAX_VALUE);
+				if (currentDistance + CHANGE_DISTANCE < neighbourDistance) {
+					distanceByState.put(neighbour, currentDistance + CHANGE_DISTANCE);
+					previousByState.put(neighbour, currentState);
+					statesToVisit.add(neighbour);
+				}
+			}
+		}
+
+		final Integer resultingDistance = distanceByState.get(new State(targetX, targetY, Tool.TORCH));
+
+		State s = new State(targetX, targetY, Tool.TORCH);
+
+		do {
+			System.out.println(s);
+			s = previousByState.get(s);
+		} while (s != null);
+
+		return resultingDistance;
 	}
 }

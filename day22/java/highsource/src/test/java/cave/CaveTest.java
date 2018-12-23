@@ -58,4 +58,14 @@ public class CaveTest {
 		}
 		assertThat(riskLevel).isEqualTo(114);
 	}
+	
+	@Test
+	public void walks() {
+
+		final Cave cave = new Cave(510, 10, 10);
+		
+		Integer walk = cave.walk();
+		
+		System.out.println(walk);
+	}
 }
