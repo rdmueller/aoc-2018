@@ -143,14 +143,3 @@ func searchGrid(p1 Position3, p2 Position3, stepSize int, scoreFn func (Position
 	}
 	return bestScore, returnPos, bestScorePos
 }
-/*
-answers
-127664974, too high
-111228644, too high (grid search approach)
-111227644, after fixing +1000 bias in the code from previous trial
-111227643
-104668669, too low
-
-most bots 713
-892
-*/
