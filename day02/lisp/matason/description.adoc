@@ -1,0 +1,4 @@
+== Usage
+I use the SBCL Common Lisp Compiler - http://www.sbcl.org/
+
+sbcl --script solution.lisp
