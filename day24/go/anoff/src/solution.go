@@ -13,18 +13,48 @@ func main() {
 
 func part1(armies []*Army) {
 	turn(armies)
+	turn(armies)
 	fmt.Println("Solution for part1:", 0)
 }
 func turn(armies []*Army) {
+	for _, a := range armies {
+		fmt.Printf("%s army w/ %d groups\n", a.faction, len(a.groups))
+		for _, g := range a.groups {
+			fmt.Printf("\t%d with %d units\n", g.id, g.units)
+		}
+	}
 	a1 := armies[0]
 	a2 := armies[1]
 	a1.planAttack(a2)
 	a2.planAttack(a1)
-	for _, g := range a1.groups {
-		fmt.Println(g, "targeting", g.target, "with", g.damagePotential(g.target), "damage")
+	for _, g := range append(a1.groups, a2.groups...) {
+		if g.units > 0 && g.target != nil {
+			fmt.Printf("..%s group %d planning to attack %s group %d for %d damage\n", g.faction, g.id, g.target.faction, g.target.id, g.damagePotential(g.target))
+		}
 	}
+	strike(armies)
 }
 
+func strike(armies []*Army) {
+	allGroups := append(armies[0].groups, armies[1].groups...)
+	sortGroupsByInitiative(allGroups)
+	for _, g := range allGroups {
+		if g.units == 0 {
+			fmt.Println("Group already down to 0 units")
+			continue
+		} else if g.target == nil {
+			fmt.Println("Group has no target")
+			continue
+		}
+		damage := g.damagePotential(g.target)
+		unitLoss := damage / g.target.hp
+		fmt.Printf("%s group %d (%s) attacks %s group %d (w: %s, i: %s) for %d damage, killing %d units\n", g.faction, g.id, g.attackType, g.target.faction, g.target.id, g.target.weaknesses, g.target.immunities, damage, unitLoss)
+		g.target.units -= unitLoss
+		if g.target.units < 0 {
+			g.target.units = 0
+		}
+	}
+}
 func part2([]Army) {
 	fmt.Println("Solution for part2:", 0)
 }

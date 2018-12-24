@@ -8,6 +8,8 @@ type Group struct {
 	Unit
 	units int		// number of units
 	target *Group
+	faction string
+	id int
 }
 
 func (g *Group) getPower() int {
@@ -34,6 +36,7 @@ func (g *Group) damagePotential(t *Group) int {
 	return d
 }
 
+// descending
 func sortGroupsByInitiative(g []*Group) []*Group {
 	sort.Sort(byInitiative(g))
 	return g
@@ -47,7 +50,7 @@ func (g byInitiative) Swap(i, j int) {
 	g[i], g[j] = g[j], g[i]
 }
 func (g byInitiative) Less(i, j int) bool {
-	if g[i].initiative < g[j].initiative {
+	if g[i].initiative > g[j].initiative {
 		return true
 	}
 	return false

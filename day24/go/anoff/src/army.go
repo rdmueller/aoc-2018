@@ -16,6 +16,8 @@ func NewArmy(faction string) Army {
 }
 
 func (a *Army) addGroup(g *Group) *Army {
+	g.faction = a.faction
+	g.id = len(a.groups)+1
 	a.groups = append(a.groups, g)
 	return a
 }
@@ -55,6 +57,8 @@ func (a *Army) planAttack(t *Army) *Army {
 				maxDamageGroup = tgroup
 			}
 		}
+		// TODO: handle ties
+		// If an attacking group is considering two defending groups to which it would deal equal damage, it chooses to target the defending group with the largest effective power; if there is still a tie, it chooses the defending group with the highest initiative.
 		if maxDamageGroup != nil {
 			group.target = maxDamageGroup
 		} else {
