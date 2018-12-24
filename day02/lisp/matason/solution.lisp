@@ -38,4 +38,4 @@
        while ids
        collect ids)))
 
-(format t "~@a~%" (main))
+(format t "~@a~%" (part1))
