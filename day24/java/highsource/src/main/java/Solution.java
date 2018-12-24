@@ -1,9 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
+import army.Army;
 import army.Group;
 
 public class Solution {
@@ -11,12 +10,12 @@ public class Solution {
 	public static void main(String[] args) throws IOException {
 
 		try (BufferedReader reader = new BufferedReader(
-				new InputStreamReader(Solution.class.getResourceAsStream("input.txt")))) {
+				new InputStreamReader(Solution.class.getResourceAsStream("test0.txt")))) {
 
-			final List<Group> immuneSystem = new ArrayList<>();
-			final List<Group> infection = new ArrayList<>();
+			final Army immuneSystem = new Army();
+			final Army infection = new Army();
 
-			List<Group> currentArmy = null;
+			Army currentArmy = null;
 
 			for (String line; (line = reader.readLine()) != null;) {
 				if ("Immune System:".equals(line)) {
@@ -29,6 +28,11 @@ public class Solution {
 					currentArmy.add(Group.parse(line));
 				}
 			}
+
+			System.out.println("Immune system:");
+			System.out.println(immuneSystem);
+			System.out.println("Infection:");
+			System.out.println(infection);
 		}
 	}
 }

@@ -107,4 +107,25 @@ public class GroupTest {
 								//
 								initiative(7).build());
 	}
+
+	@Test
+	public void effectivePower() {
+		assertThat(Group.parse(
+				"18 units each with 729 hit points (weak to fire; immune to cold, slashing) with an attack that does 8 radiation damage at initiative 10")
+				.getEffectivePower()).isEqualTo(144);
+
+	}
+	
+	@Test
+	public void calculateDamage() {
+		Group group1 = Group.parse("17 units each with 5390 hit points (weak to radiation, bludgeoning) with an attack that does 4507 fire damage at initiative 2");
+		Group group2 = Group.parse("4485 units each with 2961 hit points (immune to radiation; weak to fire, cold) with an attack that does 12 slashing damage at initiative 4");
+		Group group3 = Group.parse("4485 units each with 2961 hit points (immune to fire; weak to cold) with an attack that does 12 slashing damage at initiative 4");
+		Group group4 = Group.parse("4485 units each with 2961 hit points with an attack that does 12 slashing damage at initiative 4");
+		assertThat(group1.calculateDamage(group2)).isEqualTo(153238);
+		assertThat(group1.calculateDamage(group3)).isEqualTo(0);
+		assertThat(group1.calculateDamage(group4)).isEqualTo(76619);
+
+	}
+	
 }

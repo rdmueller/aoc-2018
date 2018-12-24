@@ -44,6 +44,23 @@ public class Group {
 
 	private static final Pattern WEAK_TO_PATTERN = Pattern.compile(WEAK_TO_REGEX);
 
+	public int getEffectivePower() {
+		return this.numberOfUnits * this.attackHitPoints;
+	}
+
+	public int calculateDamage(Group that) {
+		Objects.requireNonNull(that, "given group must not be null.");
+
+		if (that.getImmuneTo().contains(getAttackDamageType())) {
+			return 0;
+		} else if (that.getWeakTo().contains(getAttackDamageType())) {
+			return getEffectivePower() * 2;
+		} else {
+			return getEffectivePower();
+		}
+
+	}
+
 	public static Group parse(String str) {
 		Objects.requireNonNull(str, "str must not be null.");
 
