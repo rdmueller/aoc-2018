@@ -1,0 +1,49 @@
+
+== Day 18: Settlers of The North Pole
+
+This solution is written in Groovy.
+
+https://adventofcode.com/2018/day/18
+
+It is the 24th of december and I have to catch up with those challenges.
+Let's hope this is solveable within 30 minutes...
+
+=== First Star
+
+Let's first read the file into a map
+
+[source, groovy]
+....
+include::solution.groovy[tags=readInput]
+....
+
+now calculate the next state for one cell
+
+[source, groovy]
+....
+include::solution.groovy[tags=nextCell]
+....
+
+and the whole next state
+
+[source, groovy]
+....
+include::solution.groovy[tags=nextState]
+....
+
+and calculate the checksum
+
+[source, groovy]
+....
+include::solution.groovy[tags=caclChecksum]
+....
+
+
+=== Second Star
+
+I've extended the functions from part one with the size parameter and had to write a new iteration:
+
+[source, groovy]
+....
+include::solution.groovy[tags=dynamicLargest]
+....
