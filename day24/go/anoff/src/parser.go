@@ -3,7 +3,6 @@ package main
 import (
 	"regexp"
 	"strings"
-	"fmt"
 )
 
 func createArmiesFromInput(input []string) (Army, Army) {
@@ -28,8 +27,6 @@ func createArmiesFromInput(input []string) (Army, Army) {
 				u.immunities = append(u.immunities, i)
 			}
 			g := NewGroup(u, nums[2])
-			fmt.Println(line)
-			fmt.Println(g)
 			curArmy.addGroup(&g)
 		}
 	}
