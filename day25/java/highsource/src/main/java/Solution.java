@@ -1,6 +1,10 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import point.XYZT;
 
 public class Solution {
 
@@ -9,9 +13,12 @@ public class Solution {
 		try (BufferedReader reader = new BufferedReader(
 				new InputStreamReader(Solution.class.getResourceAsStream("input.txt")))) {
 
+			final Set<XYZT> points = new LinkedHashSet<>();
+			
 			for (String line; (line = reader.readLine()) != null;) {
-				System.out.println(line);
+				points.add(XYZT.parse(line));
 			}
+			System.out.println(points);
 		}
 	}
 }
