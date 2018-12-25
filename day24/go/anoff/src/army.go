@@ -2,7 +2,7 @@ package main
 
 import (
 	"sort"
-	"fmt"
+	_"fmt"
 )
 
 type Army struct {
@@ -52,7 +52,7 @@ func (a *Army) planAttack(t *Army) *Army {
 		maxDamage := 0
 		var maxDamageGroup *Group
 		for _, tgroup := range t.groups {
-			if !a.isTargetingGroup(tgroup) && group.damagePotential(tgroup) > maxDamage {
+			if !a.isTargetingGroup(tgroup) && group.damagePotential(tgroup) > maxDamage && tgroup.units > 0 {
 				maxDamage = group.damagePotential(tgroup)
 				maxDamageGroup = tgroup
 			}
@@ -63,7 +63,7 @@ func (a *Army) planAttack(t *Army) *Army {
 			group.target = maxDamageGroup
 		} else {
 			group.target = nil
-			fmt.Println("Could not find a target for group", group)
+			// fmt.Println("Could not find a target for group", group)
 		}
 	}
 	return a
@@ -76,4 +76,18 @@ func (a *Army) isTargetingGroup(t *Group) bool {
 		}
 	}
 	return false
+}
+
+func (a *Army) cleanup() *Army {
+	for i, g := range a.groups {
+		if g.units <= 0 {
+			if i == 0 || i == len(a.groups) {
+				panic("waa")
+			}
+			a.groups = append(a.groups[:i], a.groups[i+1:]...)
+		}
+		g.target = nil
+	}
+
+	return a
 }
