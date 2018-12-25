@@ -9,6 +9,19 @@
        (if (equal t (id-has-three id)) (incf total-threes))
        finally (return (* total-twos total-threes))))
 
+;;; Part 2
+(defun part2 ()
+  (defvar outer-list (input-to-list))
+  (defvar inner-list (copy-list outer-list))
+  (loop named outer for outer-id in outer-list
+     while outer-id do
+       (loop named inner for inner-id in inner-list with mismatch-index = 0
+          while inner-id do
+            (setf mismatch-index (mismatch outer-id inner-id))
+            (when (not (equal nil mismatch-index))
+              (if (equal nil (mismatch outer-id inner-id :start1 (+ 1 mismatch-index) :start2 (+ 1 mismatch-index)))
+                (return-from outer (remove (elt outer-id mismatch-index) outer-id :start mismatch-index :end (+ 1 mismatch-index))))))))
+
 ;;; Sort each item in the list alphabetically.
 (defun sort-list-ids (ids)
   (loop for id in ids do
@@ -39,3 +52,4 @@
        collect ids)))
 
 (format t "~@a~%" (part1))
+(format t "~@a~%" (part2))
