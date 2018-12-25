@@ -1,6 +1,6 @@
 This solution is written in JavaScript.
 
-https://adventofcode.com/2018/day/6
+https://adventofcode.com/2018/day/9
 
 Today I wanted to use some knowledge gained by watching https://www.youtube.com/watch?v=dxzBZpzzzo8.
 
