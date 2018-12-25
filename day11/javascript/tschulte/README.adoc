@@ -1,12 +1,16 @@
 This solution is written in JavaScript.
 
-https://adventofcode.com/2018/day/6
+https://adventofcode.com/2018/day/11
 
 == First Star
 
+[source, js]
+....
+include::part1.js[]
+....
 
 [source, js]
 ....
-include::part1.js[tags=parseLine]
+include::solution.js[tags=part1]
 ....
 
