@@ -19,9 +19,21 @@ public class XYZT {
 	private final int y;
 	private final int z;
 	private final int t;
+	private static final int MAX_CONSTELLATION_DISTANCE = 3;
 
 	private final static String REGEX = "^(-?\\d+),(-?\\d+),(-?\\d+),(-?\\d+)$";
 	private final static Pattern PATTERN = Pattern.compile(REGEX);
+
+	public boolean inSameConstellation(XYZT that) {
+		Objects.requireNonNull(that, "the other point must not be null.");
+		return manhattanDistance(that) <= MAX_CONSTELLATION_DISTANCE;
+	}
+
+	public int manhattanDistance(XYZT that) {
+		Objects.requireNonNull(that, "the other point must not be null.");
+		return Math.abs(this.x - that.x) + Math.abs(this.y - that.y) + Math.abs(this.z - that.z)
+				+ Math.abs(this.t - that.t);
+	}
 
 	public static XYZT parse(String str) {
 		Objects.requireNonNull(str, "str must not be null.");
