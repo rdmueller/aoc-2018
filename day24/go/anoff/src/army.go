@@ -50,17 +50,47 @@ func (a *Army) planAttack(t *Army) *Army {
 	a.sortGroupsByPower()
 	for _, group := range a.groups {
 		maxDamage := 0
-		var maxDamageGroup *Group
+		var targetGroup *Group
+		var maxDamageGroups []*Group
 		for _, tgroup := range t.groups {
-			if !a.isTargetingGroup(tgroup) && group.damagePotential(tgroup) > maxDamage && tgroup.units > 0 {
-				maxDamage = group.damagePotential(tgroup)
-				maxDamageGroup = tgroup
-			}
+			if !a.isTargetingGroup(tgroup) && tgroup.units > 0 {
+				damage := group.damagePotential(tgroup)
+				if damage > maxDamage {
+					maxDamage = group.damagePotential(tgroup)
+					maxDamageGroups = []*Group{tgroup}
+				} else if damage == maxDamage {
+					maxDamageGroups = append(maxDamageGroups, tgroup)
+				}
+			} 
 		}
-		// TODO: handle ties
+		var maxPowerGroups []*Group
+		if len(maxDamageGroups) > 1 {
+			maxPower := 0
+			for _, tgroup := range maxDamageGroups {
+				if tgroup.getPower() > maxPower {
+					maxPower = tgroup.getPower()
+					maxPowerGroups = []*Group{tgroup}
+				} else if tgroup.getPower() == maxPower {
+					maxPowerGroups = append(maxPowerGroups, tgroup)
+				}
+			}
+		} else if len(maxDamageGroups) == 1 {
+			targetGroup = maxDamageGroups[0]
+		}
+		if len(maxPowerGroups) > 1 {
+			maxInitiative := 0
+			for _, tgroup := range maxDamageGroups {
+				if tgroup.initiative > maxInitiative {
+					maxInitiative = tgroup.initiative
+					targetGroup = tgroup
+				}
+			}
+		} else if len(maxPowerGroups) == 1 {
+			targetGroup = maxPowerGroups[0]
+		}
 		// If an attacking group is considering two defending groups to which it would deal equal damage, it chooses to target the defending group with the largest effective power; if there is still a tie, it chooses the defending group with the highest initiative.
-		if maxDamageGroup != nil {
-			group.target = maxDamageGroup
+		if targetGroup != nil {
+			group.target = targetGroup
 		} else {
 			group.target = nil
 			// fmt.Println("Could not find a target for group", group)
