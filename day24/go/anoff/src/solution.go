@@ -12,6 +12,7 @@ func main() {
 }
 
 func part1(armies []*Army) {
+	i := 0
 	for {
 		turn(armies)
 		done := false
@@ -42,6 +43,7 @@ func part1(armies []*Army) {
 		if done {
 			break
 		}
+		i++
 	}
 }
 func turn(armies []*Army) {
@@ -66,7 +68,14 @@ func turn(armies []*Army) {
 }
 
 func strike(armies []*Army) {
-	allGroups := append(armies[0].groups, armies[1].groups...)
+	// hack because allGroups = append(armies[0].groups, armies[1].groups...)
+	//		resulted in the army.groups being rewritten
+	var allGroups []*Group
+	for _, a := range armies {
+		for _, g := range a.groups {
+			allGroups = append(allGroups, g)
+		}
+	}
 	sortGroupsByInitiative(allGroups)
 	for _, g := range allGroups {
 		if g.units == 0 {
@@ -78,11 +87,11 @@ func strike(armies []*Army) {
 		}
 		damage := g.damagePotential(g.target)
 		unitLoss := damage / g.target.hp
+		if unitLoss > g.target.units {
+			unitLoss = g.target.units
+		}
 		fmt.Printf("%s group %d (%s) attacks %s group %d (w: %s, i: %s) for %d damage, killing %d units\n", g.faction, g.id, g.attackType, g.target.faction, g.target.id, g.target.weaknesses, g.target.immunities, damage, unitLoss)
 		g.target.units -= unitLoss
-		if g.target.units < 0 {
-			g.target.units = 0
-		}
 	}
 }
 func part2([]Army) {
