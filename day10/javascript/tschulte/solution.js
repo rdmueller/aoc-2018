@@ -10,10 +10,10 @@ const lines = input.split("\n").filter(line => line);
 
 // tag::part1[]
 const message = new Lights(lines.map(parseLine)).moveUntilMessageAppears();
-console.log("Day 05, part 1: ");
+console.log("Day 10, part 1: ");
 console.log(message.toString());
 //end::part1[]
 
 // tag::part2[]
-console.log("Day 05, part 2: " + message.time + "s");
+console.log("Day 10, part 2: " + message.time + "s");
 // end::part2[]

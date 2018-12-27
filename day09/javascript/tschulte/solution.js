@@ -12,9 +12,9 @@ const lines = input.split("\n").filter(line => line);
 // tag::part1[]
 const game = parseLine(lines[0]);
 
-console.log("Day 05, part 1: " + game.highscore);
+console.log("Day 09, part 1: " + game.highscore);
 //end::part1[]
 
 // tag::part2[]
-console.log("Day 05, part 2: " + bigGame(game, 100).highscore);
+console.log("Day 09, part 2: " + bigGame(game, 100).highscore);
 // end::part2[]

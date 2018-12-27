@@ -12,10 +12,10 @@ const lines = input.split("\n").filter(line => line);
 // tag::part1[]
 const coords = lines.map(parseLine);
 const largestArea = findLargestArea(coords);
-console.log("Day 05, part 1: " + largestArea);
+console.log("Day 06, part 1: " + largestArea);
 //end::part1[]
 
 // tag::part2[]
 const areaWithin = findAreaWithin(coords, 10000);
-console.log("Day 05, part 2: " + areaWithin);
+console.log("Day 06, part 2: " + areaWithin);
 // end::part2[]
