@@ -3,6 +3,7 @@
 // tag::PowerGrid[]
 class PowerGrid {
   constructor(serialNumber, size = 300) {
+    this.size = size;
     this.racks = new Array(size);
     for (let x = 0; x < size; x++) {
       this.racks[x] = new Array(size);
@@ -42,13 +43,7 @@ class SubPowerGrid {
     this.x = x;
     this.y = y;
     this.size = size;
-  }
 
-  get upperLeft() {
-    return this.parentGrid.racks[this.x][this.y];
-  }
-
-  get powerLevel() {
     let powerLevel = 0;
     for (let x = this.size - 1; x >= 0; x--) {
       const parentX = this.x + x;
@@ -57,7 +52,11 @@ class SubPowerGrid {
         powerLevel += this.parentGrid.racks[parentX][parentY].powerLevel;
       }
     }
-    return powerLevel;
+    this.powerLevel = powerLevel;
+  }
+
+  get upperLeft() {
+    return this.parentGrid.racks[this.x][this.y];
   }
 }
 // end::SubPowerGrid[]

@@ -4,6 +4,7 @@
 
 const assert = require("assert");
 const { FuelCell, PowerGrid, SubPowerGrid } = require("./part1");
+const { findHighestSubGrid } = require("./part2");
 
 assert.equal(new FuelCell(1, 1, 8).rackId, 11);
 assert.equal(new FuelCell(1, 2, 8).rackId, 11);
@@ -47,3 +48,8 @@ const highestPowerGrid42 = powerGrid42.findHighestSubGrid();
 assert.equal(highestPowerGrid42.powerLevel, 30);
 assert.equal(highestPowerGrid42.upperLeft.x, 21);
 assert.equal(highestPowerGrid42.upperLeft.y, 61);
+
+const highestPowerGrid18Any = findHighestSubGrid(powerGrid18);
+assert.equal(highestPowerGrid18Any.powerLevel, 113);
+assert.equal(highestPowerGrid18Any.upperLeft.x, 90);
+assert.equal(highestPowerGrid18Any.upperLeft.y, 269);

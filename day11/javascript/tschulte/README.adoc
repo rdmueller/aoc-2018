@@ -14,3 +14,17 @@ include::part1.js[]
 include::solution.js[tags=part1]
 ....
 
+== Second Star
+
+The solution for the second star is just brute force and takes 6 and a half minutes to complete, but fixing that would take longer than 6 minutes.
+It could be improved by not calculating squares again and again, but to cache some results.
+
+[source, js]
+....
+include::part2.js[]
+....
+
+[source, js]
+....
+include::solution.js[tags=part2]
+....
