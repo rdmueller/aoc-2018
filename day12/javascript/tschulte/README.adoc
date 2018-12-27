@@ -1,0 +1,12 @@
+This solution is written in JavaScript.
+
+https://adventofcode.com/2018/day/12
+
+== First Star
+
+
+[source, js]
+....
+include::part1.js[tags=parseLine]
+....
+
