@@ -4,9 +4,14 @@ https://adventofcode.com/2018/day/12
 
 == First Star
 
+[source, js]
+....
+include::part1.js[]
+....
+
 
 [source, js]
 ....
-include::part1.js[tags=parseLine]
+include::solution.js[tags=part1]
 ....
 
