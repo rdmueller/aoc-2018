@@ -18,5 +18,9 @@ console.log("Day 12, part 1: " + pots.addNumbers());
 //end::part1[]
 
 // tag::part2[]
-console.log("Day 12, part 2: ");
+for (let i = 20; i < 50000000000; i++) {
+  if (i % 1000 === 0) console.log(`Generation: ${i}`);
+  pots.nextGen();
+}
+console.log("Day 12, part 2: " + pots.addNumbers());
 // end::part2[]

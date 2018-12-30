@@ -15,3 +15,11 @@ include::part1.js[]
 include::solution.js[tags=part1]
 ....
 
+== Second Star
+
+Brute force is not going to get us to the solution.
+
+[source, js]
+....
+include::solution.js[tags=part2]
+....
