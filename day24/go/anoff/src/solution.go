@@ -102,5 +102,6 @@ func part2([]Army) {
 /*
 21645, too low
 22232, too low
-
+22300, too high
+22244, yusss
 */

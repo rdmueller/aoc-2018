@@ -47,6 +47,7 @@ func (g byPower) Less(i, j int) bool {
 }
 
 func (a *Army) planAttack(t *Army) *Army {
+	// In decreasing order of effective power, groups choose their targets; in a tie, the group with the higher initiative chooses first.
 	a.sortGroupsByPower()
 	for _, group := range a.groups {
 		maxDamage := 0
@@ -56,7 +57,7 @@ func (a *Army) planAttack(t *Army) *Army {
 			if !a.isTargetingGroup(tgroup) && tgroup.units > 0 {
 				damage := group.damagePotential(tgroup)
 				if damage > maxDamage {
-					maxDamage = group.damagePotential(tgroup)
+					maxDamage = damage
 					maxDamageGroups = []*Group{tgroup}
 				} else if damage == maxDamage {
 					maxDamageGroups = append(maxDamageGroups, tgroup)
@@ -79,7 +80,7 @@ func (a *Army) planAttack(t *Army) *Army {
 		}
 		if len(maxPowerGroups) > 1 {
 			maxInitiative := 0
-			for _, tgroup := range maxDamageGroups {
+			for _, tgroup := range maxPowerGroups {
 				if tgroup.initiative > maxInitiative {
 					maxInitiative = tgroup.initiative
 					targetGroup = tgroup
@@ -89,7 +90,7 @@ func (a *Army) planAttack(t *Army) *Army {
 			targetGroup = maxPowerGroups[0]
 		}
 		// If an attacking group is considering two defending groups to which it would deal equal damage, it chooses to target the defending group with the largest effective power; if there is still a tie, it chooses the defending group with the highest initiative.
-		if targetGroup != nil {
+		if targetGroup != nil && group.damagePotential(targetGroup) > 0 {
 			group.target = targetGroup
 		} else {
 			group.target = nil
