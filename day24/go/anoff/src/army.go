@@ -110,12 +110,14 @@ func (a *Army) isTargetingGroup(t *Group) bool {
 }
 
 func (a *Army) cleanup() *Army {
-	for i, g := range a.groups {
+	for i := 0; i < len(a.groups); i++ {
+		g := a.groups[i]
 		if g.units <= 0 {
-			if i == len(a.groups) {
+			if i == len(a.groups) -1 {
 				a.groups = a.groups[:i]
 			} else {
 				a.groups = append(a.groups[:i], a.groups[i+1:]...)
+				i--
 			}
 		}
 		g.target = nil

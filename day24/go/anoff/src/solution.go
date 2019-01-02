@@ -6,12 +6,13 @@ import (
 
 func main() {
 	input := readInput("../input.txt")
-	immune, infection := createArmiesFromInput(input)
-	armies := []*Army{&immune, &infection}
-	part1(armies)
+	//part1(input)
+	part2(input)
 }
 
-func part1(armies []*Army) {
+func part1(input []string) {
+	immune, infection := createArmiesFromInput(input)
+	armies := []*Army{&immune, &infection}
 	i := 0
 	for {
 		turn(armies)
@@ -94,12 +95,58 @@ func strike(armies []*Army) {
 		g.target.units -= unitLoss
 	}
 }
-func part2([]Army) {
-	fmt.Println("Solution for part2:", 0)
+func part2(input []string) {
+	solutionFound := false
+	// TODO: for a fully automated search this needs to check if a fight goes "stale" i.e. neither army is taking damage this happens around 50~51
+	for immuneBoost := 52; immuneBoost < 100; immuneBoost+=1 {
+		immune, infection := createArmiesFromInput(input)
+		for i := range immune.groups {
+			immune.groups[i].damage += immuneBoost
+		}
+		armies := []*Army{&immune, &infection}
+		for {
+			turn(armies)
+			done := false
+			for _, a := range armies {
+				activeGroups := 0
+				for _, g := range a.groups {
+					if g.units > 0 {
+						activeGroups++
+					}
+				}
+				if activeGroups == 0 {
+					done = true
+					fmt.Println("Faction", a.faction, "has no fighters left")
+					var winner *Army
+					if a == armies[0] {
+						winner = armies[1]
+					} else {
+						winner = armies[0]
+					}
+					remainingUnits := 0
+					for _, g := range winner.groups {
+						remainingUnits += g.units
+					}
+					fmt.Println("Fight ended:", remainingUnits, winner.faction, "for boost of ", immuneBoost)
+					if winner.faction == "immune system" {
+						solutionFound = true
+					}
+					break
+				}
+			}
+			if done {
+				break
+			}
+		}
+		if solutionFound {
+			fmt.Println("Solution for part2 found ^")
+			break
+		}
+	}
 }
-
-
-/*
+		
+		
+		/*
 21645, too low
 22232, too low
 22300, too high
