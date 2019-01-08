@@ -21,5 +21,23 @@ Brute force is not going to get us to the solution.
 
 [source, js]
 ....
+include::solution.js[tags=part2BruteForce]
+....
+
+I refactored the code to keep a reference to the first and last pot instead of only the pot "0".
+After each increase of the generation it is ensured that there is only exactly one empty pot on both ends.
+
+I printed the state of the pots for the first xhundred generations and noticed that the string stopped changing after some time.
+Only the index of the first non-empty pot was changing from now on, resulting in the diff between generations to become constant.
+
+After introducing a new `warmup` method to find the generation after wich the diff becomes constant, the solution got easy.
+
+[source, js]
+....
+include::part2.js[]
+....
+
+[source, js]
+....
 include::solution.js[tags=part2]
 ....
